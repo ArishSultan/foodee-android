@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/darkBrown"
+    tools:context=".activities.Signup">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+           android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.18">
+
+            <ImageView
+                android:id="@+id/ivSignupBg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:scaleType="fitXY"
+                />
+            <ImageView
+                android:id="@+id/ivSignupLogo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/logo_sml"
+                android:padding="50dp"
+                />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_weight="0.52"
+            >
+
+            <TextView
+                android:id="@+id/tvSignUp1"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="40dp"
+                android:text="SignUp"
+                android:textColor="@android:color/white"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                />
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_below="@+id/tvSignUp1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:inputType="textPersonName"
+                android:singleLine="true"
+
+                android:background="@drawable/rounded_edittext"
+                android:hint="UserName"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                />
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_below="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/rounded_edittext"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:gravity="center"
+                android:singleLine="true"
+                />
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_below="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:inputType="phone"
+                android:singleLine="true"
+                android:background="@drawable/rounded_edittext"
+                android:hint="Phone"
+                android:gravity="center"
+                />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_below="@+id/etPhone"
+                android:layout_width="match_parent"
+                android:hint="Password"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:background="@drawable/rounded_edittext"
+                android:inputType="textPassword"
+                android:gravity="center"
+                />
+
+            <EditText
+                android:id="@+id/etConfirmPassword"
+                android:layout_below="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:hint="ConfirmPassword"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:background="@drawable/rounded_edittext"
+                android:inputType="textPassword"
+                android:gravity="center"
+                />
+            <Button
+                android:id="@+id/btnSignUp"
+                android:layout_below="@+id/etConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Sign Up"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/white"
+                                />
+
+            <TextView
+                android:id="@+id/tvAlreadyAccount"
+                android:layout_below="@+id/btnSignUp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="40dp"
+                android:text="Already have an account?"
+                android:textColor="@android:color/white"
+                android:textSize="15dp"
+                 />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tvSuLogin"
+
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Login"
+        android:textSize="15dp"
+        android:textColor="@color/white"
+        android:background="@color/grey"
+
+        />
+
+</RelativeLayout>
