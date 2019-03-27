@@ -18,13 +18,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.32">
+            android:layout_weight="0.25">
 
             <ImageView
                 android:id="@+id/ivLoginBG"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY" />
+                android:layout_height="250dp"
+                android:scaleType="fitXY"
+                />
 
             <ImageView
                 android:id="@+id/ivLoginLogo"
@@ -58,7 +59,7 @@
             <EditText
                 android:id="@+id/etId"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="45dp"
                 android:layout_below="@+id/tvLogin"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/rounded_edittext"
@@ -70,19 +71,21 @@
             <EditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="45dp"
                 android:layout_below="@+id/etId"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/rounded_edittext"
                 android:inputType="textPassword"
+                android:hint="●●●●●●●●●●●●●"
+                android:gravity="center"
                 android:singleLine="true" />
 
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="45dp"
                 android:layout_below="@+id/etPassword"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/rounded_button"
                 android:text="Sign In"
                 android:textColor="@color/white" />
@@ -92,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_below="@+id/btnLogin"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:text="OR"
                 android:textColor="@color/white"
@@ -103,26 +106,70 @@
             <LinearLayout
                 android:id="@+id/llSocial"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="45dp"
                 android:layout_below="@+id/tvOr"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:gravity="center"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
                 android:orientation="horizontal">
 
 
-                <Button
-                    android:id="@+id/btnFacebook"
-                    android:layout_width="82dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="12dp"
-                    android:background="@drawable/rounded_socialbutton"
-                    android:src="@drawable/ic_accessibility_black_24dp" />
+                <android.support.v7.widget.CardView
+                    android:layout_width="0dp"
+                    app:cardCornerRadius="6dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
 
-                <Button
-                    android:id="@+id/btnGoogle"
-                    android:layout_width="82dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_socialbutton" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:tint="#2c2015"
+
+                        android:src="@drawable/twitter_logo"
+                        android:padding="10dp"
+                        />
+                </android.support.v7.widget.CardView>
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="0dp"
+                    app:cardCornerRadius="6dp"
+
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"
+
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/facebook_logo"
+                        android:tint="#2c2015"
+                        android:padding="10dp"
+                        />
+                </android.support.v7.widget.CardView>
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="6dp"
+
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/google_logo"
+                        android:tint="#2c2015"
+
+                        android:padding="10dp"
+                        />
+
+                </android.support.v7.widget.CardView>
 
             </LinearLayout>
 
@@ -131,7 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/llSocial"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -141,7 +188,7 @@
                     android:layout_height="wrap_content"
                     android:text="Don't have an account"
                     android:textColor="@color/white"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -151,7 +198,7 @@
                     android:paddingLeft="5dp"
                     android:text="SignUp"
                     android:textColor="@color/lightBrown"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:textStyle="bold" />
             </LinearLayout>
 

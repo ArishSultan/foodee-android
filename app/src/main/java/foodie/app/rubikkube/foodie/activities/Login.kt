@@ -43,7 +43,7 @@ class Login : AppCompatActivity() {
 //        ivLoginBG = findViewById(R.id.ivLoginBG)
 //        ivLoginLogo = findViewById(R.id.ivLoginLogo)
 
-        Glide.with(this).load(R.drawable.bg_mid).into(ivLoginBG)
+        Glide.with(this).load(R.drawable.bg_sml).into(ivLoginBG)
         Glide.with(this).load(R.drawable.logo_main).into(ivLoginLogo)
 
     }
