@@ -46,7 +46,8 @@
         <activity
             android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".activities.TimelineRV"></activity>
+        <activity android:name=".activities.TimelineRV" />
+        <activity android:name=".activities.Settings"></activity>
     </application>
 
 </manifest>
