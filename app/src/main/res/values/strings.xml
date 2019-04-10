@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Foodie</string>
+    <string name="app_name">Foodee</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_timeline">Timeline</string>
     <string name="title_nearby">NearBy</string>

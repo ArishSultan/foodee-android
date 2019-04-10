@@ -126,7 +126,6 @@ class NearByFragment : Fragment(), OnMapReadyCallback {
 
 
 
-
     }
 
 

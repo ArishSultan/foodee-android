@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="right"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="right"
+        android:layout_marginLeft="80dp"
+        android:orientation="vertical">
+
+        <foodie.app.rubikkube.foodie.fonts.robotoRegular
+            android:id="@+id/tv_sender_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/donor_chatlist_drawable"
+
+            android:text="H i think now its fine and shide like a sky and the moon and the sri lana"
+            android:textColor="#000"
+            android:textSize="14sp"
+
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="00dp"
+            android:orientation="horizontal">
+
+
+
+            <foodie.app.rubikkube.foodie.fonts.robotoThin
+                android:id="@+id/tv_message_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="03:45PM"
+                android:gravity="right"
+                android:layout_marginRight="4dp"
+                android:textColor="#000"
+                android:textSize="10sp" />
+
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/img_status"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+
+
+        android:visibility="invisible"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"/>
+
+</LinearLayout>
