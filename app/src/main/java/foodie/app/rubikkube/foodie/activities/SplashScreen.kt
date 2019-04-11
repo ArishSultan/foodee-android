@@ -12,12 +12,14 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.nabinbhandari.android.permissions.PermissionHandler
 import com.nabinbhandari.android.permissions.Permissions
+import com.pixplicity.easyprefs.library.Prefs
 
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.fragments.TimelineFragment
+import foodie.app.rubikkube.foodie.utilities.Constant
 import java.util.ArrayList
 
 class SplashScreen : AppCompatActivity() {
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,23 +29,29 @@ class SplashScreen : AppCompatActivity() {
         initViews()
         Handler().postDelayed({
 
-
             val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            Permissions.check(this/*context*/, permissions, null,null, object : PermissionHandler() {
+
+            Permissions.check(this/*context*/, permissions, null, null, object : PermissionHandler() {
                 override fun onGranted() {
-                    val intent = Intent(this@SplashScreen, Login::class.java)
-                    startActivity(intent)
-                    finish()
+                    if (Prefs.getString(Constant.IS_LOGIN, "") == "true") {
+                        val intent = Intent(this@SplashScreen, HomeActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        val intent = Intent(this@SplashScreen, Login::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
 
                 }
 
                 override fun onDenied(context: Context?, deniedPermissions: ArrayList<String>?) {
-                    Toast.makeText(this@SplashScreen,"Permission Denial", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@SplashScreen, "Permission Denial", Toast.LENGTH_LONG).show()
                     finish()
                 }
             })
 
-        }, 4000)
+        }, 3000)
     }
 
     private fun initViews() {
