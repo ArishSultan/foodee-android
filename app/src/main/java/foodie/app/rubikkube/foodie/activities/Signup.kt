@@ -52,7 +52,7 @@ class Signup : AppCompatActivity() {
             val password = etPassword.text.toString()
             val cpasword = etConfirmPassword.text.toString()
 
-            if(fieldValidation(userName,email,phone,password,cpasword)){
+            if (fieldValidation(userName, email, phone, password, cpasword)) {
 
                 val jsonObject = JSONObject()
 
@@ -77,18 +77,18 @@ class Signup : AppCompatActivity() {
         if (userName.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty() || cPassword.isEmpty()) {
             Toast.makeText(this@Signup, "Please enter All Details First", Toast.LENGTH_SHORT).show()
             return false
-        }else if(!Utils.isValidEmail(email.toString())){
+        } else if (!Utils.isValidEmail(email.toString())) {
             Toast.makeText(this@Signup, "Please enter correct email address", Toast.LENGTH_SHORT).show()
             return false
-        }else if (!Utils.isConnectedOnline(this)) {
+        } else if (!Utils.isConnectedOnline(this)) {
             Toast.makeText(this@Signup, "No internet Connection", Toast.LENGTH_SHORT).show()
             return false
-        }else{
+        } else {
             return true
         }
     }
 
-    private fun signUp(jsonObject : JSONObject) {
+    private fun signUp(jsonObject: JSONObject) {
 
         val mService = ApiUtils.getSOService() as SOService
 
@@ -101,6 +101,7 @@ class Signup : AppCompatActivity() {
 
         mService.signup(hm, Utils.getRequestBody(jsonObject.toString()))
                 .enqueue(object : Callback<LoginResponse> {
+
                     override fun onFailure(call: Call<LoginResponse>?, t: Throwable?) {
                         Log.d("Res", t?.message)
                         pd?.dismiss()
@@ -110,10 +111,9 @@ class Signup : AppCompatActivity() {
                     override fun onResponse(call: Call<LoginResponse>?, response: Response<LoginResponse>?) {
                         pd?.dismiss()
                         if (response!!.isSuccessful) {
-
                             Prefs.putString(Constant.IS_LOGIN, "true")
-                            Prefs.putString(Constant.TOKEN, "Bearer "+response.body()?.accessToken)
-                            Prefs.putString(Constant.USERID, ""+response.body()?.user?.id)
+                            Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
+                            Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
                             Prefs.putString(Constant.NAME, response.body()?.user?.username)
                             Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
                             Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
@@ -124,7 +124,6 @@ class Signup : AppCompatActivity() {
                             Toast.makeText(this@Signup, json.getString("message"), Toast.LENGTH_SHORT).show()
                         }
                     }
-
                 })
     }
 
