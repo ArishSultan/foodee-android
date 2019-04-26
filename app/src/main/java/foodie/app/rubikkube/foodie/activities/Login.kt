@@ -4,9 +4,6 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
@@ -17,7 +14,7 @@ import com.pixplicity.easyprefs.library.Prefs
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.LoginResponse
+import foodie.app.rubikkube.foodie.model.LoginSignUpResponse
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import foodie.app.rubikkube.foodie.utilities.Utils.Companion.isConnectedOnline
@@ -28,9 +25,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.HashMap
-import kotlin.math.log
-import okhttp3.ResponseBody
-import java.io.IOException
 
 
 class Login : AppCompatActivity() {
@@ -98,33 +92,33 @@ class Login : AppCompatActivity() {
 
         pd?.show()
 
-        val hm = HashMap<String, String>()
-        hm["Content-Type"] = "application/json"
 
-        mService.login(hm, Utils.getRequestBody(jsonObject.toString()))
-                .enqueue(object : Callback<LoginResponse> {
-                    override fun onFailure(call: Call<LoginResponse>?, t: Throwable?) {
-                        Log.d("Res", t?.message)
+        mService.login(Utils.getRequestBody(jsonObject.toString()))
+                .enqueue(object : Callback<LoginSignUpResponse> {
+                    override fun onFailure(call: Call<LoginSignUpResponse>?, t: Throwable?) {
                         pd?.dismiss()
-                        Toast.makeText(this@Login, "Some thing wrong", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Login, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
                     }
 
-                    override fun onResponse(call: Call<LoginResponse>?, response: Response<LoginResponse>?) {
+                    override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
                         pd?.dismiss()
                         if (response!!.isSuccessful) {
-
-                            Prefs.putString(Constant.IS_LOGIN, "true")
-                            Prefs.putString(Constant.TOKEN, "Bearer "+response.body()?.accessToken)
-                            Prefs.putString(Constant.USERID, ""+response.body()?.user?.id)
-                            Prefs.putString(Constant.NAME, response.body()?.user?.username)
-                            Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
-                            Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
-                            startActivity(Intent(this@Login, HomeActivity::class.java))
-                            finish()
+                            if(response.body().status) {
+                                Prefs.putString(Constant.IS_LOGIN, "true")
+                                Prefs.putString(Constant.TOKEN, "Bearer "+response.body()?.accessToken)
+                                Prefs.putString(Constant.USERID, ""+response.body()?.user?.id)
+                                Prefs.putString(Constant.NAME, response.body()?.user?.username)
+                                Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
+                                Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
+                                startActivity(Intent(this@Login, HomeActivity::class.java))
+                                finish()
+                            }else {
+                                Toast.makeText(this@Login, response.body().message, Toast.LENGTH_SHORT).show()
+                            }
 
                         } else {
-                            val json = JSONObject(String(response.errorBody().bytes())) as JSONObject
-                            Toast.makeText(this@Login, json.getString("message"), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Login, response.message(), Toast.LENGTH_SHORT).show()
+
                         }
                     }
 

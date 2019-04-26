@@ -4,9 +4,6 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
 
@@ -16,7 +13,7 @@ import com.pixplicity.easyprefs.library.Prefs
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.LoginResponse
+import foodie.app.rubikkube.foodie.model.LoginSignUpResponse
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.activity_signup.*
@@ -52,13 +49,13 @@ class Signup : AppCompatActivity() {
             val password = etPassword.text.toString()
             val cpasword = etConfirmPassword.text.toString()
 
-            if (fieldValidation(userName, email, phone, password, cpasword)) {
+            if (fieldValidation(userName, email, password, cpasword)) {
 
                 val jsonObject = JSONObject()
 
                 jsonObject.put("username", userName)
                 jsonObject.put("email", email)
-                jsonObject.put("phone", phone)
+                jsonObject.put("phone", "")
                 jsonObject.put("password", password)
                 jsonObject.put("password_confirmation", cpasword)
 
@@ -73,8 +70,8 @@ class Signup : AppCompatActivity() {
         Glide.with(this).load(R.drawable.logo_sml).into(ivSignupLogo)
     }
 
-    private fun fieldValidation(userName: String, email: String, phone: String, password: String, cPassword: String): Boolean {
-        if (userName.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty() || cPassword.isEmpty()) {
+    private fun fieldValidation(userName: String, email: String, password: String, cPassword: String): Boolean {
+        if (userName.isEmpty() || email.isEmpty() || password.isEmpty() || cPassword.isEmpty()) {
             Toast.makeText(this@Signup, "Please enter All Details First", Toast.LENGTH_SHORT).show()
             return false
         } else if (!Utils.isValidEmail(email.toString())) {
@@ -94,34 +91,36 @@ class Signup : AppCompatActivity() {
 
         pd?.show()
 
-        val hm = HashMap<String, String>()
 
-        hm["Content-Type"] = "application/json"
-        hm["X-Requested-With"] = "XMLHttpRequest"
+        mService.signup(Utils.getRequestBody(jsonObject.toString()))
+                .enqueue(object : Callback<LoginSignUpResponse> {
 
-        mService.signup(hm, Utils.getRequestBody(jsonObject.toString()))
-                .enqueue(object : Callback<LoginResponse> {
-
-                    override fun onFailure(call: Call<LoginResponse>?, t: Throwable?) {
-                        Log.d("Res", t?.message)
+                    override fun onFailure(call: Call<LoginSignUpResponse>?, t: Throwable?) {
                         pd?.dismiss()
-                        Toast.makeText(this@Signup, "Some thing wrong", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Signup, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
                     }
 
-                    override fun onResponse(call: Call<LoginResponse>?, response: Response<LoginResponse>?) {
+                    override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
                         pd?.dismiss()
                         if (response!!.isSuccessful) {
-                            Prefs.putString(Constant.IS_LOGIN, "true")
-                            Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
-                            Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
-                            Prefs.putString(Constant.NAME, response.body()?.user?.username)
-                            Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
-                            Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
-                            startActivity(Intent(this@Signup, HomeActivity::class.java))
-                            finish()
+
+                            if(response.body().status) {
+                                Prefs.putString(Constant.IS_LOGIN, "true")
+                                Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
+                                Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
+                                Prefs.putString(Constant.NAME, response.body()?.user?.username)
+                                Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
+                                Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
+                                startActivity(Intent(this@Signup, HomeActivity::class.java))
+                                finish()
+                            }else {
+                                Toast.makeText(this@Signup, response.body().message, Toast.LENGTH_SHORT).show()
+
+                            }
+
                         } else {
-                            val json = JSONObject(String(response.errorBody().bytes())) as JSONObject
-                            Toast.makeText(this@Signup, json.getString("message"), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Signup, response.message(), Toast.LENGTH_SHORT).show()
+
                         }
                     }
                 })
