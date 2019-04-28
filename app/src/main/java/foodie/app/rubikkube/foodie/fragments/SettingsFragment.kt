@@ -14,6 +14,10 @@ import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.Login
 import kotlinx.android.synthetic.main.activity_settings.view.*
+import android.widget.Toast
+import android.R.attr.country
+import android.content.DialogInterface
+import android.app.AlertDialog
 
 
 class SettingsFragment : Fragment() {
@@ -31,11 +35,11 @@ class SettingsFragment : Fragment() {
             startActivity(intent)
             getActivity()?.finish();
 
-
         }
 
         return view
     }
+
 
 
 }// Required empty public constructor

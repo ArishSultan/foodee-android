@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
@@ -17,6 +18,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.esafirm.imagepicker.features.ImagePicker
+import com.esafirm.imagepicker.model.Image
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
@@ -31,6 +34,7 @@ import foodie.app.rubikkube.foodie.fragments.NearByFragment
 import foodie.app.rubikkube.foodie.fragments.ProfileFragment
 import foodie.app.rubikkube.foodie.fragments.SettingsFragment
 import foodie.app.rubikkube.foodie.fragments.TimelineFragment
+import java.util.ArrayList
 
 class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -47,12 +51,9 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
     var lat : Double? = null
     var lng : Double? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
-
 
         setupLocationManager()
         fragment = TimelineFragment()

@@ -20,6 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
@@ -38,7 +39,7 @@ dependencies {
     implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
 
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
 
     //circle image
     implementation 'de.hdodenhof:circleimageview:3.0.0'
@@ -50,7 +51,7 @@ dependencies {
     implementation 'com.pixplicity.easyprefs:library:1.9.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
 
-    implementation 'com.github.bumptech.glide:glide:4.5.0'
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
 
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
 
@@ -59,6 +60,12 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
 
     implementation 'com.kaopiz:kprogresshud:1.2.0'
+
+    implementation 'id.zelory:compressor:2.1.0'
+    implementation 'com.github.esafirm.android-image-picker:imagepicker:1.13.1'
+    implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
 
 }
 repositories {

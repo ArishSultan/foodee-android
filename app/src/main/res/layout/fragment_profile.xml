@@ -7,6 +7,8 @@
     tools:context=".fragments.ProfileFragment">
 
     <ScrollView
+        android:id="@+id/main_view"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -20,13 +22,26 @@
         android:layout_height="280dp">
 
         <ImageView
+            android:id="@+id/profile_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/image"
+            android:layout_centerInParent="true"
+            android:src="@drawable/cover_gradient"
+            android:scaleType="fitXY"
+            />
+
+        <ImageView
+            android:id="@+id/default_cover"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/cover_picture"
             android:scaleType="fitXY"
             />
 
         <View
+            android:id="@+id/view_shadow"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
@@ -43,6 +58,16 @@
             android:textColor="@android:color/white"
             />
 
+        <ImageView
+            android:id="@+id/setting_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
+            android:padding="10dp"
+            app:srcCompat="@drawable/ic_settings_black_24dp"
+            />
         <RelativeLayout
             android:layout_toLeftOf="@+id/profile_pic"
             android:layout_centerVertical="true"
@@ -51,17 +76,18 @@
             android:layout_height="wrap_content">
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegular
-                android:id="@+id/age"
+                android:id="@+id/age_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Age"
                 android:textColor="@android:color/white"
                 />
             <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                android:layout_below="@+id/age"
+                android:layout_below="@+id/age_title"
+                android:id="@+id/age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="26"
+                android:text=""
                 android:textSize="16sp"
                 android:layout_centerHorizontal="true"
                 android:textColor="@android:color/white"
@@ -73,7 +99,7 @@
             android:layout_width="110dp"
             android:layout_height="110dp"
             app:civ_border_width="2dp"
-            android:src="@drawable/two"
+            android:src="@drawable/profile_avatar"
             android:layout_centerInParent="true"
             app:civ_border_color="@android:color/white"/>
 
@@ -85,17 +111,18 @@
             android:layout_height="wrap_content">
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegular
-                android:id="@+id/city"
+                android:id="@+id/city_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="City"
                 android:textColor="@android:color/white"
                 />
             <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                android:layout_below="@+id/city"
+                android:id="@+id/city"
+                android:layout_below="@+id/city_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NY"
+                android:text=""
                 android:textSize="16sp"
                 android:layout_centerHorizontal="true"
                 android:textColor="@android:color/white"
@@ -108,7 +135,7 @@
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gene Summers"
+            android:text=""
             android:textSize="16sp"
             android:layout_marginTop="10dp"
             android:textColor="@android:color/white"
@@ -123,7 +150,7 @@
             android:textAlignment="center"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
-            android:text="5 way to make your Bbq A Memoraible Family Event"
+            android:text=""
             android:textSize="16sp"
             android:textColor="@android:color/white"
             />
@@ -152,6 +179,7 @@
             android:layout_marginTop="10dp"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:visibility="invisible"
             android:layout_marginRight="10dp"
             app:srcCompat="@drawable/ic_add_box_black_24dp"
 
@@ -159,6 +187,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/friend_like_food"
+            android:visibility="gone"
             android:layout_below="@+id/food_like"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
@@ -181,6 +210,7 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/female_card"
+            android:visibility="invisible"
             android:layout_below="@+id/like"
             android:layout_marginLeft="10dp"
             app:cardCornerRadius="8dp"
@@ -210,6 +240,7 @@
         </android.support.v7.widget.CardView>
         <android.support.v7.widget.CardView
             android:id="@+id/male_card"
+            android:visibility="invisible"
             android:layout_toRightOf="@+id/female_card"
             android:layout_below="@+id/like"
             android:layout_marginLeft="10dp"
@@ -254,6 +285,7 @@
             android:layout_below="@+id/male_card"
             android:layout_alignParentRight="true"
             android:layout_marginTop="10dp"
+            android:visibility="invisible"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginRight="10dp"
@@ -268,7 +300,7 @@
             android:layout_below="@+id/age_you"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
-            android:text="25-30"
+            android:text=""
             android:textSize="18sp"
             android:textColor="@color/grey" />
 
@@ -293,6 +325,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="40dp"
             app:cardCornerRadius="10dp"
+            android:visibility="gone"
             app:cardElevation="4dp"
             >
 
@@ -303,100 +336,18 @@
                 >
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
+                android:id="@+id/contribution_txt"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textSize="16sp"
+
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:text="20%"
                 />
             </RelativeLayout>
-
         </android.support.v7.widget.CardView>
-        <android.support.v7.widget.CardView
-            android:id="@+id/thirty_percent"
-            android:layout_toRightOf="@+id/twenty_precent_crd"
-            android:layout_below="@+id/contribution"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="4dp"
-            >
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/rectangular_line"
-                >
-
-            <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
-                android:gravity="center"
-                android:text="30%"
-                />
-            </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
-        <android.support.v7.widget.CardView
-            android:id="@+id/fifty_percent"
-            android:layout_toRightOf="@+id/thirty_percent"
-            android:layout_below="@+id/contribution"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="4dp"
-            >
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/rectangular_line"
-                >
-
-            <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
-                android:gravity="center"
-                android:text="50%"
-                />
-            </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
-        <android.support.v7.widget.CardView
-            android:id="@+id/treat_me"
-            android:layout_toRightOf="@+id/fifty_percent"
-            android:layout_below="@+id/contribution"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="4dp"
-            >
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/rounded_button"
-                >
-
-            <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="16sp"
-                android:textColor="@color/white"
-                android:gravity="center"
-                android:text="Treat Me"
-                />
-            </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
 
 
     </RelativeLayout>
