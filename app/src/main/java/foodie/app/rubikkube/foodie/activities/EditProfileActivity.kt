@@ -417,7 +417,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         jsonObject.put("_method", "PATCH")
 
         val mService = ApiUtils.getSOService() as SOService
-        mService.updateProfile(hm, Utils.getRequestBody(jsonObject.toString()))
+        mService.updateProfile(meResponse.profile.userId!!,hm, Utils.getRequestBody(jsonObject.toString()))
                 .enqueue(object : Callback<UpdateProfileResp> {
 
                     override fun onFailure(call: Call<UpdateProfileResp>?, t: Throwable?) {

@@ -30,6 +30,6 @@ interface SOService {
                     @Part userfile: MultipartBody.Part?
     ): Call<ImageUploadResp>
 
-    @POST("/api/v1/profile/3")
-    fun updateProfile(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<UpdateProfileResp>
+    @POST("/api/v1/profile/{userId}")
+    fun updateProfile(@Path("userId") userId:Int,@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<UpdateProfileResp>
 }
