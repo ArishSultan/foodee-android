@@ -206,7 +206,6 @@
                             android:hint="Enter Your Location"
                             android:layout_centerVertical="true"
                             android:background="@null"
-                            android:editable="false"
                             android:textSize="14sp"
                             android:paddingLeft="10dp" />
 
@@ -230,6 +229,7 @@
                     android:textColor="@color/darkBrown" />
 
                 <ImageView
+                    android:id="@+id/food_add_btn"
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="10dp"
                     android:layout_width="35dp"
@@ -259,11 +259,13 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
                     android:text="Gender"
+                    android:visibility="gone"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
 
                 <android.support.v7.widget.CardView
+                    android:visibility="gone"
                     android:id="@+id/female_card"
                     android:layout_below="@+id/like"
                     android:layout_marginLeft="10dp"
@@ -293,6 +295,7 @@
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
+                    android:visibility="gone"
                     android:id="@+id/male_card"
                     android:layout_toRightOf="@+id/female_card"
                     android:layout_below="@+id/like"
@@ -324,6 +327,7 @@
 
                 <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                     android:id="@+id/age_you"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/male_card"
@@ -345,13 +349,14 @@
                     android:layout_marginTop="10dp"
                     android:text="25-30"
                     android:textSize="18sp"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     android:textColor="@color/grey" />
 
 
 
                 <RelativeLayout
                     android:id="@+id/age_dropdown"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_below="@id/age_you"

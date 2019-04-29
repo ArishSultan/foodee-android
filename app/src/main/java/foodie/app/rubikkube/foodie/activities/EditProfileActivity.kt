@@ -4,15 +4,17 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
+import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -21,15 +23,15 @@ import com.esafirm.imagepicker.model.Image
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.ImageUploadResp
-import foodie.app.rubikkube.foodie.model.MeResponse
-import foodie.app.rubikkube.foodie.model.UpdateProfileResp
+import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import foodie.app.rubikkube.foodie.utilities.Utils.Companion.progressDialog
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.activity_edit_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -44,15 +46,42 @@ import java.util.ArrayList
 
 class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
+    var foodList: ArrayList<Food> = ArrayList()
+    private lateinit var profileAdapter: ProfileFoodAdapter
 
     lateinit var meResponse: MeResponse
     private var image: ArrayList<Image>? = null
     private var imageFile: File? = null
 
     private var imageType: String = ""
+    private var photoPath: String = ""
+    private var isFoodPicAdded: Boolean = false
 
     var KProgressHUD: KProgressHUD? = null
+    internal var cv: MultipartBody.Part? = null
+    private var dialog: android.support.v7.app.AlertDialog? = null
 
+    private var food_pic : ImageView? = null
+
+//    private fun getListOfFood(){
+//        val hm = java.util.HashMap<String, String>()
+//        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+//        val mService = ApiUtils.getSOService() as SOService
+//        mService.getMyFoodList(hm)
+//                .enqueue(object : Callback<ArrayList<Food>>{
+//                    override fun onFailure(call: Call<ArrayList<Food>>?, t: Throwable?) {
+//                        Toast.makeText(this@EditProfileActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+//                    }
+//
+//                    override fun onResponse(call: Call<ArrayList<Food>>?, response: Response<ArrayList<Food>>?) {
+//                        if(response!!.isSuccessful){
+//                            foodList = response!!.body()
+//                            profileAdapter.update(foodList)
+//                        }
+//                    }
+//                })
+//
+//    }
 
     override fun onClick(v: View?) {
 
@@ -148,9 +177,12 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             val location = user_location.text.toString()
             val gender = meResponse.profile.gender
             val contribution = meResponse.profile.contribution
-            if(formValidation(status,age,location,gender!!,contribution!!)){
+            if (formValidation(status, age, location, gender!!, contribution!!)) {
                 updateProfile(meResponse.profile.userId!!)
             }
+        }
+        if (v?.id == R.id.food_add_btn) {
+            addFoodBuilder()
         }
     }
 
@@ -162,12 +194,14 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         val intent = getIntent();
         if (intent != null) {
             meResponse = intent.getSerializableExtra("meResponse") as MeResponse
+            foodList = intent.getSerializableExtra("foodList") as ArrayList<Food>
             setValue(meResponse)
         }
+        setUpRecyclerView()
         Log.d("res", "" + meResponse.username)
     }
 
-    private fun formValidation(status:String,age:String,location:String,gender:String,contribution:String):Boolean {
+    private fun formValidation(status: String, age: String, location: String, gender: String, contribution: String): Boolean {
         if (status.isEmpty() || age.isEmpty() || location.isEmpty() || gender!!.isEmpty() || contribution!!.isEmpty()) {
             Toast.makeText(this@EditProfileActivity, "Please enter detail first", Toast.LENGTH_SHORT).show()
             return false
@@ -183,13 +217,18 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         } else if (gender.isEmpty()) {
             Toast.makeText(this@EditProfileActivity, "Please enter Your Gender", Toast.LENGTH_SHORT).show()
             return false
-        }else if (contribution.isEmpty()) {
+        } else if (contribution.isEmpty()) {
             Toast.makeText(this@EditProfileActivity, "Please enter Your Contribution", Toast.LENGTH_SHORT).show()
             return false
-        }else if (!Utils.isConnectedOnline(this)) {
+        } else if (!Utils.isConnectedOnline(this)) {
             Toast.makeText(this@EditProfileActivity, "No internet Connection", Toast.LENGTH_SHORT).show()
             return false
-        } else{
+        } else {
+            meResponse.profile.message = status
+            meResponse.profile.age = age.toInt()
+            meResponse.profile.location = location
+            meResponse.profile.gender = gender
+            meResponse.profile.contribution = contribution
             return true
         }
     }
@@ -208,6 +247,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         thirty_percent.setOnClickListener(this)
         fifty_percent.setOnClickListener(this)
         treat_me.setOnClickListener(this)
+        food_add_btn.setOnClickListener(this)
 
     }
 
@@ -283,10 +323,10 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            //            List<Image> images = ImagePicker.getImages(data);
-            image = ImagePicker.getImages(data) as ArrayList<Image>
+            var selectedImage = ImagePicker.getFirstImageOrNull(data)
+            photoPath = selectedImage.getPath();
             val task = imageTask()
-            task.execute(image!![0].path)
+            task.execute(photoPath)
             return
         }
 
@@ -307,10 +347,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
             try {
                 compressedImage = Compressor(this@EditProfileActivity)
-                        .setMaxWidth(640)
-                        .setMaxHeight(480)
+                        .setMaxWidth(280)
+                        .setMaxHeight(280)
                         .setQuality(50)
-                        .setCompressFormat(Bitmap.CompressFormat.PNG)
                         .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
                                 Environment.DIRECTORY_PICTURES).absolutePath)
                         .compressToFile(File(strings[0]))
@@ -326,7 +365,12 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             super.onPostExecute(file)
             KProgressHUD!!.dismiss()
             imageFile = file
-            uploadImage(imageType, file)
+            if(!imageType.isEmpty()){
+                uploadImage(imageType, imageFile)
+            }else{
+                Glide.with(this@EditProfileActivity).load(file.absoluteFile).into(food_pic!!)
+            }
+
             if (imageType.equals("avatar")) {
                 Glide.with(this@EditProfileActivity).load(file.absoluteFile).into(profile_pic!!)
             } else if (imageType.equals("cover")) {
@@ -351,44 +395,41 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 .start() // start image picker activity with request code
     }
 
-    fun uploadImage(imageType: String, file: File) {
+    fun uploadImage(imageTypeVal: String, file: File?) {
         KProgressHUD = progressDialog(this@EditProfileActivity, "", "Image Uploading...")
         KProgressHUD!!.show()
 
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
-        hm["X-Requested-With"] = "XMLHttpRequest"
-        hm["Content-Type"] = "application/json"
+//        hm["X-Requested-With"] = "XMLHttpRequest"
+//        hm["Content-Type"] = "application/json"
 
-        val type = RequestBody.create(MediaType.parse("multipart/form-data"), "avatar");
-        val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile) as RequestBody;
-
-        var image: MultipartBody.Part? = null
-        if (imageFile != null) {
-            Log.d("image file", "" + imageFile!!.name + "" + imageFile!!.path)
-            image = MultipartBody.Part.createFormData("photo", if (imageFile!!.name == null) "file" else imageFile!!.name, requestFile)
-        }
-
+        cv = MultipartBody.Part.createFormData("photo", if (file == null) "file" else file!!.name, RequestBody.create(MediaType.parse("image/*"), File(file!!.path)))
         val mService = ApiUtils.getSOService() as SOService
         mService.uploadImage(hm,
-                type,
-                image
+                RequestBody.create(MediaType.parse("text/plain"), imageTypeVal),
+                cv
         ).enqueue(object : Callback<ImageUploadResp> {
             override fun onFailure(call: Call<ImageUploadResp>?, t: Throwable?) {
                 KProgressHUD!!.dismiss()
+                imageType = ""
+                imageFile = null
                 Toast.makeText(this@EditProfileActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call<ImageUploadResp>?, response: Response<ImageUploadResp>?) {
+                imageType = ""
+                imageFile = null
                 KProgressHUD!!.dismiss()
                 if (response != null) {
-                    if (response.isSuccessful) {
+                    if (response.body().type != null) {
 
+                    } else {
+                        Toast.makeText(this@EditProfileActivity, "Image not Upload", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(this@EditProfileActivity, "Some thing worng your image is not upload try again later", Toast.LENGTH_SHORT).show()
                 }
-
             }
         })
 
@@ -413,11 +454,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         jsonObject.put("location", meResponse.profile.location)
         jsonObject.put("gender", meResponse.profile.gender)
         jsonObject.put("contribution", meResponse.profile.contribution)
-        jsonObject.put("categories", category)
+//        jsonObject.put("categories", category)
         jsonObject.put("_method", "PATCH")
 
         val mService = ApiUtils.getSOService() as SOService
-        mService.updateProfile(meResponse.profile.userId!!,hm, Utils.getRequestBody(jsonObject.toString()))
+        mService.updateProfile(userId, hm, Utils.getRequestBody(jsonObject.toString()))
                 .enqueue(object : Callback<UpdateProfileResp> {
 
                     override fun onFailure(call: Call<UpdateProfileResp>?, t: Throwable?) {
@@ -435,4 +476,108 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 })
 
     }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("on start", "run")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("onResume", "run")
+
+    }
+
+    fun addFoodBuilder(){
+
+        imageFile = null
+        imageType = ""
+
+        val builder = android.support.v7.app.AlertDialog.Builder(this)
+        val inflater = LayoutInflater.from(this)
+
+        val dialog_layout = inflater.inflate(R.layout.add_food_builder, null)
+        builder.setView(dialog_layout)
+        var food_image = dialog_layout.findViewById<View>(R.id.food_image_picker) as ImageView
+        food_pic = food_image
+        var change_text = dialog_layout.findViewById<View>(R.id.add_food) as TextView
+        var food_name= dialog_layout.findViewById<View>(R.id.et_food_name) as EditText
+        var add_food_btn = dialog_layout.findViewById<View>(R.id.btn_add_food) as LinearLayout
+
+        change_text!!.setOnClickListener {
+            isFoodPicAdded = true
+            getImage()
+        }
+
+        add_food_btn!!.setOnClickListener(View.OnClickListener {
+            val foodName = food_name.text.toString()
+
+            if (TextUtils.isEmpty(foodName)){
+                Toast.makeText(this@EditProfileActivity, "Please Enter Food Name", Toast.LENGTH_SHORT).show()
+                return@OnClickListener
+            } else {
+                imageType = foodName
+                addFood(imageType)
+            }
+        })
+
+        dialog = builder.create()
+
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+        dialog!!.show()
+    }
+
+    fun addFood(foodName : String){
+        KProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait...")
+        KProgressHUD!!.show()
+
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+
+        cv = MultipartBody.Part.createFormData("photo", if (imageFile == null) "file" else imageFile!!.name, RequestBody.create(MediaType.parse("image/*"), File(imageFile!!.path)))
+        val mService = ApiUtils.getSOService() as SOService
+        mService.addFood(hm,
+                RequestBody.create(MediaType.parse("text/plain"), foodName),
+                cv
+        ).enqueue(object : Callback<AddFoodResp> {
+
+            override fun onFailure(call: Call<AddFoodResp>?, t: Throwable?) {
+                dialog!!.dismiss()
+                KProgressHUD!!.dismiss()
+                imageType = ""
+                imageFile = null
+                Toast.makeText(this@EditProfileActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call<AddFoodResp>?, response: Response<AddFoodResp>?) {
+                dialog!!.dismiss()
+                imageType = ""
+                imageFile = null
+                KProgressHUD!!.dismiss()
+                if (response != null) {
+                    if (response.body().success) {
+                        foodList.add(0,response.body().data)
+                        profileAdapter.update(foodList)
+                        Toast.makeText(this@EditProfileActivity, ""+response.body().message, Toast.LENGTH_SHORT).show()
+
+                    } else {
+                        Toast.makeText(this@EditProfileActivity, "your prefer Food not Upload yet...", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@EditProfileActivity, "Some thing worng your image is not upload try again later", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
+
+    }
+
+    fun setUpRecyclerView() {
+        profileAdapter = ProfileFoodAdapter(this!!,foodList)
+        friend_like_food.setHasFixedSize(false)
+        val layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        friend_like_food.layoutManager = layoutManager
+        friend_like_food.adapter = profileAdapter
+    }
+
 }

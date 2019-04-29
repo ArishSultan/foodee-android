@@ -13,6 +13,9 @@ class Utils {
 
     companion object {
 
+        fun getSimpleTextBody(param: String): RequestBody {
+            return RequestBody.create(MediaType.parse("text/plain"), param)
+        }
         fun getRequestBody(body : String) : RequestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body)
 
         fun progressDialog(

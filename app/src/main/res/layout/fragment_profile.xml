@@ -187,7 +187,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/friend_like_food"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_below="@+id/food_like"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
@@ -198,6 +198,7 @@
 
         <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
             android:id="@+id/like"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/friend_like_food"
@@ -210,7 +211,7 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/female_card"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_below="@+id/like"
             android:layout_marginLeft="10dp"
             app:cardCornerRadius="8dp"
@@ -240,7 +241,7 @@
         </android.support.v7.widget.CardView>
         <android.support.v7.widget.CardView
             android:id="@+id/male_card"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_toRightOf="@+id/female_card"
             android:layout_below="@+id/like"
             android:layout_marginLeft="10dp"
@@ -271,6 +272,7 @@
 
         <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
             android:id="@+id/age_you"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/male_card"
@@ -295,6 +297,7 @@
 
         <foodie.app.rubikkube.foodie.fonts.robotoRegular
             android:id="@+id/age_val"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/age_you"
@@ -320,7 +323,7 @@
         <android.support.v7.widget.CardView
             android:id="@+id/twenty_precent_crd"
             android:layout_below="@+id/contribution"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="40dp"
@@ -330,17 +333,18 @@
             >
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@drawable/rounded_button"
                 >
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                 android:id="@+id/contribution_txt"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textSize="16sp"
-
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:text="20%"

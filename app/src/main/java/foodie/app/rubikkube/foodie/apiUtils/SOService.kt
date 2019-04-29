@@ -1,10 +1,7 @@
 package app.wi.lakhanipilgrimage.api
 
 
-import foodie.app.rubikkube.foodie.model.LoginSignUpResponse
-import foodie.app.rubikkube.foodie.model.MeResponse
-import foodie.app.rubikkube.foodie.model.ImageUploadResp
-import foodie.app.rubikkube.foodie.model.UpdateProfileResp
+import foodie.app.rubikkube.foodie.model.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -32,4 +29,16 @@ interface SOService {
 
     @POST("/api/v1/profile/{userId}")
     fun updateProfile(@Path("userId") userId:Int,@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<UpdateProfileResp>
+
+    @Multipart
+    @POST("/api/v1/food")
+    fun addFood(@HeaderMap header: Map<String, String>,
+                @Part("name") type: RequestBody,
+                @Part foodFile: MultipartBody.Part?
+    ): Call<AddFoodResp>
+
+    @GET("/api/v1/food")
+    fun getMyFoodList(@HeaderMap header: Map<String, String>): Call<ArrayList<Food>>
+
+
 }
