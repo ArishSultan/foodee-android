@@ -56,6 +56,10 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var imageType: String = ""
     private var photoPath: String = ""
     private var isFoodPicAdded: Boolean = false
+    private var message: String = ""
+    private var age: String = ""
+    private var location: String = ""
+    private var contribution: String = ""
 
     var KProgressHUD: KProgressHUD? = null
     internal var cv: MultipartBody.Part? = null
@@ -95,6 +99,8 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         if (v?.id == R.id.location_dropdown) {
 
         }
+
+
         if (v?.id == R.id.female_card_bg) {
             meResponse.profile.gender = "Female"
 
@@ -111,7 +117,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             male_txt.setTextColor(resources.getColor(R.color.white))
         }
         if (v?.id == R.id.twenty_precent) {
-            meResponse.profile.contribution = "20%"
+
+
+            contribution = "20%"
             twenty_precent.setBackgroundResource(R.drawable.rounded_button)
             thirty_percent.setBackgroundResource(R.drawable.rectangular_line)
             fifty_percent.setBackgroundResource(R.drawable.rectangular_line)
@@ -123,7 +131,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
         if (v?.id == R.id.thirty_percent) {
-            meResponse.profile.contribution = "30%"
+            contribution = "30%"
 
             twenty_precent.setBackgroundResource(R.drawable.rectangular_line)
             thirty_percent.setBackgroundResource(R.drawable.rounded_button)
@@ -136,7 +144,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
         if (v?.id == R.id.fifty_percent) {
-            meResponse.profile.contribution = "50%"
+            contribution = "50%"
             twenty_precent.setBackgroundResource(R.drawable.rectangular_line)
             thirty_percent.setBackgroundResource(R.drawable.rectangular_line)
             fifty_percent.setBackgroundResource(R.drawable.rounded_button)
@@ -148,7 +156,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
         if (v?.id == R.id.treat_me) {
-            meResponse.profile.contribution = "Treatme"
+            contribution = "Treatme"
 
             twenty_precent.setBackgroundResource(R.drawable.rectangular_line)
             thirty_percent.setBackgroundResource(R.drawable.rectangular_line)
@@ -172,13 +180,13 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             getImage()
         }
         if (v?.id == R.id.save_btn) {
-            val status = user_status.text.toString()
-            val age = user_age.text.toString()
-            val location = user_location.text.toString()
-            val gender = meResponse.profile.gender
-            val contribution = meResponse.profile.contribution
-            if (formValidation(status, age, location, gender!!, contribution!!)) {
-                updateProfile(meResponse.profile.userId!!)
+           message = user_status.text.toString()
+            age = user_age.text.toString()
+            location = user_location.text.toString()
+            val gender = ""
+
+            if (formValidation(message, age, location, gender!!, contribution!!)) {
+                updateProfile(meResponse.id)
             }
         }
         if (v?.id == R.id.food_add_btn) {
@@ -194,7 +202,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         val intent = getIntent();
         if (intent != null) {
             meResponse = intent.getSerializableExtra("meResponse") as MeResponse
-            foodList = intent.getSerializableExtra("foodList") as ArrayList<Food>
+            if(meResponse.profile != null){
+                foodList = intent.getSerializableExtra("foodList") as ArrayList<Food>
+            }
             setValue(meResponse)
         }
         setUpRecyclerView()
@@ -202,7 +212,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun formValidation(status: String, age: String, location: String, gender: String, contribution: String): Boolean {
-        if (status.isEmpty() || age.isEmpty() || location.isEmpty() || gender!!.isEmpty() || contribution!!.isEmpty()) {
+        if (status.isEmpty() || age.isEmpty() || location.isEmpty() || contribution!!.isEmpty()) {
             Toast.makeText(this@EditProfileActivity, "Please enter detail first", Toast.LENGTH_SHORT).show()
             return false
         } else if (status.isEmpty()) {
@@ -214,9 +224,6 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         } else if (location.isEmpty()) {
             Toast.makeText(this@EditProfileActivity, "Please enter Your Location", Toast.LENGTH_SHORT).show()
             return false
-        } else if (gender.isEmpty()) {
-            Toast.makeText(this@EditProfileActivity, "Please enter Your Gender", Toast.LENGTH_SHORT).show()
-            return false
         } else if (contribution.isEmpty()) {
             Toast.makeText(this@EditProfileActivity, "Please enter Your Contribution", Toast.LENGTH_SHORT).show()
             return false
@@ -224,11 +231,6 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             Toast.makeText(this@EditProfileActivity, "No internet Connection", Toast.LENGTH_SHORT).show()
             return false
         } else {
-            meResponse.profile.message = status
-            meResponse.profile.age = age.toInt()
-            meResponse.profile.location = location
-            meResponse.profile.gender = gender
-            meResponse.profile.contribution = contribution
             return true
         }
     }
@@ -288,20 +290,20 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             user_age.setText(me.profile.age.toString())
             user_location.setText(me.profile.location.toString())
 
-            if (me.profile.gender.equals("Male")) {
-                me.profile.gender = "Male"
-                male_card_bg.setBackgroundResource(R.drawable.rounded_button)
-                male_txt.setTextColor(resources.getColor(R.color.white))
-
-            } else if (me.profile.gender.equals("Female")) {
-                me.profile.gender = "Female"
-
-                female_card_bg.setBackgroundResource(R.drawable.rounded_button)
-                female_txt.setTextColor(resources.getColor(R.color.white))
-            }
+//            if (me.profile.gender.equals("Male")) {
+////                me.profile.gender = "Male"
+////                male_card_bg.setBackgroundResource(R.drawable.rounded_button)
+////                male_txt.setTextColor(resources.getColor(R.color.white))
+////
+////            } else if (me.profile.gender.equals("Female")) {
+////                me.profile.gender = "Female"
+////
+////                female_card_bg.setBackgroundResource(R.drawable.rounded_button)
+////                female_txt.setTextColor(resources.getColor(R.color.white))
+////            }
 
             select_age.text = me.profile.ages
-            select_age.text = me.profile.ages
+            select_age.text = me.profile.location
 
             if (me.profile.contribution.equals("20%")) {
                 twenty_precent.setBackgroundResource(R.drawable.rounded_button)
@@ -421,8 +423,8 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 imageType = ""
                 imageFile = null
                 KProgressHUD!!.dismiss()
-                if (response != null) {
-                    if (response.body().type != null) {
+                if (response!!.isSuccessful) {
+                    if (response!!.body().type != null) {
 
                     } else {
                         Toast.makeText(this@EditProfileActivity, "Image not Upload", Toast.LENGTH_SHORT).show()
@@ -441,19 +443,19 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
-        hm["X-Requested-With"] = "XMLHttpRequest"
-        hm["Content-Type"] = "application/json"
+//        hm["X-Requested-With"] = "XMLHttpRequest"
+//        hm["Content-Type"] = "application/json"
 
         //default category
         val category = arrayOf(1, 1)
 
         val jsonObject = JSONObject()
         jsonObject.put("username", meResponse.username)
-        jsonObject.put("message", meResponse.profile.message)
-        jsonObject.put("age", meResponse.profile.age)
-        jsonObject.put("location", meResponse.profile.location)
-        jsonObject.put("gender", meResponse.profile.gender)
-        jsonObject.put("contribution", meResponse.profile.contribution)
+        jsonObject.put("message", message)
+        jsonObject.put("age",12)
+        jsonObject.put("location", location)
+        jsonObject.put("gender", "xyz")
+        jsonObject.put("contribution", contribution)
 //        jsonObject.put("categories", category)
         jsonObject.put("_method", "PATCH")
 
@@ -469,7 +471,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                     override fun onResponse(call: Call<UpdateProfileResp>?, response: Response<UpdateProfileResp>?) {
                         KProgressHUD!!.dismiss()
                         Toast.makeText(this@EditProfileActivity, "Profile Updated", Toast.LENGTH_SHORT).show()
-                        finish()
+//                        finish()
 
 
                     }

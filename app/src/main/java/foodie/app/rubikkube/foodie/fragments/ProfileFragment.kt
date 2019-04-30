@@ -69,6 +69,11 @@ class ProfileFragment : Fragment() {
 
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d("da","test")
+
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -82,8 +87,8 @@ class ProfileFragment : Fragment() {
             view.context.startActivity(intent)
         }
 
-        getMe(view)
-        getListOfFood()
+//        getMe(view)
+//        getListOfFood()
         return view
     }
 
@@ -145,7 +150,7 @@ class ProfileFragment : Fragment() {
             val requestOptionsAvatar = RequestOptions()
             requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
             requestOptionsAvatar.error(R.drawable.profile_avatar)
-            Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(view.profile_pic)
+                Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(view.profile_pic)
 
             view.profile_name.text = me.username.toString()
             view.age.text = me.profile.age.toString()

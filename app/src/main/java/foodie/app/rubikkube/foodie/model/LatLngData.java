@@ -46,7 +46,7 @@ public class LatLngData {
     private String contribution;
     @SerializedName("distance")
     @Expose
-    private Integer distance;
+    private Double distance;
 
     public Integer getId() {
         return id;
@@ -152,11 +152,11 @@ public class LatLngData {
         this.contribution = contribution;
     }
 
-    public Integer getDistance() {
+    public Double getDistance() {
         return distance;
     }
 
-    public void setDistance(Integer distance) {
+    public void setDistance(Double distance) {
         this.distance = distance;
     }
 
