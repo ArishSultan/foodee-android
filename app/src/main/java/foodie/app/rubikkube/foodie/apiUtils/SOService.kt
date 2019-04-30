@@ -40,5 +40,9 @@ interface SOService {
     @GET("/api/v1/food")
     fun getMyFoodList(@HeaderMap header: Map<String, String>): Call<ArrayList<Food>>
 
+    @GET("/api/v1/food")
+    fun sendCurrentLatLng(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<ArrayList<LatLngResponse>>
+
+
 
 }
