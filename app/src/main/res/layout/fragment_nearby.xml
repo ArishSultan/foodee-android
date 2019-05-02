@@ -29,7 +29,6 @@
            android:layout_height="70dp"
            android:layout_marginLeft="16dp"
            android:layout_marginRight="16dp"
-           android:background="@drawable/white_border"
            android:visibility="visible">
 
               <LinearLayout
@@ -46,7 +45,6 @@
                          android:layout_marginLeft="6dp"
                          android:layout_height="40dp"
                          android:layout_centerVertical="true"
-                         android:rotationY="@integer/locale_mirror_flip"
                          android:padding="8dp"
                          android:tint="#707070"
                          android:src="@drawable/search_icon_nd" />
@@ -80,8 +78,7 @@
                          android:tint="#707070"
                          android:visibility="invisible"
                          android:layout_alignParentRight="true"
-                         android:rotationY="@integer/locale_mirror_flip"
-                         android:src="@drawable/close_icon_black" />
+                          />
 
                      <View
                          android:layout_width="2dp"
@@ -102,8 +99,7 @@
                          android:visibility="invisible"
 
                          android:layout_alignParentRight="true"
-                         android:rotationY="@integer/locale_mirror_flip"
-                         android:src="@drawable/filter_icon" />
+ />
 
               </LinearLayout>
 
