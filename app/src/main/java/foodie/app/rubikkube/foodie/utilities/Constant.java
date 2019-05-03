@@ -9,6 +9,7 @@ public class Constant {
     public static final String  NAME = "name";
     public static final String  EMAIL = "email";
     public static final String  PHONE = "phone";
+    public static final String  EMAIL_CONFIRM = "email_confirm";
     public static final String  USER_TYPE = "user_type";
     public static final String  KID_ID = "kid_id";
     public static final String  KID_AVATRA = "kid_avatar";

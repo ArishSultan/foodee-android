@@ -17,6 +17,15 @@ private String email;
 @SerializedName("phone")
 @Expose
 private String phone;
+@SerializedName("lat")
+@Expose
+private String lat;
+@SerializedName("lng")
+@Expose
+private String lng;
+@SerializedName("email_confirm")
+@Expose
+private int email_confirm;
 @SerializedName("created_at")
 @Expose
 private String createdAt;
@@ -55,6 +64,18 @@ return phone;
 public void setPhone(String phone) {
 this.phone = phone;
 }
+
+public String getLat() { return lat; }
+
+public void setLat(String lat) { this.lat = lat; }
+
+public String getLng() { return lng; }
+
+public void setLng(String lng) { this.lng = lng; }
+
+public int getEmail_confirm() { return email_confirm; }
+
+public void setEmail_confirm(int email_confirm) { this.email_confirm = email_confirm; }
 
 public String getCreatedAt() {
 return createdAt;

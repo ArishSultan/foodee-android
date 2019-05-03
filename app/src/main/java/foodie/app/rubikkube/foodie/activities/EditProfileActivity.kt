@@ -202,7 +202,8 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         val intent = getIntent();
         if (intent != null) {
             meResponse = intent.getSerializableExtra("meResponse") as MeResponse
-            if(meResponse.profile != null){
+
+            if(meResponse.profile.age != null){
                 foodList = intent.getSerializableExtra("foodList") as ArrayList<Food>
             }
             setValue(meResponse)

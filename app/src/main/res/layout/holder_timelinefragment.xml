@@ -22,7 +22,9 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
-                android:src="@drawable/splash" />
+                android:src="#f0f0f0"
+                app:civ_border_color="#f0f0f0"
+                app:civ_border_width="1dp" />
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                 android:id="@+id/user_name"

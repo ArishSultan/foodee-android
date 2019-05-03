@@ -1,6 +1,5 @@
 package foodie.app.rubikkube.foodie.fragments
 
-
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -41,6 +40,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.jvm.java
 
 
 /**
@@ -51,6 +51,7 @@ class ProfileFragment : Fragment() {
     private lateinit var profileAdapter: ProfileFoodAdapter
     private var pd: KProgressHUD? = null
     private lateinit var intent: Intent
+    private var contribution: String? = null
     var foodList: ArrayList<Food> = ArrayList()
 
 
@@ -154,7 +155,7 @@ class ProfileFragment : Fragment() {
 
             view.profile_name.text = me.username.toString()
             view.age.text = me.profile.age.toString()
-            view.city.text = me.profile.location?.substring(0, 2).toString()
+            view.city.text = me.profile.location
 
             view.profile_desc.text = me.profile.message.toString()
 

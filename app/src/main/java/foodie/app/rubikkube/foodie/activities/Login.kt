@@ -1,8 +1,10 @@
 package foodie.app.rubikkube.foodie.activities
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
@@ -103,19 +105,40 @@ class Login : AppCompatActivity() {
                     override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
                         pd?.dismiss()
                         if (response!!.isSuccessful) {
-                            if(response.body().status) {
-                                Prefs.putString(Constant.IS_LOGIN, "true")
-                                Prefs.putString(Constant.TOKEN, "Bearer "+response.body()?.accessToken)
-                                Prefs.putString(Constant.USERID, ""+response.body()?.user?.id)
-                                Prefs.putString(Constant.NAME, response.body()?.user?.username)
-                                Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
-                                Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
-                                startActivity(Intent(this@Login, HomeActivity::class.java))
-                                finish()
-                            }else {
-                                Toast.makeText(this@Login, response.body().message, Toast.LENGTH_SHORT).show()
-                            }
+                            if (response.body().user.email_confirm == 0)
+                            {
 
+                                val builder = AlertDialog.Builder(this@Login)
+                                // Set the alert dialog title
+                                builder.setTitle("Verify Your Email Address")
+                                // Display a message on alert dialog
+                                builder.setMessage("Account verification link sent to your Email address, Please verify your Email address before proceeding further")
+                                // Set a positive button and its click listener on alert dialog
+                                builder.setPositiveButton("Ok"){dialog, which ->
+                                    // Do something when user press the positive button
+                                    etEmail.text.clear()
+                                    etPassword.text.clear()
+                                }
+                                // Finally, make the alert dialog using builder
+                                val dialog: AlertDialog = builder.create()
+                                // Display the alert dialog on app interface
+                                dialog.show()
+                            }
+                            else {
+                                if (response.body().status) {
+                                    Prefs.putString(Constant.IS_LOGIN, "true")
+                                    Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
+                                    Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
+                                    Prefs.putString(Constant.NAME, response.body()?.user?.username)
+                                    Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
+                                    Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
+                                    Prefs.putInt(Constant.EMAIL_CONFIRM, response.body().user.email_confirm)
+                                    startActivity(Intent(this@Login, HomeActivity::class.java))
+                                    finish()
+                                } else {
+                                    Toast.makeText(this@Login, response.body().message, Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         } else {
                             Toast.makeText(this@Login, response.message(), Toast.LENGTH_SHORT).show()
 

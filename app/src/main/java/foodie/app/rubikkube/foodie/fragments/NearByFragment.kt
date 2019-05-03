@@ -6,18 +6,22 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
+import android.support.v7.widget.CardView
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -28,18 +32,22 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
 import de.hdodenhof.circleimageview.CircleImageView
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
+import foodie.app.rubikkube.foodie.model.Food
 import foodie.app.rubikkube.foodie.model.LatLngResponse
+import foodie.app.rubikkube.foodie.model.MeResponse
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
+import kotlinx.android.synthetic.main.activity_edit_profile.*
+import kotlinx.android.synthetic.main.fragment_nearby.*
+import kotlinx.android.synthetic.main.fragment_nearby.view.*
+import kotlinx.android.synthetic.main.fragment_profile.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,18 +57,104 @@ import retrofit2.Response
 /**
  * A simple [Fragment] subclass.
  */
-class NearByFragment : Fragment(), OnMapReadyCallback {
-
+class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
     var mapFragment: SupportMapFragment? = null
     var mGoogleMap: GoogleMap? = null
     var currentLocation: LatLng ? = null
+    private var pd: KProgressHUD? = null
+    var meResponse: ArrayList<MeResponse> = ArrayList()
 
+    override fun onClick(v: View?) {
+//        val cv_search_all_food = v?.findViewById<CardView>(R.id.cv_search_all_food)
+//        val cv_search_25_contribution = v?.findViewById<CardView>(R.id.cv_search_25_contribution)
+//        val cv_search_50_contribution = v?.findViewById<CardView>(R.id.cv_search_50_contribution)
+//        val cv_search_treat_me = v?.findViewById<CardView>(R.id.cv_search_treat_me)
+//        val tv_search_all_food = v?.findViewById<TextView>(R.id.tv_search_all_food)
+//        val tv_search_25_contribution = v?.findViewById<TextView>(R.id.tv_search_25_contribution)
+//        val tv_search_50_contribution = v?.findViewById<TextView>(R.id.tv_search_treat_me)
+//        val tv_search_treat_me = v?.findViewById<TextView>(R.id.tv_search_50_contribution)
+        var contribute:String
+        var food:String
+
+        if (v?.id == R.id.cv_search_all_food)
+        {
+            Toast.makeText(context,"All Foods",Toast.LENGTH_SHORT).show()
+            food = filterRestaurant.text.toString()
+            if (food.equals(""))
+                food = ""
+            contribute = "all"
+            getSpecificFood(food,contribute)
+//            cv_search_all_food?.setBackgroundResource(R.drawable.rounded_button)
+//            cv_search_25_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_50_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_treat_me?.setBackgroundResource(R.drawable.round_button_unselected)
+//            tv_search_all_food?.setTextColor(Color.parseColor("#ffffff"))
+//            tv_search_25_contribution?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_50_contribution?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_treat_me?.setTextColor(Color.parseColor("#000000"))
+        }
+        else if (v?.id == R.id.cv_search_25_contribution)
+        {
+            Toast.makeText(context,"25 Contribution Foods",Toast.LENGTH_SHORT).show()
+            food = filterRestaurant.text.toString()
+            if (food.equals(""))
+                food = ""
+            contribute = "25"
+            getSpecificFood(food,contribute)
+//            cv_search_all_food?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_25_contribution?.setBackgroundResource(R.drawable.rounded_button)
+//            cv_search_50_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_treat_me?.setBackgroundResource(R.drawable.round_button_unselected)
+//            tv_search_all_food?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_25_contribution?.setTextColor(Color.parseColor("#ffffff"))
+//            tv_search_50_contribution?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_treat_me?.setTextColor(Color.parseColor("#000000"))
+
+        }
+        else if (v?.id == R.id.cv_search_50_contribution)
+        {
+            Toast.makeText(context,"50 Contribution Foods",Toast.LENGTH_SHORT).show()
+            food = filterRestaurant.text.toString()
+            if (food.equals(""))
+                food = ""
+            contribute = "50"
+            getSpecificFood(food,contribute)
+//            cv_search_all_food?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_25_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_50_contribution?.setBackgroundResource(R.drawable.rounded_button)
+//            cv_search_treat_me?.setBackgroundResource(R.drawable.round_button_unselected)
+//            tv_search_all_food?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_25_contribution?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_50_contribution?.setTextColor(Color.parseColor("#ffffff"))
+//            tv_search_treat_me?.setTextColor(Color.parseColor("#000000"))
+        }
+        else if (v?.id == R.id.cv_search_treat_me)
+        {
+            Toast.makeText(context,"Treat Me Foods",Toast.LENGTH_SHORT).show()
+            food = filterRestaurant.text.toString()
+            if (food.equals(""))
+                food = ""
+            contribute = "treat me"
+            getSpecificFood(food,contribute)
+//            cv_search_all_food?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_25_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_50_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
+//            cv_search_treat_me?.setBackgroundResource(R.drawable.rounded_button)
+//            tv_search_all_food?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_25_contribution?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_50_contribution?.setTextColor(Color.parseColor("#000000"))
+//            tv_search_treat_me?.setTextColor(Color.parseColor("#ffffff"))
+        }
+
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_nearby, container, false)
+
+        initializeListeners(view)
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         if (mapFragment == null) {
             val fm = fragmentManager
@@ -69,7 +163,17 @@ class NearByFragment : Fragment(), OnMapReadyCallback {
             ft.replace(R.id.map, mapFragment!!).commit()
         }
         mapFragment!!.getMapAsync(this)
+
+
         return view
+    }
+
+    private fun initializeListeners(view: View) {
+
+        view.cv_search_all_food.setOnClickListener(this)
+        view.cv_search_25_contribution.setOnClickListener(this)
+        view.cv_search_50_contribution.setOnClickListener(this)
+        view.cv_search_treat_me.setOnClickListener(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -125,7 +229,6 @@ class NearByFragment : Fragment(), OnMapReadyCallback {
 
         googleMap?.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker)).position(currentLocation!!).title("Me"))
         //googleMap?.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(setscaledBitmapMarker(90,90,R.drawable.location_marker,context!!))).position(currentLocation).title("Me"))
-
 //        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.one, 90, 90, userOne)
 //        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.two, 90, 90, userTwo)
 //        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.three, 90, 90, userThree)
@@ -133,9 +236,36 @@ class NearByFragment : Fragment(), OnMapReadyCallback {
 //        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.five, 90, 90, userFive)
 //        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.six, 90, 90, userSix)
 
+        mGoogleMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
+            override fun onMarkerClick(marker: Marker): Boolean {
+                Toast.makeText(context,"This is marker",Toast.LENGTH_SHORT).show()
+                Log.d("Marker","Marker")
+                return false
+            }
+        })
 
     }
 
+
+    private fun getSpecificFood(food:String,contribution:String) {
+        val mService = ApiUtils.getSOService() as SOService
+
+        val hm = java.util.HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["X-Requested-With"] = "XMLHttpRequest"
+
+        mService.getSpecificFoodList(hm,food,contribution)
+                .enqueue(object: Callback<ArrayList<MeResponse>>{
+                    override fun onFailure(call: Call<ArrayList<MeResponse>>?, t: Throwable?) {
+
+                    }
+
+                    override fun onResponse(call: Call<ArrayList<MeResponse>>?, response: Response<ArrayList<MeResponse>>?) {
+                        Log.d("Specific food",""+response?.body())
+                    }
+                })
+
+    }
 
 }
 
@@ -158,15 +288,19 @@ class NearByFragment : Fragment(), OnMapReadyCallback {
 
                     override fun onResponse(call: Call<LatLngResponse>?, response: Response<LatLngResponse>?) {
                         Log.d("onf",""+response!!.body().success)
-
                         if(response.isSuccessful){
+                            val user_id = Prefs.getString(Constant.USERID,"")
                             for(i in response.body().data.indices) {
-                                if(response.body().data[i].avatar != null){
-                                    if(response.body().data[i].lat != null && response.body().data[i].lng != null ) {
+                                Log.d("Response_User_ID",response.body().data[i].userId.toString())
+                                if (!(user_id.equals(response.body().data[i].userId.toString()))){
+                                    if (response.body().data[i].avatar != null) {
+                                        if (response.body().data[i].lat != null && response.body().data[i].lng != null) {
+                                            Log.d("LatLng", response.body().data[i].lat + " " + response.body().data[i].lng + " " + response.body().data[i].userId)
 //                                        if(!Prefs.getString(Constant.USERID,"").equals(response.body().data[i].userId.toString())){
-                                            Log.d("url",ApiUtils.BASE_URL+"/storage/media/avatar/"+Prefs.getString(Constant.USERID,"")+"/"+response.body().data[i].avatar)
-                                            setCircularImageAsMarkerWithGlide(context,googleMap,ApiUtils.BASE_URL+"/storage/media/avatar/"+Prefs.getString(Constant.USERID,"")+"/"+response.body().data[i].avatar,120,120,LatLng(response.body().data[i].lat.toDouble(),response.body().data[i].lng.toDouble()))
+                                            Log.d("url", ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar)
+                                            setCircularImageAsMarkerWithGlide(context, googleMap, ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar, 120, 120, LatLng(response.body().data[i].lat.toDouble(), response.body().data[i].lng.toDouble()))
 //                                        }
+                                        }
                                     }
                                 }
                             }
@@ -214,6 +348,9 @@ private fun setCircularImageAsMarkerWithGlide(context: Context, googleMap: Googl
                 }
 
             })
+
+
 }
+
 
 // Required empty public constructor
