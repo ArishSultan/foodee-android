@@ -61,90 +61,109 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
     var mapFragment: SupportMapFragment? = null
     var mGoogleMap: GoogleMap? = null
-    var currentLocation: LatLng ? = null
+    var currentLocation: LatLng? = null
     private var pd: KProgressHUD? = null
     var meResponse: ArrayList<MeResponse> = ArrayList()
+    var contribute: String = "all"
+    var food: String = ""
+
+
+
+    private fun initializeListeners(view: View) {
+
+        view.tv_search_all_food.setOnClickListener(this)
+        view.tv_search_25_contribution.setOnClickListener(this)
+        view.tv_search_50_contribution.setOnClickListener(this)
+        view.tv_search_treat_me.setOnClickListener(this)
+    }
+
 
     override fun onClick(v: View?) {
-//        val cv_search_all_food = v?.findViewById<CardView>(R.id.cv_search_all_food)
-//        val cv_search_25_contribution = v?.findViewById<CardView>(R.id.cv_search_25_contribution)
-//        val cv_search_50_contribution = v?.findViewById<CardView>(R.id.cv_search_50_contribution)
-//        val cv_search_treat_me = v?.findViewById<CardView>(R.id.cv_search_treat_me)
-//        val tv_search_all_food = v?.findViewById<TextView>(R.id.tv_search_all_food)
-//        val tv_search_25_contribution = v?.findViewById<TextView>(R.id.tv_search_25_contribution)
-//        val tv_search_50_contribution = v?.findViewById<TextView>(R.id.tv_search_treat_me)
-//        val tv_search_treat_me = v?.findViewById<TextView>(R.id.tv_search_50_contribution)
-        var contribute:String
-        var food:String
 
-        if (v?.id == R.id.cv_search_all_food)
-        {
-            Toast.makeText(context,"All Foods",Toast.LENGTH_SHORT).show()
+    }
+
+    private fun clickListner(v: View) {
+
+        v.tv_search_all_food.setBackgroundResource(R.drawable.rounded_button)
+        v.tv_search_all_food.setTextColor(resources.getColor(R.color.white))
+
+        v.tv_search_all_food.setOnClickListener {
+
             food = filterRestaurant.text.toString()
-            if (food.equals(""))
+            if (food.equals("")) {
                 food = ""
-            contribute = "all"
+                contribute = "all"
+            }
             getSpecificFood(food,contribute)
-//            cv_search_all_food?.setBackgroundResource(R.drawable.rounded_button)
-//            cv_search_25_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_50_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_treat_me?.setBackgroundResource(R.drawable.round_button_unselected)
-//            tv_search_all_food?.setTextColor(Color.parseColor("#ffffff"))
-//            tv_search_25_contribution?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_50_contribution?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_treat_me?.setTextColor(Color.parseColor("#000000"))
-        }
-        else if (v?.id == R.id.cv_search_25_contribution)
-        {
-            Toast.makeText(context,"25 Contribution Foods",Toast.LENGTH_SHORT).show()
-            food = filterRestaurant.text.toString()
-            if (food.equals(""))
-                food = ""
-            contribute = "25"
-            getSpecificFood(food,contribute)
-//            cv_search_all_food?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_25_contribution?.setBackgroundResource(R.drawable.rounded_button)
-//            cv_search_50_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_treat_me?.setBackgroundResource(R.drawable.round_button_unselected)
-//            tv_search_all_food?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_25_contribution?.setTextColor(Color.parseColor("#ffffff"))
-//            tv_search_50_contribution?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_treat_me?.setTextColor(Color.parseColor("#000000"))
+
+            v.tv_search_all_food.setBackgroundResource(R.drawable.rounded_button)
+            v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_50_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_treat_me.setBackgroundResource(R.drawable.rectangular_line)
+
+            v.tv_search_all_food.setTextColor(resources.getColor(R.color.white))
+            v.tv_search_25_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_treat_me.setTextColor(resources.getColor(R.color.d_gray))
 
         }
-        else if (v?.id == R.id.cv_search_50_contribution)
-        {
-            Toast.makeText(context,"50 Contribution Foods",Toast.LENGTH_SHORT).show()
+
+        v.tv_search_25_contribution.setOnClickListener {
             food = filterRestaurant.text.toString()
-            if (food.equals(""))
+            if (food.equals("")) {
                 food = ""
-            contribute = "50"
+                contribute = "25"
+            }
             getSpecificFood(food,contribute)
-//            cv_search_all_food?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_25_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_50_contribution?.setBackgroundResource(R.drawable.rounded_button)
-//            cv_search_treat_me?.setBackgroundResource(R.drawable.round_button_unselected)
-//            tv_search_all_food?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_25_contribution?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_50_contribution?.setTextColor(Color.parseColor("#ffffff"))
-//            tv_search_treat_me?.setTextColor(Color.parseColor("#000000"))
+
+            v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_25_contribution.setBackgroundResource(R.drawable.rounded_button)
+            v.tv_search_50_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_treat_me.setBackgroundResource(R.drawable.rectangular_line)
+
+            v.tv_search_all_food.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_25_contribution.setTextColor(resources.getColor(R.color.white))
+            v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
-        else if (v?.id == R.id.cv_search_treat_me)
-        {
-            Toast.makeText(context,"Treat Me Foods",Toast.LENGTH_SHORT).show()
+
+        v.tv_search_50_contribution.setOnClickListener {
             food = filterRestaurant.text.toString()
-            if (food.equals(""))
+            if (food.equals("")) {
                 food = ""
-            contribute = "treat me"
+                contribute = "50"
+            }
+
             getSpecificFood(food,contribute)
-//            cv_search_all_food?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_25_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_50_contribution?.setBackgroundResource(R.drawable.round_button_unselected)
-//            cv_search_treat_me?.setBackgroundResource(R.drawable.rounded_button)
-//            tv_search_all_food?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_25_contribution?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_50_contribution?.setTextColor(Color.parseColor("#000000"))
-//            tv_search_treat_me?.setTextColor(Color.parseColor("#ffffff"))
+            v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_50_contribution.setBackgroundResource(R.drawable.rounded_button)
+            v.tv_search_treat_me.setBackgroundResource(R.drawable.rectangular_line)
+
+            v.tv_search_all_food.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_25_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.white))
+            v.tv_search_treat_me.setTextColor(resources.getColor(R.color.d_gray))
+
+
+        }
+        v.tv_search_treat_me.setOnClickListener {
+            food = filterRestaurant.text.toString()
+            if (food.equals("")) {
+                food = ""
+                contribute = "treat me"
+            }
+            getSpecificFood(food,contribute)
+            v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_50_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_treat_me.setBackgroundResource(R.drawable.rounded_button)
+
+            v.tv_search_all_food.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_25_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_treat_me.setTextColor(resources.getColor(R.color.white))
+
         }
 
     }
@@ -153,8 +172,10 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_nearby, container, false)
+        pd = Utils.progressDialog(context!!, "", "Please wait")
 
-        initializeListeners(view)
+        clickListner(view)
+
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         if (mapFragment == null) {
             val fm = fragmentManager
@@ -168,21 +189,14 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
         return view
     }
 
-    private fun initializeListeners(view: View) {
-
-        view.cv_search_all_food.setOnClickListener(this)
-        view.cv_search_25_contribution.setOnClickListener(this)
-        view.cv_search_50_contribution.setOnClickListener(this)
-        view.cv_search_treat_me.setOnClickListener(this)
-    }
 
     override fun onMapReady(googleMap: GoogleMap) {
 
         mGoogleMap = googleMap
         currentLocation = LatLng(Prefs.getDouble("currentLat", 0.0), Prefs.getDouble("currentLng", 0.0))
 
-        if(currentLocation!=null){
-            sendCurrentLocation(activity!!,currentLocation,mGoogleMap!!)
+        if (currentLocation != null) {
+            sendCurrentLocation(activity!!, currentLocation, mGoogleMap!!)
 
         }
 //        val userLat1 = currentLocation!!.latitude - 0.014
@@ -238,8 +252,8 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
         mGoogleMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
             override fun onMarkerClick(marker: Marker): Boolean {
-                Toast.makeText(context,"This is marker",Toast.LENGTH_SHORT).show()
-                Log.d("Marker","Marker")
+                Toast.makeText(context, "This is marker", Toast.LENGTH_SHORT).show()
+                Log.d("Marker", "Marker")
                 return false
             }
         })
@@ -247,21 +261,29 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
     }
 
 
-    private fun getSpecificFood(food:String,contribution:String) {
+    private fun getSpecificFood(food: String, contribution: String) {
+        pd!!.show()
+
         val mService = ApiUtils.getSOService() as SOService
 
         val hm = java.util.HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
 
-        mService.getSpecificFoodList(hm,food,contribution)
-                .enqueue(object: Callback<ArrayList<MeResponse>>{
+        mService.getSpecificFoodList(hm, food, contribution)
+                .enqueue(object : Callback<ArrayList<MeResponse>> {
                     override fun onFailure(call: Call<ArrayList<MeResponse>>?, t: Throwable?) {
+                        pd!!.dismiss()
 
                     }
 
                     override fun onResponse(call: Call<ArrayList<MeResponse>>?, response: Response<ArrayList<MeResponse>>?) {
-                        Log.d("Specific food",""+response?.body())
+                        Log.d("Specific food", "" + response?.body())
+                        pd!!.dismiss()
+                        if(response?.body()!!.size < 0){
+                            Toast.makeText(activity, "", Toast.LENGTH_SHORT).show()
+                        }
+
                     }
                 })
 
@@ -269,45 +291,45 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
 }
 
-    private fun sendCurrentLocation(context: Context,currentLocation: LatLng?,googleMap: GoogleMap) {
-        val mService = ApiUtils.getSOService() as SOService
+private fun sendCurrentLocation(context: Context, currentLocation: LatLng?, googleMap: GoogleMap) {
+    val mService = ApiUtils.getSOService() as SOService
 
-        val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+    val hm = HashMap<String, String>()
+    hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
 
-        val jsonObject = JSONObject()
-        jsonObject.put("lat", currentLocation!!.latitude)
-        jsonObject.put("lng", currentLocation!!.longitude)
+    val jsonObject = JSONObject()
+    jsonObject.put("lat", currentLocation!!.latitude)
+    jsonObject.put("lng", currentLocation!!.longitude)
 
-        mService.sendCurrentLatLng(hm, Utils.getRequestBody(jsonObject.toString()))
-                .enqueue(object : Callback<LatLngResponse>{
+    mService.sendCurrentLatLng(hm, Utils.getRequestBody(jsonObject.toString()))
+            .enqueue(object : Callback<LatLngResponse> {
 
-                    override fun onFailure(call: Call<LatLngResponse>?, t: Throwable?) {
-                        Log.d("onf",t!!.message)
-                    }
+                override fun onFailure(call: Call<LatLngResponse>?, t: Throwable?) {
+                    Log.d("onf", t!!.message)
+                }
 
-                    override fun onResponse(call: Call<LatLngResponse>?, response: Response<LatLngResponse>?) {
-                        Log.d("onf",""+response!!.body().success)
-                        if(response.isSuccessful){
-                            val user_id = Prefs.getString(Constant.USERID,"")
-                            for(i in response.body().data.indices) {
-                                Log.d("Response_User_ID",response.body().data[i].userId.toString())
-                                if (!(user_id.equals(response.body().data[i].userId.toString()))){
-                                    if (response.body().data[i].avatar != null) {
-                                        if (response.body().data[i].lat != null && response.body().data[i].lng != null) {
-                                            Log.d("LatLng", response.body().data[i].lat + " " + response.body().data[i].lng + " " + response.body().data[i].userId)
+                override fun onResponse(call: Call<LatLngResponse>?, response: Response<LatLngResponse>?) {
+                    Log.d("onf", "" + response!!.body().success)
+                    if (response.isSuccessful) {
+                        val user_id = Prefs.getString(Constant.USERID, "")
+                        for (i in response.body().data.indices) {
+                            Log.d("Response_User_ID", response.body().data[i].userId.toString())
+                            if (!(user_id.equals(response.body().data[i].userId.toString()))) {
+                                if (response.body().data[i].avatar != null) {
+                                    if (response.body().data[i].lat != null && response.body().data[i].lng != null) {
+                                        Log.d("LatLng", response.body().data[i].lat + " " + response.body().data[i].lng + " " + response.body().data[i].userId)
 //                                        if(!Prefs.getString(Constant.USERID,"").equals(response.body().data[i].userId.toString())){
-                                            Log.d("url", ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar)
-                                            setCircularImageAsMarkerWithGlide(context, googleMap, ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar, 120, 120, LatLng(response.body().data[i].lat.toDouble(), response.body().data[i].lng.toDouble()))
+                                        Log.d("url", ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar)
+                                        setCircularImageAsMarkerWithGlide(context, googleMap, ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar, 120, 120, LatLng(response.body().data[i].lat.toDouble(), response.body().data[i].lng.toDouble()))
 //                                        }
-                                        }
                                     }
                                 }
                             }
                         }
                     }
-                })
-    }
+                }
+            })
+}
 
 
 private fun styleMap(context: Context, style: Int, mMap: GoogleMap) {
@@ -338,7 +360,7 @@ private fun setscaledBitmapMarker(height: Int, width: Int, @DrawableRes image: I
 }
 
 
-private fun setCircularImageAsMarkerWithGlide(context: Context, googleMap: GoogleMap,  image: String, width: Int, height: Int, userLocation: LatLng) {
+private fun setCircularImageAsMarkerWithGlide(context: Context, googleMap: GoogleMap, image: String, width: Int, height: Int, userLocation: LatLng) {
 
     Glide.with(context!!).asBitmap().load(image).apply(RequestOptions.circleCropTransform())
             .into(object : SimpleTarget<Bitmap>(width, height) {

@@ -125,10 +125,10 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             fifty_percent.setBackgroundResource(R.drawable.rectangular_line)
             treat_me.setBackgroundResource(R.drawable.rectangular_line)
 
-            twenty_precent.setTextColor(resources.getColor(R.color.white))
-            thirty_percent.setTextColor(resources.getColor(R.color.d_gray))
-            fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
-            treat_me.setTextColor(resources.getColor(R.color.d_gray))
+        twenty_precent.setTextColor(resources.getColor(R.color.white))
+        thirty_percent.setTextColor(resources.getColor(R.color.d_gray))
+        fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
+        treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
         if (v?.id == R.id.thirty_percent) {
             contribution = "30%"
