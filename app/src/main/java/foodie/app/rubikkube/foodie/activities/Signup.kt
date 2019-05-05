@@ -104,39 +104,43 @@ class Signup : AppCompatActivity() {
                     override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
                         pd?.dismiss()
                         if (response!!.isSuccessful) {
-                            if (response.body().user.email_confirm == 0)
-                            {
-                                val builder = AlertDialog.Builder(this@Signup)
-                                // Set the alert dialog title
-                                builder.setTitle("Verify Your Email Address")
-                                // Display a message on alert dialog
-                                builder.setMessage("Account verification link sent to your Email address, Please verify your Email address before Sign in")
-                                // Set a positive button and its click listener on alert dialog
-                                builder.setPositiveButton("Ok"){dialog, which ->
-                                    // Do something when user press the positive button
-                                    startActivity(Intent(this@Signup, Login::class.java))
-                                    finish()
+
+                            if(response.body().status) {
+                                if (response.body().user.email_confirm == 0)
+                                {
+                                    val builder = AlertDialog.Builder(this@Signup)
+                                    // Set the alert dialog title
+                                    builder.setTitle("Verify Your Email Address")
+                                    // Display a message on alert dialog
+                                    builder.setMessage("Account verification link sent to your Email address, Please verify your Email address before Sign in")
+                                    // Set a positive button and its click listener on alert dialog
+                                    builder.setPositiveButton("Ok"){dialog, which ->
+                                        // Do something when user press the positive button
+                                        startActivity(Intent(this@Signup, Login::class.java))
+                                        finish()
+                                    }
+                                    // Finally, make the alert dialog using builder
+                                    val dialog: AlertDialog = builder.create()
+                                    // Display the alert dialog on app interface
+                                    dialog.show()
                                 }
-                                // Finally, make the alert dialog using builder
-                                val dialog: AlertDialog = builder.create()
-                                // Display the alert dialog on app interface
-                                dialog.show()
-                            }
-                            else {
-                                if (response.body().status) {
-                                    Prefs.putString(Constant.IS_LOGIN, "true")
-                                    Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
-                                    Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
-                                    Prefs.putString(Constant.NAME, response.body()?.user?.username)
-                                    Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
-                                    Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
-                                    startActivity(Intent(this@Signup, HomeActivity::class.java))
-                                    finish()
-                                } else {
-                                    Toast.makeText(this@Signup, response.body().message, Toast.LENGTH_SHORT).show()
+                                else {
+
+                                        Prefs.putString(Constant.IS_LOGIN, "true")
+                                        Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
+                                        Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
+                                        Prefs.putString(Constant.NAME, response.body()?.user?.username)
+                                        Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
+                                        Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
+                                        startActivity(Intent(this@Signup, HomeActivity::class.java))
+                                        finish()
 
                                 }
+                            }else {
+                                Toast.makeText(this@Signup, response.body().message, Toast.LENGTH_SHORT).show()
+
                             }
+
                         } else {
                             Toast.makeText(this@Signup, response.message(), Toast.LENGTH_SHORT).show()
 

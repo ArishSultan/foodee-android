@@ -159,7 +159,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:text="Food You Like"
+            android:text="Food I Like"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown" />
@@ -305,7 +305,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Your Contribution "
+            android:text="My Contribution "
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/darkBrown" />
