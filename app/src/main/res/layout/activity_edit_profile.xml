@@ -189,6 +189,15 @@
 
 
                     </RelativeLayout>
+
+                    <CheckBox
+                        android:id="@+id/age_check_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="show age on your profile"
+                        />
+
                     <RelativeLayout
                         android:id="@+id/location_dropdown"
                         android:layout_width="match_parent"
@@ -222,7 +231,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="Food You Like"
+                    android:text="Food I Like"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
@@ -394,7 +403,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Your Contribution "
+                    android:text="My Contribution "
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />

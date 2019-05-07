@@ -74,6 +74,6 @@ class Profile() : Serializable {
 
         @SerializedName("foods")
         @Expose
-        private val foods: List<Food>? = null
+        val foods: List<Food>? = null
 
 }

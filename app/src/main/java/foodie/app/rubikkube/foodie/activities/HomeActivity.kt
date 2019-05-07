@@ -59,6 +59,9 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         fragment = TimelineFragment()
         loadFragment(fragment)
 
+//        Hawk.init(this).build();
+
+
         val navigation = findViewById<View>(R.id.navigation) as BottomNavigationView
         navigation.setOnNavigationItemSelectedListener { menuItem ->
 

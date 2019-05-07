@@ -31,6 +31,7 @@ import foodie.app.rubikkube.foodie.utilities.Utils
 import foodie.app.rubikkube.foodie.utilities.Utils.Companion.progressDialog
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.activity_edit_profile.*
+import kotlinx.android.synthetic.main.activity_edit_profile.view.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -60,6 +61,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var age: String = ""
     private var location: String = ""
     private var contribution: String = ""
+
+    var isPublic = false
+
 
     var KProgressHUD: KProgressHUD? = null
     internal var cv: MultipartBody.Part? = null
@@ -197,12 +201,12 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
+
         initializeListeners()
 
         val intent = getIntent();
         if (intent != null) {
             meResponse = intent.getSerializableExtra("meResponse") as MeResponse
-
             if(meResponse.profile.age != null){
                 foodList = intent.getSerializableExtra("foodList") as ArrayList<Food>
             }
@@ -210,6 +214,14 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
         setUpRecyclerView()
         Log.d("res", "" + meResponse.username)
+
+        age_check_box.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                isPublic = true
+            }
+        }
+
+
     }
 
     private fun formValidation(status: String, age: String, location: String, gender: String, contribution: String): Boolean {

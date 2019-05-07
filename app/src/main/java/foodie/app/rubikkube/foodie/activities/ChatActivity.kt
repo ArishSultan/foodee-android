@@ -41,14 +41,13 @@ class ChatActivity : AppCompatActivity() {
 //        intent.putExtra("fcmToken",item.deviceId)
           intent.putExtra("name",item.name)*/
 
+//        val userDP = intent.getIntExtra("user_dp",R.drawable.one)
+//        val userName = intent.getStringExtra("name")
 
-        val userDP = intent.getIntExtra("user_dp",R.drawable.one)
-        val userName = intent.getStringExtra("name")
+        Glide.with(this@ChatActivity).load(R.drawable.one).into(findViewById(R.id.chat_user_img))
+        chat_user_name.text = "Johnshah"
 
-        Glide.with(this@ChatActivity).load(userDP).into(findViewById(R.id.chat_user_img))
-        chat_user_name.text = userName
-
-        intializeAdapter(userDP)
+        intializeAdapter(R.drawable.one)
         send_message_button.setOnClickListener {
 
 

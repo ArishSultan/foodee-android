@@ -3,6 +3,7 @@ package foodie.app.rubikkube.foodie.fragments
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -34,10 +35,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.kaopiz.kprogresshud.KProgressHUD
+import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 import de.hdodenhof.circleimageview.CircleImageView
 
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.OtherUserProfileDetailActivity
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.Food
 import foodie.app.rubikkube.foodie.model.LatLngResponse
@@ -66,7 +69,7 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
     var meResponse: ArrayList<MeResponse> = ArrayList()
     var contribute: String = "all"
     var food: String = ""
-
+    var fragment: Fragment? = null
 
 
     private fun initializeListeners(view: View) {
@@ -94,7 +97,8 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
                 food = ""
                 contribute = "all"
             }
-            getSpecificFood(food,contribute)
+//            getSpecificFood(food, contribute)
+            getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
 
             v.tv_search_all_food.setBackgroundResource(R.drawable.rounded_button)
             v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
@@ -114,7 +118,8 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
                 food = ""
                 contribute = "25"
             }
-            getSpecificFood(food,contribute)
+//            getSpecificFood(food, contribute)
+            getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
 
             v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_25_contribution.setBackgroundResource(R.drawable.rounded_button)
@@ -133,8 +138,8 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
                 food = ""
                 contribute = "50"
             }
+            getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
 
-            getSpecificFood(food,contribute)
             v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_50_contribution.setBackgroundResource(R.drawable.rounded_button)
@@ -153,7 +158,7 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
                 food = ""
                 contribute = "treat me"
             }
-            getSpecificFood(food,contribute)
+            getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
             v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_50_contribution.setBackgroundResource(R.drawable.rectangular_line)
@@ -174,6 +179,9 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
         val view = inflater.inflate(R.layout.fragment_nearby, container, false)
         pd = Utils.progressDialog(context!!, "", "Please wait")
 
+        Hawk.init(context!!).build();
+
+
         clickListner(view)
 
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -189,6 +197,11 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
+
 
     override fun onMapReady(googleMap: GoogleMap) {
 
@@ -199,69 +212,32 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
             sendCurrentLocation(activity!!, currentLocation, mGoogleMap!!)
 
         }
-//        val userLat1 = currentLocation!!.latitude - 0.014
-//        val userLng1 = currentLocation!!.longitude + 0.024
-//
-//        val userOne = LatLng(userLat1, userLng1)
-//
-//        val userLat2 = currentLocation!!.latitude - 0.005
-//        val userLng2 = currentLocation!!.longitude + 0.005
-//
-//        val userTwo = LatLng(userLat2, userLng2)
-//
-//
-//        val userLat3 = currentLocation!!.latitude - 0.006
-//        val userLng3 = currentLocation!!.longitude + 0.006
-//
-//        val userThree = LatLng(userLat3, userLng3)
-//
-//
-//        val userLat4 = currentLocation!!.latitude + 0.003
-//        val userLng4 = currentLocation!!.longitude - 0.003
-//
-//        val userFour = LatLng(userLat4, userLng4)
-//
-//
-//        val userLat5 = currentLocation!!.latitude + 0.002
-//        val userLng5 = currentLocation!!.longitude - 0.002
-//
-//        val userFive = LatLng(userLat5, userLng5)
-//
-//
-//        val userLat6 = currentLocation!!.latitude - 0.007
-//        val userLng6 = currentLocation!!.longitude + 0.007
-
-//        val userSix = LatLng(userLat6, userLng6)
-
 
         styleMap(context!!, R.raw.style, googleMap)
         //mMap?.addMarker(MarkerOptions().position(currentLocation).title(latlngObject.getString("address")))
         val update = CameraUpdateFactory.newLatLngZoom(currentLocation, 16f)
         mGoogleMap?.moveCamera(update)
 
-
-
         googleMap?.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker)).position(currentLocation!!).title("Me"))
-        //googleMap?.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(setscaledBitmapMarker(90,90,R.drawable.location_marker,context!!))).position(currentLocation).title("Me"))
-//        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.one, 90, 90, userOne)
-//        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.two, 90, 90, userTwo)
-//        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.three, 90, 90, userThree)
-//        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.four, 90, 90, userFour)
-//        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.five, 90, 90, userFive)
-//        setCircularImageAsMarkerWithGlide(context!!, googleMap, R.drawable.six, 90, 90, userSix)
 
         mGoogleMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
             override fun onMarkerClick(marker: Marker): Boolean {
-                Toast.makeText(context, "This is marker", Toast.LENGTH_SHORT).show()
-                Log.d("Marker", "Marker")
+//                Toast.makeText(context, "This is marker", Toast.LENGTH_SHORT).show()
+                Log.d("Marker", "" + marker.title)
+
+                if (!marker.title.equals("Me")) {
+                    var intent = Intent(activity, OtherUserProfileDetailActivity::class.java)
+                    intent.putExtra("id", marker.title)
+                    startActivity(intent)
+                }
+
                 return false
             }
         })
 
     }
 
-
-    private fun getSpecificFood(food: String, contribution: String) {
+    private fun getSpecificFood(context: Context, food: String, contribution: String, googleMap: GoogleMap) {
         pd!!.show()
 
         val mService = ApiUtils.getSOService() as SOService
@@ -272,6 +248,7 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
         mService.getSpecificFoodList(hm, food, contribution)
                 .enqueue(object : Callback<ArrayList<MeResponse>> {
+
                     override fun onFailure(call: Call<ArrayList<MeResponse>>?, t: Throwable?) {
                         pd!!.dismiss()
 
@@ -280,7 +257,28 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
                     override fun onResponse(call: Call<ArrayList<MeResponse>>?, response: Response<ArrayList<MeResponse>>?) {
                         Log.d("Specific food", "" + response?.body())
                         pd!!.dismiss()
-                        if(response?.body()!!.size < 0){
+                        mGoogleMap!!.clear()
+
+                        if (response?.body()!!.size > 0) {
+                            val user_id = Prefs.getString(Constant.USERID, "")
+                            for (i in response.body().indices) {
+                                Log.d("Response_User_ID", response.body().get(i).id.toString())
+                                if (!(user_id.equals(response.body().get(i).id.toString()))) {
+                                    if (response.body().get(i).profile.cover != null) {
+                                        if (response.body().get(i).lat != null && response.body().get(i).lng != null) {
+                                            Log.d("LatLng", response.body().get(i).lat.toString() + " " + response.body().get(i).lng + " " + response.body().get(i).id)
+//                                        if(!Prefs.getString(Constant.USERID,"").equals(response.body().data[i].userId.toString())){
+                                            Hawk.put("resp", "resp")
+                                            Hawk.put(response.body().get(i).id.toString(), response.body().get(i))
+                                            Log.d("url", ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().get(i).id + "/" + response.body().get(i).profile.avatar)
+
+                                            setCircularImageAsMarkerWithGlide(context, googleMap, ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().get(i).id + "/" + response.body().get(i).profile.avatar, 120, 120, LatLng(response.body().get(i).lat.toString().toDouble(), response.body().get(i).lng.toString().toDouble()), "" + response.body().get(i).profile.userId)
+//                                        }
+                                        }
+                                    }
+                                }
+                            }
+
                             Toast.makeText(activity, "", Toast.LENGTH_SHORT).show()
                         }
 
@@ -319,8 +317,12 @@ private fun sendCurrentLocation(context: Context, currentLocation: LatLng?, goog
                                     if (response.body().data[i].lat != null && response.body().data[i].lng != null) {
                                         Log.d("LatLng", response.body().data[i].lat + " " + response.body().data[i].lng + " " + response.body().data[i].userId)
 //                                        if(!Prefs.getString(Constant.USERID,"").equals(response.body().data[i].userId.toString())){
+                                        Hawk.put(response.body().data[i].userId.toString(), response.body().data[i])
                                         Log.d("url", ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar)
-                                        setCircularImageAsMarkerWithGlide(context, googleMap, ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar, 120, 120, LatLng(response.body().data[i].lat.toDouble(), response.body().data[i].lng.toDouble()))
+
+                                        Hawk.delete("resp")
+
+                                        setCircularImageAsMarkerWithGlide(context, googleMap, ApiUtils.BASE_URL + "/storage/media/avatar/" + response.body().data[i].userId + "/" + response.body().data[i].avatar, 120, 120, LatLng(response.body().data[i].lat.toDouble(), response.body().data[i].lng.toDouble()), "" + response.body().data[i].userId)
 //                                        }
                                     }
                                 }
@@ -360,13 +362,14 @@ private fun setscaledBitmapMarker(height: Int, width: Int, @DrawableRes image: I
 }
 
 
-private fun setCircularImageAsMarkerWithGlide(context: Context, googleMap: GoogleMap, image: String, width: Int, height: Int, userLocation: LatLng) {
+private fun setCircularImageAsMarkerWithGlide(context: Context, googleMap: GoogleMap, image: String, width: Int, height: Int, userLocation: LatLng, userId: String) {
 
     Glide.with(context!!).asBitmap().load(image).apply(RequestOptions.circleCropTransform())
             .into(object : SimpleTarget<Bitmap>(width, height) {
+
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     //val bitmap = createCustomMarker(context!!,resource)
-                    googleMap?.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(resource)).position(userLocation))
+                    googleMap?.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(resource)).position(userLocation).title(userId))
                 }
 
             })

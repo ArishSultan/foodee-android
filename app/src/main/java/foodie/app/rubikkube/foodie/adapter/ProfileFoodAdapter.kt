@@ -14,7 +14,7 @@ import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.Food
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 
-class ProfileFoodAdapter(context: Context, list : ArrayList<Food>)  : RecyclerView.Adapter<ProfileFoodAdapter.ProfileFoodHolder>() {
+class ProfileFoodAdapter(context: Context, list : List<Food>)  : RecyclerView.Adapter<ProfileFoodAdapter.ProfileFoodHolder>() {
 
     val mContext = context
     var foodList = list
@@ -46,7 +46,7 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>)  : RecyclerVi
         val foodText: TextView = view.findViewById(R.id.food_text)
     }
 
-    fun update(list : ArrayList<Food>){
+    fun update(list : List<Food>){
         foodList = list
         notifyDataSetChanged()
     }
