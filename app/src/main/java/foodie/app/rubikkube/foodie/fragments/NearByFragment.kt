@@ -310,6 +310,7 @@ private fun sendCurrentLocation(context: Context, currentLocation: LatLng?, goog
                     Log.d("onf", "" + response!!.body().success)
                     if (response.isSuccessful) {
                         val user_id = Prefs.getString(Constant.USERID, "")
+                        Log.d("User_ID", user_id)
                         for (i in response.body().data.indices) {
                             Log.d("Response_User_ID", response.body().data[i].userId.toString())
                             if (!(user_id.equals(response.body().data[i].userId.toString()))) {

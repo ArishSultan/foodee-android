@@ -62,7 +62,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var location: String = ""
     private var contribution: String = ""
 
-    var isPublic = false
+    var isPublic = 0
 
 
     var KProgressHUD: KProgressHUD? = null
@@ -217,7 +217,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
         age_check_box.setOnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
-                isPublic = true
+                isPublic = 1
+            }
+            else
+            {
+                isPublic = 0
             }
         }
 
@@ -298,6 +302,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             requestOptionsAvatar.error(R.drawable.profile_avatar)
             Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
 
+            age_check_box.isChecked = me.profile.isAgePrivate
+
+            Log.d("is Age Private",""+me.profile.isAgePrivate);
             user_name.setText(me.username.toString())
             user_status.setText(if(me.profile.message == null) "" else me.profile.message)
             user_age.setText(if(me.profile.age == null) "" else me.profile.age.toString())
@@ -468,6 +475,8 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         jsonObject.put("age",12)
         jsonObject.put("location", location)
         jsonObject.put("gender", "xyz")
+        Log.d("isPublic",""+isPublic)
+        jsonObject.put("is_age_private",isPublic)
         jsonObject.put("contribution", contribution)
 //        jsonObject.put("categories", category)
         jsonObject.put("_method", "PATCH")

@@ -18,6 +18,7 @@ import foodie.app.rubikkube.foodie.model.LatLngData
 import foodie.app.rubikkube.foodie.model.MeResponse
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
+import kotlin.math.log
 
 
 class OtherUserProfileDetailActivity : AppCompatActivity() {
@@ -44,7 +45,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
                     dataBindMe(profile)
                 } else {
                     val profile = Hawk.get(id, "") as LatLngData
-                    Log.d("profile", profile.username)
+                            Log.d("profile", profile.username)
                     dataBind(profile)
                 }
 
@@ -74,11 +75,18 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         requestOptionsAvatar.error(R.drawable.profile_avatar)
         Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.avatar).into(profile_pic)
 
+        Log.d("agePrivate",""+me.agePrivate+" "+me.age);
+        if(!me.agePrivate)
+        {
+            age_title.visibility = View.VISIBLE
+            age.visibility = View.VISIBLE
+            age.text = me.age.toString()
+        }
         profile_name.text = me.username.toString()
         age.text = me.age.toString()
         city.text = me.location
-
         profile_desc.text = me.message.toString()
+        me.agePrivate
 
         twenty_precent_crd.visibility = View.VISIBLE
         contribution_txt.text = me.contribution.toString()
@@ -104,6 +112,13 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         requestOptionsAvatar.error(R.drawable.profile_avatar)
         Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
 
+        Log.d("agePrivate",""+me.profile.isAgePrivate+" "+me.profile.age);
+        if(!me.profile.isAgePrivate)
+        {
+            age_title.visibility = View.VISIBLE
+            age.visibility = View.VISIBLE
+            age.text = me.profile.age.toString()
+        }
         profile_name.text = me.username.toString()
         age.text = me.profile.age.toString()
         city.text = me.profile.location
