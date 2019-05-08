@@ -78,15 +78,19 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         Log.d("agePrivate",""+me.agePrivate+" "+me.age);
         if(!me.agePrivate)
         {
+            age_title.visibility = View.INVISIBLE
+            age.visibility = View.INVISIBLE
+        }
+        else{
             age_title.visibility = View.VISIBLE
             age.visibility = View.VISIBLE
             age.text = me.age.toString()
         }
+
         profile_name.text = me.username.toString()
         age.text = me.age.toString()
         city.text = me.location
         profile_desc.text = me.message.toString()
-        me.agePrivate
 
         twenty_precent_crd.visibility = View.VISIBLE
         contribution_txt.text = me.contribution.toString()

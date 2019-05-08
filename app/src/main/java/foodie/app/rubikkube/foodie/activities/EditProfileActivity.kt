@@ -536,12 +536,18 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         add_food_btn!!.setOnClickListener(View.OnClickListener {
             val foodName = food_name.text.toString()
 
-            if (TextUtils.isEmpty(foodName)){
+            if (TextUtils.isEmpty(foodName)) {
                 Toast.makeText(this@EditProfileActivity, "Please Enter Food Name", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
-            } else {
+            } else{
+                if (imageFile != null) {
                 imageType = foodName
                 addFood(imageType)
+                }
+                else{
+                    Toast.makeText(this@EditProfileActivity, "Please Upload Food Image", Toast.LENGTH_SHORT).show()
+
+                }
             }
         })
 

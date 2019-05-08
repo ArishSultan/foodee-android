@@ -17,9 +17,11 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v7.widget.CardView
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -92,10 +94,10 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
         v.tv_search_all_food.setOnClickListener {
 
+            contribute = "all"
             food = filterRestaurant.text.toString()
             if (food.equals("")) {
                 food = ""
-                contribute = "all"
             }
 //            getSpecificFood(food, contribute)
             getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
@@ -114,9 +116,9 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
         v.tv_search_25_contribution.setOnClickListener {
             food = filterRestaurant.text.toString()
+            contribute = "25"
             if (food.equals("")) {
                 food = ""
-                contribute = "25"
             }
 //            getSpecificFood(food, contribute)
             getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
@@ -134,9 +136,9 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
         v.tv_search_50_contribution.setOnClickListener {
             food = filterRestaurant.text.toString()
+            contribute = "50"
             if (food.equals("")) {
                 food = ""
-                contribute = "50"
             }
             getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
 
@@ -154,9 +156,9 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
         }
         v.tv_search_treat_me.setOnClickListener {
             food = filterRestaurant.text.toString()
+            contribute = "treat me"
             if (food.equals("")) {
                 food = ""
-                contribute = "treat me"
             }
             getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
             v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
@@ -183,6 +185,18 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
 
         clickListner(view)
+        view.findViewById<EditText>(R.id.filterRestaurant).setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                //Perform Code
+                food = filterRestaurant.text.toString()
+                if(!(filterRestaurant.text.equals(""))){
+                    getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
+                }
+                return@OnKeyListener true
+            }
+            false
+        })
+
 
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         if (mapFragment == null) {

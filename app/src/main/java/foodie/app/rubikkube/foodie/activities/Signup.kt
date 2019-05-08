@@ -78,7 +78,12 @@ class Signup : AppCompatActivity() {
         } else if (!Utils.isValidEmail(email.toString())) {
             Toast.makeText(this@Signup, "Please enter correct email address", Toast.LENGTH_SHORT).show()
             return false
-        } else if (!Utils.isConnectedOnline(this)) {
+        }
+        else if(!(password.equals(cPassword))){
+            Toast.makeText(this@Signup, "Password Mismatched", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        else if (!Utils.isConnectedOnline(this)) {
             Toast.makeText(this@Signup, "No internet Connection", Toast.LENGTH_SHORT).show()
             return false
         } else {

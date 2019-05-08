@@ -105,8 +105,16 @@ class Login : AppCompatActivity() {
                     override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
                         pd?.dismiss()
                         if (response!!.isSuccessful) {
-
-                            if(response.body().status) {
+                            Prefs.putString(Constant.IS_LOGIN, "true")
+                            Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
+                            Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
+                            Prefs.putString(Constant.NAME, response.body()?.user?.username)
+                            Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
+                            Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
+                            Prefs.putInt(Constant.EMAIL_CONFIRM, response.body().user.email_confirm)
+                            startActivity(Intent(this@Login, HomeActivity::class.java))
+                            finish()
+                            /*if(response.body().status) {
                                 if (response.body().user.email_confirm == 0)
                                 {
 
@@ -140,7 +148,7 @@ class Login : AppCompatActivity() {
                             }else {
                                 Toast.makeText(this@Login, response.body().message, Toast.LENGTH_SHORT).show()
 
-                            }
+                            }*/
 
                         } else {
                             Toast.makeText(this@Login, response.message(), Toast.LENGTH_SHORT).show()

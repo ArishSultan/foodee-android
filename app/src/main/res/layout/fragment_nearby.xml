@@ -60,6 +60,7 @@
                          android:hint="Search Foods"
                          android:textColor="#404852"
                          android:textColorHint="#a9a3a3"
+                         android:singleLine="true"
                          android:layout_toLeftOf="@+id/closeImageView"
                          android:textSize="14sp"
                          android:layout_toEndOf="@+id/backImageView"
