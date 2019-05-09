@@ -53,16 +53,28 @@
                     android:textColor="@android:color/white"
                     />
                 <ImageView
-                    android:id="@+id/save_btn"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="10dp"
                     android:padding="8dp"
+                    android:visibility="gone"
                     android:tint="@color/white"
                     android:layout_alignParentRight="true"
                     app:srcCompat="@drawable/check_mark"
                     />
+                <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
+                    android:id="@+id/save_btn"
+                    android:text="DONE"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:padding="8dp"
+                    android:tint="@color/white"
+                    android:layout_alignParentRight="true" />
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_pic"
                     android:layout_width="110dp"

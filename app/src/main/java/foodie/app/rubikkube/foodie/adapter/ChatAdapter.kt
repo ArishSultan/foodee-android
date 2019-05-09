@@ -73,7 +73,7 @@
             return  if(chatmessage.getSender()!! % 2 == 0) {
                 1
             } else {
-                0
+                1
             }
         }
 

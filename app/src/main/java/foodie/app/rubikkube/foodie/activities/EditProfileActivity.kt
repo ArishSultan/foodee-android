@@ -22,6 +22,7 @@ import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.model.Image
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
+import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
@@ -216,6 +217,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         Log.d("res", "" + meResponse.username)
 
         age_check_box.setOnCheckedChangeListener { buttonView, isChecked ->
+
             if(isChecked){
                 isPublic = 1
             }
@@ -472,10 +474,10 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         val jsonObject = JSONObject()
         jsonObject.put("username", meResponse.username)
         jsonObject.put("message", message)
-        jsonObject.put("age",12)
+        jsonObject.put("age",age)
         jsonObject.put("location", location)
         jsonObject.put("gender", "xyz")
-        Log.d("isPublic",""+isPublic)
+        Log.d("is_age_private",""+isPublic);
         jsonObject.put("is_age_private",isPublic)
         jsonObject.put("contribution", contribution)
 //        jsonObject.put("categories", category)
@@ -545,7 +547,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 addFood(imageType)
                 }
                 else{
-                    Toast.makeText(this@EditProfileActivity, "Please Upload Food Image", Toast.LENGTH_SHORT).show()
+                    Toasty.error(this@EditProfileActivity, "Please Upload Food Image", Toast.LENGTH_SHORT).show()
 
                 }
             }

@@ -95,7 +95,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         twenty_precent_crd.visibility = View.VISIBLE
         contribution_txt.text = me.contribution.toString()
 
-//        foodList = me.profile.foods!!
+        foodList = me.foods!!
         profileAdapter.update(foodList)
 
 

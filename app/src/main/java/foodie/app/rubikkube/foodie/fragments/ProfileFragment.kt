@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
@@ -124,7 +125,7 @@ class ProfileFragment : Fragment() {
                     if (response.body().profile == null || response.body().profile.message == null) {
                         startActivity(intent)
                     } else {
-                        main_view.visibility = View.VISIBLE
+                        view.findViewById<ScrollView>(R.id.main_view).visibility = View.VISIBLE
                     }
                     setValue(view, response.body())
                 } else {
