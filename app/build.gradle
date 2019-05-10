@@ -65,6 +65,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.orhanobut:hawk:2.0.1'
     implementation 'com.github.GrenderG:Toasty:1.4.2'
+    implementation 'net.alhazmy13.MediaPicker:libary:2.4.4'
+    implementation 'com.loopj.android:android-async-http:1.4.9'
 }
 repositories {
     mavenCentral()
