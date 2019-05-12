@@ -21,8 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activities.OtherUserProfileDetailActivity"></activity>
         <activity android:name=".activities.SplashScreen">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,9 +33,7 @@
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.Signup" />
         <activity android:name=".activities.Login" />
-        <activity android:name=".activities.EditProfileActivity">
-
-        </activity>
+        <activity android:name=".activities.EditProfileActivity"></activity>
         <activity android:name=".activities.TestActivity" />
 
         <meta-data

@@ -22,6 +22,7 @@ import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.model.Image
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
+import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
@@ -31,6 +32,7 @@ import foodie.app.rubikkube.foodie.utilities.Utils
 import foodie.app.rubikkube.foodie.utilities.Utils.Companion.progressDialog
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.activity_edit_profile.*
+import kotlinx.android.synthetic.main.activity_edit_profile.view.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -60,6 +62,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var age: String = ""
     private var location: String = ""
     private var contribution: String = ""
+
+    var isPublic = 0
+
 
     var KProgressHUD: KProgressHUD? = null
     internal var cv: MultipartBody.Part? = null
@@ -125,10 +130,10 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             fifty_percent.setBackgroundResource(R.drawable.rectangular_line)
             treat_me.setBackgroundResource(R.drawable.rectangular_line)
 
-            twenty_precent.setTextColor(resources.getColor(R.color.white))
-            thirty_percent.setTextColor(resources.getColor(R.color.d_gray))
-            fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
-            treat_me.setTextColor(resources.getColor(R.color.d_gray))
+        twenty_precent.setTextColor(resources.getColor(R.color.white))
+        thirty_percent.setTextColor(resources.getColor(R.color.d_gray))
+        fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
+        treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
         if (v?.id == R.id.thirty_percent) {
             contribution = "30%"
@@ -197,12 +202,12 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
+
         initializeListeners()
 
         val intent = getIntent();
         if (intent != null) {
             meResponse = intent.getSerializableExtra("meResponse") as MeResponse
-
             if(meResponse.profile.age != null){
                 foodList = intent.getSerializableExtra("foodList") as ArrayList<Food>
             }
@@ -210,6 +215,19 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
         setUpRecyclerView()
         Log.d("res", "" + meResponse.username)
+
+        age_check_box.setOnCheckedChangeListener { buttonView, isChecked ->
+
+            if(isChecked){
+                isPublic = 1
+            }
+            else
+            {
+                isPublic = 0
+            }
+        }
+
+
     }
 
     private fun formValidation(status: String, age: String, location: String, gender: String, contribution: String): Boolean {
@@ -286,6 +304,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             requestOptionsAvatar.error(R.drawable.profile_avatar)
             Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
 
+            age_check_box.isChecked = me.profile.isAgePrivate
+
+            Log.d("is Age Private",""+me.profile.isAgePrivate);
             user_name.setText(me.username.toString())
             user_status.setText(if(me.profile.message == null) "" else me.profile.message)
             user_age.setText(if(me.profile.age == null) "" else me.profile.age.toString())
@@ -453,9 +474,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         val jsonObject = JSONObject()
         jsonObject.put("username", meResponse.username)
         jsonObject.put("message", message)
-        jsonObject.put("age",12)
+        jsonObject.put("age",age)
         jsonObject.put("location", location)
         jsonObject.put("gender", "xyz")
+        Log.d("is_age_private",""+isPublic);
+        jsonObject.put("is_age_private",isPublic)
         jsonObject.put("contribution", contribution)
 //        jsonObject.put("categories", category)
         jsonObject.put("_method", "PATCH")
@@ -515,12 +538,18 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         add_food_btn!!.setOnClickListener(View.OnClickListener {
             val foodName = food_name.text.toString()
 
-            if (TextUtils.isEmpty(foodName)){
+            if (TextUtils.isEmpty(foodName)) {
                 Toast.makeText(this@EditProfileActivity, "Please Enter Food Name", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
-            } else {
+            } else{
+                if (imageFile != null) {
                 imageType = foodName
                 addFood(imageType)
+                }
+                else{
+                    Toasty.error(this@EditProfileActivity, "Please Upload Food Image", Toast.LENGTH_SHORT).show()
+
+                }
             }
         })
 

@@ -36,6 +36,10 @@ class Profile() : Serializable {
         @Expose
         var age: Int? = null
 
+        @SerializedName("is_age_private")
+        @Expose
+        var isAgePrivate: Boolean = false
+
         @SerializedName("min_age")
         @Expose
         var minAge: Any? = null
@@ -74,6 +78,6 @@ class Profile() : Serializable {
 
         @SerializedName("foods")
         @Expose
-        private val foods: List<Food>? = null
+        val foods: List<Food>? = null
 
 }

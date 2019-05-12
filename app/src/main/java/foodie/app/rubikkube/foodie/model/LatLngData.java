@@ -3,6 +3,8 @@ package foodie.app.rubikkube.foodie.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class LatLngData {
 
     @SerializedName("id")
@@ -44,9 +46,15 @@ public class LatLngData {
     @SerializedName("contribution")
     @Expose
     private String contribution;
+    @SerializedName("is_age_private")
+    @Expose
+    private Boolean isAgePrivate;
     @SerializedName("distance")
     @Expose
     private Double distance;
+    @SerializedName("foods")
+    @Expose
+    private List<Food> foods;
 
     public Integer getId() {
         return id;
@@ -152,6 +160,10 @@ public class LatLngData {
         this.contribution = contribution;
     }
 
+    public Boolean getAgePrivate() { return isAgePrivate; }
+
+    public void setAgePrivate(Boolean agePrivate) { isAgePrivate = agePrivate; }
+
     public Double getDistance() {
         return distance;
     }
@@ -160,4 +172,7 @@ public class LatLngData {
         this.distance = distance;
     }
 
+    public List<Food> getFoods() { return foods; }
+
+    public void setFoods(List<Food> foods) { this.foods = foods; }
 }

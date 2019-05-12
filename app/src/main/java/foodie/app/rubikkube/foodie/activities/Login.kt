@@ -13,6 +13,7 @@ import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
+import es.dmoral.toasty.Toasty
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
@@ -104,28 +105,19 @@ class Login : AppCompatActivity() {
 
                     override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
                         pd?.dismiss()
-                        if (response!!.isSuccessful) {
+
+                        Log.d("Response",""+response!!.body().user)
+                        Log.d("Rsp",""+response.isSuccessful)
+
+                        if (response.isSuccessful) {
 
                             if(response.body().status) {
                                 if (response.body().user.email_confirm == 0)
                                 {
-
-                                    val builder = AlertDialog.Builder(this@Login)
-                                    // Set the alert dialog title
-                                    builder.setTitle("Verify Your Email Address")
-                                    // Display a message on alert dialog
-                                    builder.setMessage("Account verification link sent to your Email address, Please verify your Email address before proceeding further")
-                                    // Set a positive button and its click listener on alert dialog
-                                    builder.setPositiveButton("Ok"){dialog, which ->
-                                        // Do something when user press the positive button
-                                        dialog.dismiss()
-                                    }
-                                    // Finally, make the alert dialog using builder
-                                    val dialog: AlertDialog = builder.create()
-                                    // Display the alert dialog on app interface
-                                    dialog.show()
+                                    Toasty.info(this@Login,"Account verification link sent to your Email address, Please verify your Email address before proceeding further",Toast.LENGTH_SHORT).show()
                                 }
                                 else {
+                                        Toasty.success(this@Login,"Logged in Successfully.",Toast.LENGTH_SHORT).show()
                                         Prefs.putString(Constant.IS_LOGIN, "true")
                                         Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
                                         Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
@@ -149,5 +141,10 @@ class Login : AppCompatActivity() {
                     }
 
                 })
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy();
     }
 }
