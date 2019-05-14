@@ -1,6 +1,7 @@
 package foodie.app.rubikkube.foodie.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
@@ -11,6 +12,7 @@ import android.widget.LinearLayout
 
 
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.PostActivity
 import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
@@ -31,6 +33,10 @@ class TimelineFragment : Fragment() {
 //        view.toolbar_title.setText("TimeLine")
 //        view.text.setText("TimeLine")
         setUpRecyclerView(view)
+
+        view.post.setOnClickListener {
+            view.context.startActivity(Intent(activity,PostActivity::class.java))
+        }
 
         return view;
     }
