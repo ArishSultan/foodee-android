@@ -46,6 +46,7 @@ interface SOService {
     @GET("/api/v1/search/user/")
     fun getSpecificFoodList(@HeaderMap header: Map<String, String>, @Query("food")food: String, @Query("contribution")contribution: String): Call<ArrayList<MeResponse>>
 
-
+    @GET("/api/v1/posts")
+    fun getFeeds(@HeaderMap header: Map<String, String>): Call<FeedResponse>
 
 }

@@ -1,6 +1,7 @@
 package foodie.app.rubikkube.foodie.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
@@ -11,6 +12,7 @@ import android.widget.LinearLayout
 
 
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.PostActivity
 import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
@@ -31,6 +33,10 @@ class TimelineFragment : Fragment() {
 //        view.toolbar_title.setText("TimeLine")
 //        view.text.setText("TimeLine")
         setUpRecyclerView(view)
+
+        view.post.setOnClickListener {
+            view.context.startActivity(Intent(activity,PostActivity::class.java))
+        }
 
         return view;
     }
@@ -86,57 +92,5 @@ class TimelineFragment : Fragment() {
 //
 //    }
 
-    class RecyclerTouchListener(context: Context, recyclerView: RecyclerView, private val clickListener: ClickListener?) : RecyclerView.OnItemTouchListener {
-
-        private val gestureDetector: GestureDetector
-
-        init {
-            gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-                override fun onSingleTapUp(e: MotionEvent): Boolean {
-
-                    return true
-
-                }
-
-                override fun onLongPress(e: MotionEvent) {
-
-                    val child = recyclerView.findChildViewUnder(e.getX(), e.getY())
-
-                    if (child != null && clickListener != null) {
-
-                        clickListener.onLongClick(child, recyclerView.getChildPosition(child))
-
-                    }
-                }
-            })
-        }
-
-
-        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-
-            val child = rv.findChildViewUnder(e.getX(), e.getY())
-
-            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-
-                clickListener.onClick(child, rv.getChildPosition(child))
-
-            }
-            return false
-        }
-
-        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
-
-        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-
-        }
-
-
-        interface ClickListener {
-
-            fun onClick(view: View, position: Int)
-
-            fun onLongClick(view: View?, position: Int)
-        }
-    }
 
 }

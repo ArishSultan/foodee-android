@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".activities.PostActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:background="@color/black"
+        android:layout_height="60dp">
+
+
+        <ImageView
+            android:id="@+id/back_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_keyboard_backspace_black_24dp"
+            />
+
+        <foodie.app.rubikkube.foodie.fonts.robotoRegular
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Post"
+            android:textColor="@color/white"
+            android:layout_centerInParent="true"
+            android:textSize="20sp"
+            />
+
+    </RelativeLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_pic"
+        android:layout_below="@+id/menu"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/p"
+        />
+
+    <foodie.app.rubikkube.foodie.fonts.robotoRegular
+        android:id="@+id/user_name"
+        android:layout_below="@+id/menu"
+        android:layout_toRightOf="@+id/profile_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Yasir Ahmed"
+        android:layout_marginTop="25dp"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/txt_caption"
+        android:layout_below="@+id/profile_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:textSize="18sp"
+        android:background="@null"
+        android:hint="what's on your mind?" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_grid"
+        android:layout_below="@id/txt_caption"
+        android:visibility="visible"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+
+</RelativeLayout>

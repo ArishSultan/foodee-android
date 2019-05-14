@@ -110,15 +110,9 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         return false
     }
 
-
-
-
-
     private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
-
 
     private fun  setupLocationManager() {
         //buildGoogleApiClient();
