@@ -14,7 +14,6 @@ import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
-import net.alhazmy13.mediapicker.Image.ImagePicker
 import java.util.ArrayList
 
 class TimelineFragment : Fragment() {
@@ -53,39 +52,39 @@ class TimelineFragment : Fragment() {
 
     }
 
-    private fun setMultimediaGridAdapter() {
-        imageList = ArrayList<String>()
-        imageList?.add("start")
-        multimediaGridAdapter = MultimediaAdapter(getContext(), imageList)
-        rv_grid?.setItemAnimator(DefaultItemAnimator())
-        rv_grid?.setAdapter(multimediaGridAdapter)
-        rv_grid?.setLayoutManager(LinearLayoutManager(getActivity(), LinearLayout.HORIZONTAL, false))
-        rv_grid?.addOnItemTouchListener(RecyclerTouchListener(getActivity() , rv_grid!!, object : RecyclerTouchListener.ClickListener() {
-            fun onClick(view: View, position: Int) {
-
-                val lastPos = imageList.size - 1
-                //String aray[] = multimedia.get(position).split("@");
-                if (position == lastPos) {
-
-                    ImagePicker.Builder(getActivity())
-                            .mode(ImagePicker.Mode.CAMERA_AND_GALLERY)
-                            .compressLevel(ImagePicker.ComperesLevel.MEDIUM)
-                            .directory(ImagePicker.Directory.DEFAULT)
-                            .extension(ImagePicker.Extension.PNG)
-                            .scale(600, 600)
-                            .allowMultipleImages(false)
-                            .enableDebuggingMode(true)
-                            .build()
-                }
-
-            }
-
-            fun onLongClick(view: View, position: Int) {
-
-            }
-        }))
-
-    }
+//    private fun setMultimediaGridAdapter() {
+//        imageList = ArrayList<String>()
+//        imageList?.add("start")
+//        multimediaGridAdapter = MultimediaAdapter(getContext(), imageList)
+//        rv_grid?.setItemAnimator(DefaultItemAnimator())
+//        rv_grid?.setAdapter(multimediaGridAdapter)
+//        rv_grid?.setLayoutManager(LinearLayoutManager(getActivity(), LinearLayout.HORIZONTAL, false))
+//        rv_grid?.addOnItemTouchListener(RecyclerTouchListener(getActivity() , rv_grid!!, object : RecyclerTouchListener.ClickListener() {
+//            fun onClick(view: View, position: Int) {
+//
+//                val lastPos = imageList.size - 1
+//                //String aray[] = multimedia.get(position).split("@");
+//                if (position == lastPos) {
+//
+//                    ImagePicker.Builder(getActivity())
+//                            .mode(ImagePicker.Mode.CAMERA_AND_GALLERY)
+//                            .compressLevel(ImagePicker.ComperesLevel.MEDIUM)
+//                            .directory(ImagePicker.Directory.DEFAULT)
+//                            .extension(ImagePicker.Extension.PNG)
+//                            .scale(600, 600)
+//                            .allowMultipleImages(false)
+//                            .enableDebuggingMode(true)
+//                            .build()
+//                }
+//
+//            }
+//
+//            fun onLongClick(view: View, position: Int) {
+//
+//            }
+//        }))
+//
+//    }
 
     class RecyclerTouchListener(context: Context, recyclerView: RecyclerView, private val clickListener: ClickListener?) : RecyclerView.OnItemTouchListener {
 
