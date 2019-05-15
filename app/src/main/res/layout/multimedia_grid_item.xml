@@ -16,17 +16,19 @@
 
         <ImageView
             android:id="@+id/imgOne"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:src="@drawable/add"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:srcCompat="@drawable/ic_add_black_24dp"
             android:scaleType="centerCrop"
+            android:padding="5dp"
+            android:background="@drawable/rectangular_orange"
             />
 
 
         <ImageView
             android:id="@+id/imgOne_sign"
-            android:layout_width="12dp"
-            android:layout_height="15dp"
+            android:layout_width="32dp"
+            android:layout_height="35dp"
             android:visibility="gone"
             android:layout_alignEnd="@+id/imgOne"
             android:layout_alignParentBottom="true"
@@ -36,6 +38,7 @@
             android:layout_marginRight="8dp"
             android:src="@drawable/img_ico" />
         <View
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/image_overlay"
@@ -45,8 +48,7 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:visibility="visible"
-
-            app:srcCompat="@drawable/ic_close_dark"
+            app:srcCompat="@drawable/ic_clear_black_24dp"
             android:layout_alignParentTop="true"
             android:layout_marginRight="2dp"
             android:layout_marginTop="4dp"

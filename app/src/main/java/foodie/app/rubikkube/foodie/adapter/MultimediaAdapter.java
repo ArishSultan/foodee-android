@@ -55,7 +55,7 @@ public class MultimediaAdapter extends RecyclerView.Adapter<MultimediaAdapter.my
         //int lastPosition = filePaths.size() - 1;
 
         if(position == filePaths.size() -1) {
-            Glide.with(context).load(R.drawable.add).into(holder.imgOne);
+            Glide.with(context).load(R.drawable.ic_add_black_24dp).into(holder.imgOne);
             holder._deleteIcon.setVisibility(View.INVISIBLE);
         } else {
                 Glide.with(context).load(file).into(holder.imgOne);
@@ -85,6 +85,7 @@ public class MultimediaAdapter extends RecyclerView.Adapter<MultimediaAdapter.my
         private ImageView imgOne;
         private RelativeLayout _add_item;
         private ImageView _deleteIcon;
+
         public myViewHolder(View itemView) {
             super(itemView);
 
