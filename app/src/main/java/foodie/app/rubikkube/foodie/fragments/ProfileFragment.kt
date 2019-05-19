@@ -147,13 +147,25 @@ class ProfileFragment : Fragment() {
             val requestOptionsCover = RequestOptions()
             requestOptionsCover.placeholder(R.drawable.cover_picture)
             requestOptionsCover.error(R.drawable.cover_picture)
-            Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(view.profile_cover)
-
+            if(me.profile.cover!=null) {
+                Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(view.profile_cover)
+            }
+            else
+            {
+                Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(R.drawable.cover_picture).into(view.profile_cover)
+            }
             val requestOptionsAvatar = RequestOptions()
             requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
             requestOptionsAvatar.error(R.drawable.profile_avatar)
-                Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(view.profile_pic)
 
+            if(me.profile.avatar!=null) {
+                Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(view.profile_pic)
+            }
+            else
+            {
+                Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(view.profile_pic)
+
+            }
             view.profile_name.text = me.username.toString()
             view.age.text = me.profile.age.toString()
             view.city.text = me.profile.location

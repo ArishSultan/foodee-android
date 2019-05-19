@@ -67,6 +67,7 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.4.2'
     implementation 'net.alhazmy13.MediaPicker:libary:2.4.4'
     implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'com.github.smarteist:autoimageslider:1.2.0'
 }
 repositories {
     mavenCentral()

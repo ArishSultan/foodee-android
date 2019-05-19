@@ -49,4 +49,12 @@ interface SOService {
     @GET("/api/v1/posts")
     fun getFeeds(@HeaderMap header: Map<String, String>): Call<FeedResponse>
 
+    @Multipart
+    @POST("/api/v1/posts")
+    fun addNewPost(@HeaderMap header: Map<String, String>,@Part photos: List<MultipartBody.Part>?, @Part("content") content: RequestBody, @Query("Lat")latitude:Double,@Query("lng")longitude:Double): Call<AddNewPostResponse>
+
+    @GET("/api/v1/posts")
+    fun getTimelinePost(@HeaderMap header: Map<String, String>): Call<FeedResponse>
+
+
 }

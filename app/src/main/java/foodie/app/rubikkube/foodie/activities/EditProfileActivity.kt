@@ -292,18 +292,28 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         if (me.profile == null) {
             user_name.setText(me.username.toString())
         } else {
-
             val requestOptionsCover = RequestOptions()
             requestOptionsCover.placeholder(R.drawable.cover_picture)
             requestOptionsCover.error(R.drawable.cover_picture)
-            Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(cover_edit)
-
-
+            if(me.profile.cover!=null) {
+                Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(cover_edit)
+            }
+            else
+            {
+                Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(R.drawable.cover_picture).into(cover_edit)
+            }
             val requestOptionsAvatar = RequestOptions()
             requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
             requestOptionsAvatar.error(R.drawable.profile_avatar)
-            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
 
+            if(me.profile.avatar!=null) {
+                Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
+            }
+            else
+            {
+                Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(profile_pic)
+
+            }
             age_check_box.isChecked = me.profile.isAgePrivate
 
             Log.d("is Age Private",""+me.profile.isAgePrivate);
@@ -495,7 +505,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                     override fun onResponse(call: Call<UpdateProfileResp>?, response: Response<UpdateProfileResp>?) {
                         KProgressHUD!!.dismiss()
                         Toast.makeText(this@EditProfileActivity, "Profile Updated", Toast.LENGTH_SHORT).show()
-//                        finish()
+                        finish()
 
 
                     }

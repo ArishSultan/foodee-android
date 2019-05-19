@@ -36,6 +36,9 @@ public class FeedData {
     @SerializedName("comments")
     @Expose
     private List<Object> comments = null;
+    @SerializedName("user")
+    @Expose
+    private User user;
 
     public Integer getId() {
         return id;
@@ -117,4 +120,7 @@ public class FeedData {
         this.comments = comments;
     }
 
+    public User getUser() { return user; }
+
+    public void setUser(User user) { this.user = user; }
 }

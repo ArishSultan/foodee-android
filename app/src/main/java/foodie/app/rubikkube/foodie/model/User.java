@@ -32,6 +32,9 @@ private String createdAt;
 @SerializedName("updated_at")
 @Expose
 private String updatedAt;
+@SerializedName("profile")
+@Expose
+private Profile profile;
 
 public Integer getId() {
 return id;
@@ -93,4 +96,7 @@ public void setUpdatedAt(String updatedAt) {
 this.updatedAt = updatedAt;
 }
 
+public Profile getProfile() { return profile; }
+
+public void setProfile(Profile profile) { this.profile = profile; }
 }

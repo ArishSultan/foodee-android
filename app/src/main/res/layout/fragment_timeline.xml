@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:padding="5dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/p"
+            android:src="@drawable/profile_avatar"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             />
