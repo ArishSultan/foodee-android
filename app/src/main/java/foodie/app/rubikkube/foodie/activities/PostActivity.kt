@@ -58,7 +58,6 @@ class PostActivity : AppCompatActivity() {
 
             if (Hawk.contains("profileResponse")) {
                 val meResponse = Hawk.get("profileResponse", "") as MeResponse
-                Log.d("profile", meResponse.profile.avatar)
                 dataBindMe(meResponse)
             }
 
@@ -124,7 +123,7 @@ class PostActivity : AppCompatActivity() {
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
         if(me.profile.avatar!=null) {
-            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(user_avatar)
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.profile.userId + "/" + me.profile.avatar).into(user_avatar)
         }
         else
         {

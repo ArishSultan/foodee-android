@@ -33,9 +33,15 @@ public class FeedData {
     @SerializedName("comments_count")
     @Expose
     private Integer commentsCount;
+    @SerializedName("likes_count")
+    @Expose
+    private Integer likescount;
+    @SerializedName("is_liked")
+    @Expose
+    private Boolean isLiked;
     @SerializedName("comments")
     @Expose
-    private List<Object> comments = null;
+    private List<CommentData> comments = null;
     @SerializedName("user")
     @Expose
     private User user;
@@ -112,11 +118,20 @@ public class FeedData {
         this.commentsCount = commentsCount;
     }
 
-    public List<Object> getComments() {
+    public Integer getLikescount() { return likescount; }
+
+    public void setLikescount(Integer likescount) { this.likescount = likescount; }
+
+    public Boolean getIsLiked() {
+        return isLiked; }
+
+    public void setIsLiked(Boolean isLiked) { this.isLiked = isLiked; }
+
+    public List<CommentData> getComments() {
         return comments;
     }
 
-    public void setComments(List<Object> comments) {
+    public void setComments(List<CommentData> comments) {
         this.comments = comments;
     }
 

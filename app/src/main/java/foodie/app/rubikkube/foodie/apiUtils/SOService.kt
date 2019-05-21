@@ -56,5 +56,10 @@ interface SOService {
     @GET("/api/v1/posts")
     fun getTimelinePost(@HeaderMap header: Map<String, String>): Call<FeedResponse>
 
+    @POST("/api/v1/comments")
+    fun addNewComment(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<CommentResponse>
+
+    @POST("/api/v1/post/like/{postId}")
+    fun likeAndUnlike(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<LikeResponse>
 
 }
