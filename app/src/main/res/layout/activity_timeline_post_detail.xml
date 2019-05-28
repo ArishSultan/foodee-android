@@ -1,178 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.TimelinePostDetailActivity">
 
+    <RelativeLayout
+        android:id="@+id/lyt_toolbar"
+        android:layout_width="match_parent"
+        android:background="@color/black"
+        android:layout_height="60dp">
 
-    <android.support.v7.widget.CardView
+        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Post Details"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            />
+    </RelativeLayout>
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardCornerRadius="1dp"
-        app:cardElevation="4dp">
+        android:layout_below="@+id/lyt_toolbar"
+        android:fillViewport="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
-        <RelativeLayout
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_height="match_parent">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:src="#f0f0f0"
-                app:civ_border_color="#f0f0f0"
-                app:civ_border_width="1dp" />
-
-            <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                android:id="@+id/user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_toRightOf="@+id/profile_image"
-                android:text="Mitchell Simpson"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-
-                />
-
-            <foodie.app.rubikkube.foodie.fonts.robotoThinBold
-                android:id="@+id/time_ago"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/user_name"
-                android:layout_toRightOf="@+id/profile_image"
-                android:includeFontPadding="false"
-                android:text="8 min ago"
-                android:textColor="@color/black"
-                android:textSize="12sp" />
-
-            <foodie.app.rubikkube.foodie.fonts.robotoRegular
-                android:id="@+id/txt_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_image"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:textSize="14sp"
-                />
-
-            <RelativeLayout
-                android:id="@+id/slider_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txt_content">
-
-                <com.smarteist.autoimageslider.SliderLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="225dp"
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/imageSlider" />
-            </RelativeLayout>
-
-            <ImageView
-                android:id="@+id/chat_bubble_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/slider_layout"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/comment" />
-
-            <foodie.app.rubikkube.foodie.fonts.robotoRegular
-                android:id="@+id/comment_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/slider_layout"
-                android:layout_marginLeft="12dp"
-                android:layout_marginTop="28dp"
-                android:layout_toRightOf="@+id/chat_bubble_icon"
-                android:background="@drawable/rectangular_box"
-                android:paddingLeft="10dp"
-                android:paddingTop="2dp"
-                android:paddingRight="10dp"
-                android:textAlignment="center"
-                android:paddingBottom="2dp"
-                android:text="23" />
-
-            <ImageView
-                android:id="@+id/like_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/slider_layout"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_toRightOf="@+id/comment_txt"
-                android:src="@drawable/like" />
-
-            <foodie.app.rubikkube.foodie.fonts.robotoRegular
-                android:id="@+id/like_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/slider_layout"
-                android:layout_marginLeft="12dp"
-                android:layout_marginTop="28dp"
-                android:layout_toRightOf="@+id/like_icon"
-                android:background="@drawable/rectangular_box"
-                android:paddingLeft="10dp"
-                android:paddingTop="2dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="2dp"
-                android:textAlignment="center"
-                android:text="88K" />
-
-            <TextView
-                android:id="@+id/txt_view_more_comments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="View Comments"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_below="@id/like_icon"
-                android:textSize="16sp"
-                android:visibility="gone"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_post_comments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txt_view_more_comments"
-                />
+            android:layout_height="match_parent"
+            app:cardCornerRadius="1dp"
+            app:cardElevation="4dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:background="@drawable/rectangular_line"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="10dp">
+                android:layout_height="match_parent">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:src="#f0f0f0"
+                    app:civ_border_color="#f0f0f0"
+                    app:civ_border_width="1dp" />
 
-                <EditText
-                    android:id="@+id/edt_msg"
+                <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_toRightOf="@+id/profile_image"
+                    android:text="Mitchell Simpson"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+
+                    />
+
+                <foodie.app.rubikkube.foodie.fonts.robotoThinBold
+                    android:id="@+id/time_ago"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/user_name"
+                    android:layout_toRightOf="@+id/profile_image"
+                    android:includeFontPadding="false"
+                    android:text="8 min ago"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                    android:id="@+id/txt_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Write Comment..."
-                    android:layout_centerVertical="true"
-                    android:background="@null"
-                    android:paddingLeft="10dp" />
-
-                <Button
-                    android:id="@+id/btn_send_msg"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/ic_send"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
+                    android:layout_below="@+id/profile_image"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="14sp"
                     />
+
+                <RelativeLayout
+                    android:id="@+id/slider_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txt_content">
+
+                    <com.smarteist.autoimageslider.SliderLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="225dp"
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/imageSlider" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/chat_bubble_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@+id/slider_layout"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/comment" />
+
+                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                    android:id="@+id/comment_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/slider_layout"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_toRightOf="@+id/chat_bubble_icon"
+                    android:background="@drawable/rectangular_box"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingRight="10dp"
+                    android:textAlignment="center"
+                    android:paddingBottom="2dp"
+                    android:text="23" />
+
+                <ImageView
+                    android:id="@+id/like_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@+id/slider_layout"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@+id/comment_txt"
+                    android:src="@drawable/like" />
+
+                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                    android:id="@+id/like_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/slider_layout"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_toRightOf="@+id/like_icon"
+                    android:background="@drawable/rectangular_box"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="2dp"
+                    android:textAlignment="center"
+                    android:text="88K" />
+
+                <TextView
+                    android:id="@+id/txt_view_more_comments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View Comments"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_below="@id/like_icon"
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_margin="10dp"
+                    android:background="@android:color/darker_gray"
+                    android:alpha="0.5"
+                    android:layout_below="@id/txt_view_more_comments"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_post_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/divider"
+                    android:layout_marginBottom="50dp"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:background="@drawable/round_shape_chat"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="10dp">
+
+
+                    <EditText
+                        android:id="@+id/edt_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Write Comment..."
+                        android:layout_centerVertical="true"
+                        android:background="@null"
+                        android:paddingLeft="10dp" />
+
+                    <Button
+                        android:id="@+id/btn_send_msg"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@drawable/ic_send"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="10dp"
+                        />
+                </RelativeLayout>
             </RelativeLayout>
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
+        </android.support.v7.widget.CardView>
+
+    </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>

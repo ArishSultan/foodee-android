@@ -21,6 +21,8 @@ public class Constant {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
+    public static final String CHAT_SERVER_URL = "http://34.220.151.44:3000";
+
     public static String getTimeAgo(long time) {
         if (time < 1000000000000L) {
             time *= 1000;

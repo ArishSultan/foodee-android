@@ -19,6 +19,7 @@ import com.google.gson.Gson
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
+import foodie.app.rubikkube.foodie.AppClass
 
 
 import foodie.app.rubikkube.foodie.R
@@ -29,6 +30,7 @@ import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
+import io.socket.client.Socket
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
 import retrofit2.Call
@@ -44,9 +46,15 @@ class TimelineFragment : Fragment() {
     private var pd: KProgressHUD? = null
     private var rv_grid: RecyclerView? = null
     private var feedData:List<FeedData>?= ArrayList()
+    private var mSocket:Socket? = null
 
     private lateinit var timeLineAdapter: TimelineAdapter
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val app = getActivity()!!.getApplication() as AppClass
+        mSocket = app.getSocket()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 

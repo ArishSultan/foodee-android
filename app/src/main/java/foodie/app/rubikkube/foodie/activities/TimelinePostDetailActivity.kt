@@ -4,12 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.opengl.Visibility
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.WindowManager
+import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -20,15 +19,15 @@ import com.smarteist.autoimageslider.SliderLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.adapter.PostCommentAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.CommentResponse
-import foodie.app.rubikkube.foodie.model.FeedData
-import foodie.app.rubikkube.foodie.model.LikeResponse
-import foodie.app.rubikkube.foodie.model.MeResponse
+import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.activity_timeline_post_detail.*
+import okhttp3.MultipartBody
 import org.json.JSONObject
+import org.w3c.dom.Comment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,6 +40,13 @@ class TimelinePostDetailActivity : Activity() {
     var edt_msg: EditText? = null
     var btn_send_msg: Button? = null
     var timeLinePost: FeedData? = null
+    var listCommentData:List<CommentData>? = ArrayList()
+    var commentData:CommentData? = null
+    var me: MeResponse? = null
+    var user: User? = null
+    var profile: Profile? = null
+    private lateinit var postCommentAdapter: PostCommentAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline_post_detail)
@@ -56,23 +62,53 @@ class TimelinePostDetailActivity : Activity() {
             dataBindMe(timeLinePost!!)
         }
 
+        setUpRecyclerView()
+
+        Log.d("Post_id",""+timeLinePost!!.id)
+        //getAllComments(timeLinePost!!.id,this)
+
         like_icon!!.setOnClickListener {
             var imageFlat = timeLinePost?.isLiked
             if (imageFlat!!) {
                 likeAndUnlike(timeLinePost!!.id, this)
                 like_icon!!.setImageResource(R.drawable.like)
                 timeLinePost?.isLiked = false
+                timeLinePost!!.likescount -= 1
+                like_txt.text = (timeLinePost!!.likescount).toString()
             } else {
                 likeAndUnlike(timeLinePost!!.id, this)
                 like_icon!!.setImageResource(R.drawable.ic_liked)
                 timeLinePost?.isLiked = true
+                timeLinePost!!.likescount += 1
+                like_txt.text = (timeLinePost!!.likescount).toString()
             }
         }
 
         btn_send_msg!!.setOnClickListener {
             addComment(edt_msg!!.text.toString(), timeLinePost!!.id.toString(), this)
+            timeLinePost!!.commentsCount += 1
+            comment_txt.text = timeLinePost!!.commentsCount.toString()
             edt_msg!!.text.clear()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getAllComments(timeLinePost!!.id,this)
+    }
+
+    private fun setUpRecyclerView() {
+
+        postCommentAdapter = PostCommentAdapter(this,listCommentData)
+        rv_post_comments.setHasFixedSize(false)
+
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.orientation = LinearLayout.VERTICAL
+
+        rv_post_comments.layoutManager = layoutManager
+        rv_post_comments.adapter = postCommentAdapter
+
+        rv_post_comments.isNestedScrollingEnabled = true
 
     }
 
@@ -118,11 +154,11 @@ class TimelinePostDetailActivity : Activity() {
                 like_icon?.setImageResource(R.drawable.like)
             }
 
-            if (timeLinePost.commentsCount > 0) {
-                txt_view_more_comments!!.visibility = View.VISIBLE
-            } else {
-                txt_view_more_comments!!.visibility = View.GONE
-            }
+//            if (timeLinePost.commentsCount > 0) {
+//                txt_view_more_comments!!.visibility = View.VISIBLE
+//            } else {
+//                txt_view_more_comments!!.visibility = View.GONE
+//            }
         }
     }
 
@@ -146,6 +182,21 @@ class TimelinePostDetailActivity : Activity() {
                     Log.d("post_id", "" + response.body().postId)
                     Log.d("user_id", "" + response.body().userId)
                     Log.d("comment_id", "" + response.body().id)
+                    me = Hawk.get("profileResponse")
+                    commentData = CommentData()
+                    commentData!!.id = response.body().id
+                    commentData!!.content = response.body().content
+                    commentData!!.createdAt = "Just now"
+                    commentData!!.postId = response.body().postId.toInt()
+                    user = User()
+                    profile = Profile()
+                    profile!!.avatar = me!!.profile.avatar
+                    user!!.username = me!!.username
+                    user!!.id = me!!.id
+                    user!!.profile = profile
+                    commentData!!.user = user
+                    (listCommentData as java.util.ArrayList<CommentData>).add(commentData!!)
+                    postCommentAdapter.update(listCommentData)
                     Toasty.success(context, "Comment Posted Successfully").show()
                 }
             })
@@ -166,6 +217,27 @@ class TimelinePostDetailActivity : Activity() {
                 override fun onResponse(call: Call<LikeResponse>?, response: Response<LikeResponse>?) {
                     Log.d("status", response!!.body().status.toString())
                     Log.d("post_count", response!!.body().postCount.toString())
+                }
+            })
+        }
+
+        fun getAllComments(post_id:Int,context: Context) {
+            val mService = ApiUtils.getSOService() as SOService
+            val hm = java.util.HashMap<String, String>()
+            hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+            hm["X-Requested-With"] = "XMLHttpRequest"
+            mService.getComments(post_id,hm).enqueue(object : Callback<GetCommentResponse> {
+                override fun onFailure(call: Call<GetCommentResponse>?, t: Throwable?) {
+                    Toasty.error(context,"There is a Network Connectivity issue.").show()
+                }
+                override fun onResponse(call: Call<GetCommentResponse>?, response: Response<GetCommentResponse>?) {
+                    if (response!!.isSuccessful) {
+                        listCommentData = ArrayList()
+                        listCommentData = response!!.body().data
+                        postCommentAdapter.update(listCommentData)
+                    }else{
+                        Log.d("Response","Response Failed")
+                    }
                 }
             })
         }

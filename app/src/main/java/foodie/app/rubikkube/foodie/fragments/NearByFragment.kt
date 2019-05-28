@@ -64,8 +64,7 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
     private fun initializeListeners(view: View) {
 
         view.tv_search_all_food.setOnClickListener(this)
-        view.tv_search_20_contribution.setOnClickListener(this)
-        view.tv_search_30_contribution.setOnClickListener { this }
+        view.tv_search_25_contribution.setOnClickListener(this)
         view.tv_search_50_contribution.setOnClickListener(this)
         view.tv_search_treat_me.setOnClickListener(this)
     }
@@ -91,22 +90,20 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
             getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
 
             v.tv_search_all_food.setBackgroundResource(R.drawable.rounded_button)
-            v.tv_search_20_contribution.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_30_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_50_contribution.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_treat_me.setBackgroundResource(R.drawable.rectangular_line)
 
             v.tv_search_all_food.setTextColor(resources.getColor(R.color.white))
-            v.tv_search_20_contribution.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_30_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_25_contribution.setTextColor(resources.getColor(R.color.d_gray))
             v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.d_gray))
             v.tv_search_treat_me.setTextColor(resources.getColor(R.color.d_gray))
 
         }
 
-        v.tv_search_20_contribution.setOnClickListener {
+        v.tv_search_25_contribution.setOnClickListener {
             food = filterRestaurant.text.toString()
-            contribute = "20"
+            contribute = "25"
             if (food.equals("")) {
                 food = ""
             }
@@ -114,38 +111,14 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
             getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
 
             v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_20_contribution.setBackgroundResource(R.drawable.rounded_button)
-            v.tv_search_30_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_25_contribution.setBackgroundResource(R.drawable.rounded_button)
             v.tv_search_50_contribution.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_treat_me.setBackgroundResource(R.drawable.rectangular_line)
 
             v.tv_search_all_food.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_20_contribution.setTextColor(resources.getColor(R.color.white))
-            v.tv_search_30_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_25_contribution.setTextColor(resources.getColor(R.color.white))
             v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.d_gray))
             v.tv_search_treat_me.setTextColor(resources.getColor(R.color.d_gray))
-        }
-
-        v.tv_search_30_contribution.setOnClickListener{
-            food = filterRestaurant.text.toString()
-            contribute = "30"
-            if (food.equals("")) {
-                food = ""
-            }
-            getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
-
-            v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_20_contribution.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_30_contribution.setBackgroundResource(R.drawable.rounded_button)
-            v.tv_search_50_contribution.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_treat_me.setBackgroundResource(R.drawable.rectangular_line)
-
-            v.tv_search_all_food.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_20_contribution.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_30_contribution.setTextColor(resources.getColor(R.color.white))
-            v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_treat_me.setTextColor(resources.getColor(R.color.d_gray))
-
         }
 
         v.tv_search_50_contribution.setOnClickListener {
@@ -157,14 +130,12 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
             getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
 
             v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_20_contribution.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_30_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_50_contribution.setBackgroundResource(R.drawable.rounded_button)
             v.tv_search_treat_me.setBackgroundResource(R.drawable.rectangular_line)
 
             v.tv_search_all_food.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_20_contribution.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_30_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_25_contribution.setTextColor(resources.getColor(R.color.d_gray))
             v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.white))
             v.tv_search_treat_me.setTextColor(resources.getColor(R.color.d_gray))
 
@@ -178,14 +149,12 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
             }
             getSpecificFood(view!!.context, food, contribute, mGoogleMap!!)
             v.tv_search_all_food.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_20_contribution.setBackgroundResource(R.drawable.rectangular_line)
-            v.tv_search_30_contribution.setBackgroundResource(R.drawable.rectangular_line)
+            v.tv_search_25_contribution.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_50_contribution.setBackgroundResource(R.drawable.rectangular_line)
             v.tv_search_treat_me.setBackgroundResource(R.drawable.rounded_button)
 
             v.tv_search_all_food.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_20_contribution.setTextColor(resources.getColor(R.color.d_gray))
-            v.tv_search_30_contribution.setTextColor(resources.getColor(R.color.d_gray))
+            v.tv_search_25_contribution.setTextColor(resources.getColor(R.color.d_gray))
             v.tv_search_50_contribution.setTextColor(resources.getColor(R.color.d_gray))
             v.tv_search_treat_me.setTextColor(resources.getColor(R.color.white))
 

@@ -51,11 +51,11 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileAdapter: ProfileFoodAdapter
     private var pd: KProgressHUD? = null
-    private lateinit var intent: Intent
+    private  lateinit var intent: Intent
     private var contribution: String? = null
+
+    var builder: AlertDialog.Builder? = null
     var foodList: ArrayList<Food> = ArrayList()
-
-
 
     override fun onStart() {
         super.onStart()
@@ -65,30 +65,25 @@ class ProfileFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d("onResume", "prun")
-
         getMe(this!!.view!!)
-        getListOfFood()
-
+        getListOfFood(this!!.view!!)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("da","test")
-
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_profile, container, false) as View
         setUpRecyclerView(view)
+        builder = AlertDialog.Builder(activity)
         intent = Intent(activity, EditProfileActivity::class.java)
-
         pd = Utils.progressDialog(context!!, "", "Please wait").show()
-
         view.setting_icon.setOnClickListener {
             view.context.startActivity(intent)
         }
-
 //        getMe(view)
 //        getListOfFood()
         return view
@@ -101,29 +96,43 @@ class ProfileFragment : Fragment() {
         val layoutManager = LinearLayoutManager(activity, LinearLayout.HORIZONTAL, false)
         view.friend_like_food.layoutManager = layoutManager
         view.friend_like_food.adapter = profileAdapter
-
     }
 
     private fun getMe(view: View) {
         val mService = ApiUtils.getSOService() as SOService
-
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
-
 
         mService.me(hm).enqueue(object : Callback<MeResponse> {
             override fun onFailure(call: Call<MeResponse>?, t: Throwable?) {
                 pd?.dismiss()
                 Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
             }
-
             override fun onResponse(call: Call<MeResponse>?, response: Response<MeResponse>?) {
                 pd?.dismiss()
                 if (response!!.isSuccessful) {
                     intent.putExtra("meResponse", response.body())
                     if (response.body().profile == null || response.body().profile.message == null) {
-                        startActivity(intent)
+
+                        builder!!.setTitle("Info for new users")
+
+                        //Setting message manually and performing action on button click
+                        builder!!.setMessage("Please enter your profile details to perform further actions.\n Do you want to edit your Profile ?")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes") { dialog, id ->
+                                    dialog.dismiss()
+                                    startActivity(intent)
+                                }
+                                .setNegativeButton("No") { dialog, id ->
+                                    //  Action for 'NO' Button
+                                    dialog.cancel()
+                                }
+                        //Creating dialog box
+                        val alert = builder!!.create()
+                        //Setting the title manually
+                        alert.setTitle("Info for new users")
+                        alert.show()
                     } else {
                         view.findViewById<ScrollView>(R.id.main_view).visibility = View.VISIBLE
                     }
@@ -132,9 +141,7 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(activity, response.message(), Toast.LENGTH_SHORT).show()
                 }
             }
-
         })
-
     }
 
     private fun setValue(view: View, me: MeResponse) {
@@ -145,47 +152,66 @@ class ProfileFragment : Fragment() {
             view.view_shadow.visibility = View.VISIBLE
 
             val requestOptionsCover = RequestOptions()
-            requestOptionsCover.placeholder(R.drawable.cover_picture)
-            requestOptionsCover.error(R.drawable.cover_picture)
-            if(me.profile.cover!=null) {
+            requestOptionsCover.placeholder(R.drawable.cover_background_two)
+            requestOptionsCover.error(R.drawable.cover_background_two)
+            if (me.profile.cover != null) {
                 Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(view.profile_cover)
+            } else {
+                Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(R.drawable.cover_background_two).into(view.profile_cover)
             }
-            else
-            {
-                Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(R.drawable.cover_picture).into(view.profile_cover)
-            }
+
             val requestOptionsAvatar = RequestOptions()
             requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
             requestOptionsAvatar.error(R.drawable.profile_avatar)
-
-            if(me.profile.avatar!=null) {
+            if (me.profile.avatar != null) {
                 Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(view.profile_pic)
-            }
-            else
-            {
+            } else {
                 Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(view.profile_pic)
 
             }
             view.profile_name.text = me.username.toString()
             view.age.text = me.profile.age.toString()
-            view.city.text = me.profile.location
+            view.age_val.text = me.profile.ages.toString()
 
-            view.profile_desc.text = me.profile.message.toString()
+            if(me.profile.location == null)
+            {
+                view.city.visibility = View.GONE
+            }
+            else
+            {
+                view.city.visibility = View.VISIBLE
+                view.city.text = me.profile.location
+            }
 
+            if(me.profile.message == null)
+            {
+                view.profile_desc.visibility = View.GONE
+            }
+            else
+            {
+                view.profile_desc.visibility = View.VISIBLE
+                view.profile_desc.text = me.profile.message.toString()
+            }
+
+            if (me.profile.contribution == null) {
+                view.contribution.visibility = View.GONE
+                view.twenty_precent_crd.visibility = View.GONE
+            }
+            else {
+
+                view.contribution.visibility = View.VISIBLE
+                view.twenty_precent_crd.visibility = View.VISIBLE
+                view.contribution_txt.text = me.profile.contribution.toString()
+            }
 //            if (me.profile.interest.equals("Male")) {
 //                view.female_card.visibility = View.VISIBLE
 //            } else if (me.profile.interest.equals("Female")) {
 //                view.male_card.visibility = View.VISIBLE
 //            }
-
-            view.age_val.text = me.profile.ages.toString()
-            view.twenty_precent_crd.visibility = View.VISIBLE
-            view.contribution_txt.text = me.profile.contribution.toString()
-
         }
     }
 
-    private fun getListOfFood(){
+    private fun getListOfFood(view: View){
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
@@ -194,15 +220,19 @@ class ProfileFragment : Fragment() {
                     override fun onFailure(call: Call<ArrayList<Food>>?, t: Throwable?) {
                         Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
                     }
-
                     override fun onResponse(call: Call<ArrayList<Food>>?, response: Response<ArrayList<Food>>?) {
                         if(response!!.isSuccessful){
                             intent.putExtra("foodList", response.body())
-                            foodList = response!!.body()
-                            profileAdapter.update(foodList)
+                            if(response.body().size!=0) {
+                                view.food_like.visibility = View.VISIBLE
+                                foodList = response!!.body()
+                                profileAdapter.update(foodList)
+                            }
+                            else{
+                                view.food_like.visibility = View.GONE
+                            }
                         }
                     }
                 })
-
     }
 }// Required empty public constructor

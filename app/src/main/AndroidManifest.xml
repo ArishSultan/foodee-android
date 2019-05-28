@@ -21,7 +21,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true">
         <activity android:name=".activities.PostActivity" />
         <activity android:name=".activities.OtherUserProfileDetailActivity" />
         <activity android:name=".activities.SplashScreen">

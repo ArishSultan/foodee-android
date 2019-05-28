@@ -62,4 +62,7 @@ interface SOService {
     @POST("/api/v1/post/like/{postId}")
     fun likeAndUnlike(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<LikeResponse>
 
+    @GET("/api/v1/comments/{postId}")
+    fun getComments(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<GetCommentResponse>
+
 }

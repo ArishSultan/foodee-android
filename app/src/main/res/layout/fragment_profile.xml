@@ -26,7 +26,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:src="@drawable/cover_gradient"
             android:scaleType="centerCrop"
             />
 
@@ -35,7 +34,6 @@
             android:layout_width="130dp"
             android:layout_height="130dp"
             android:layout_centerInParent="true"
-            android:src="@drawable/cover_picture"
             android:scaleType="fitXY"
             />
 
@@ -66,7 +64,8 @@
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
             android:padding="10dp"
-            app:srcCompat="@drawable/ic_settings_black_24dp"
+            android:src="@drawable/edit"
+            android:tint="@color/white"
             />
         <RelativeLayout
             android:layout_toLeftOf="@+id/profile_pic"
@@ -323,6 +322,7 @@
             >
 
             <RelativeLayout
+                android:id="@+id/lyt_contribution"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@drawable/rounded_button"

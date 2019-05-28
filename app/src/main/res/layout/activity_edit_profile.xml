@@ -26,12 +26,8 @@
                     android:id="@+id/cover_edit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/foodie_background"
                     android:scaleType="centerCrop"
                     />
-
-
-
 
                 <ImageView
                     android:id="@+id/back_icon"
@@ -421,7 +417,7 @@
                     android:textColor="@color/darkBrown" />
 
                 <android.support.v7.widget.CardView
-                    android:id="@+id/twenty_precent_crd"
+                    android:id="@+id/twenty_five_precent_crd"
                     android:layout_below="@+id/contribution"
                     android:layout_width="50dp"
                     android:layout_height="40dp"
@@ -439,18 +435,18 @@
                         >
 
                         <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                            android:id="@+id/twenty_precent"
+                            android:id="@+id/twenty_five_precent"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:textSize="16sp"
                             android:textColor="@android:color/darker_gray"
                             android:gravity="center"
-                            android:text="20%"
+                            android:text="25%"
                             />
                     </RelativeLayout>
 
                 </android.support.v7.widget.CardView>
-                <android.support.v7.widget.CardView
+                <!--<android.support.v7.widget.CardView
                     android:id="@+id/thirty_percent_card"
                     android:layout_toRightOf="@+id/twenty_precent_crd"
                     android:layout_below="@+id/contribution"
@@ -478,10 +474,10 @@
                             />
                     </RelativeLayout>
 
-                </android.support.v7.widget.CardView>
+                </android.support.v7.widget.CardView>-->
                 <android.support.v7.widget.CardView
                     android:id="@+id/fifty_percent_card"
-                    android:layout_toRightOf="@+id/thirty_percent_card"
+                    android:layout_toRightOf="@+id/twenty_five_precent_crd"
                     android:layout_below="@+id/contribution"
                     android:layout_width="50dp"
                     android:layout_height="40dp"

@@ -66,8 +66,8 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         view_shadow.visibility = View.VISIBLE
 
         val requestOptionsCover = RequestOptions()
-        requestOptionsCover.placeholder(R.drawable.cover_picture)
-        requestOptionsCover.error(R.drawable.cover_picture)
+        requestOptionsCover.placeholder(R.drawable.cover_background_two)
+        requestOptionsCover.error(R.drawable.cover_background_two)
         Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.cover).into(profile_cover)
 
         val requestOptionsAvatar = RequestOptions()
@@ -107,8 +107,8 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         view_shadow.visibility = View.VISIBLE
 
         val requestOptionsCover = RequestOptions()
-        requestOptionsCover.placeholder(R.drawable.cover_picture)
-        requestOptionsCover.error(R.drawable.cover_picture)
+        requestOptionsCover.placeholder(R.drawable.cover_background_two)
+        requestOptionsCover.error(R.drawable.cover_background_two)
         Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(profile_cover)
 
         val requestOptionsAvatar = RequestOptions()

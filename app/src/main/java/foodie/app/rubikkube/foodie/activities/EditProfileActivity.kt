@@ -121,56 +121,37 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             female_txt.setTextColor(resources.getColor(R.color.d_gray))
             male_txt.setTextColor(resources.getColor(R.color.white))
         }
-        if (v?.id == R.id.twenty_precent) {
+        if (v?.id == R.id.twenty_five_precent) {
 
 
-            contribution = "20%"
-            twenty_precent.setBackgroundResource(R.drawable.rounded_button)
-            thirty_percent.setBackgroundResource(R.drawable.rectangular_line)
+            contribution = "25%"
+            twenty_five_precent.setBackgroundResource(R.drawable.rounded_button)
             fifty_percent.setBackgroundResource(R.drawable.rectangular_line)
             treat_me.setBackgroundResource(R.drawable.rectangular_line)
 
-        twenty_precent.setTextColor(resources.getColor(R.color.white))
-        thirty_percent.setTextColor(resources.getColor(R.color.d_gray))
-        fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
-        treat_me.setTextColor(resources.getColor(R.color.d_gray))
-        }
-        if (v?.id == R.id.thirty_percent) {
-            contribution = "30%"
-
-            twenty_precent.setBackgroundResource(R.drawable.rectangular_line)
-            thirty_percent.setBackgroundResource(R.drawable.rounded_button)
-            fifty_percent.setBackgroundResource(R.drawable.rectangular_line)
-            treat_me.setBackgroundResource(R.drawable.rectangular_line)
-
-            twenty_precent.setTextColor(resources.getColor(R.color.d_gray))
-            thirty_percent.setTextColor(resources.getColor(R.color.white))
+            twenty_five_precent.setTextColor(resources.getColor(R.color.white))
             fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
             treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
+
         if (v?.id == R.id.fifty_percent) {
             contribution = "50%"
-            twenty_precent.setBackgroundResource(R.drawable.rectangular_line)
-            thirty_percent.setBackgroundResource(R.drawable.rectangular_line)
+            twenty_five_precent.setBackgroundResource(R.drawable.rectangular_line)
             fifty_percent.setBackgroundResource(R.drawable.rounded_button)
             treat_me.setBackgroundResource(R.drawable.rectangular_line)
 
-            twenty_precent.setTextColor(resources.getColor(R.color.d_gray))
-            thirty_percent.setTextColor(resources.getColor(R.color.d_gray))
+            twenty_five_precent.setTextColor(resources.getColor(R.color.d_gray))
             fifty_percent.setTextColor(resources.getColor(R.color.white))
             treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
         if (v?.id == R.id.treat_me) {
             contribution = "Treatme"
 
-            twenty_precent.setBackgroundResource(R.drawable.rectangular_line)
-            thirty_percent.setBackgroundResource(R.drawable.rectangular_line)
+            twenty_five_precent.setBackgroundResource(R.drawable.rectangular_line)
             fifty_percent.setBackgroundResource(R.drawable.rectangular_line)
             treat_me.setBackgroundResource(R.drawable.rounded_button)
 
-            twenty_precent.setTextColor(resources.getColor(R.color.d_gray
-            ))
-            thirty_percent.setTextColor(resources.getColor(R.color.d_gray))
+            twenty_five_precent.setTextColor(resources.getColor(R.color.d_gray))
             fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
             treat_me.setTextColor(resources.getColor(R.color.white))
         }
@@ -208,7 +189,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         val intent = getIntent();
         if (intent != null) {
             meResponse = intent.getSerializableExtra("meResponse") as MeResponse
-            if(meResponse.profile.age != null){
+            if(meResponse.profile.age != null ){
                 foodList = intent.getSerializableExtra("foodList") as ArrayList<Food>
             }
             setValue(meResponse)
@@ -218,7 +199,8 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
         age_check_box.setOnCheckedChangeListener { buttonView, isChecked ->
 
-            if(isChecked){
+            if(isChecked)
+            {
                 isPublic = 1
             }
             else
@@ -264,8 +246,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         location_dropdown.setOnClickListener(this)
         female_card_bg.setOnClickListener(this)
         male_card_bg.setOnClickListener(this)
-        twenty_precent.setOnClickListener(this)
-        thirty_percent.setOnClickListener(this)
+        twenty_five_precent.setOnClickListener(this)
         fifty_percent.setOnClickListener(this)
         treat_me.setOnClickListener(this)
         food_add_btn.setOnClickListener(this)
@@ -293,14 +274,14 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             user_name.setText(me.username.toString())
         } else {
             val requestOptionsCover = RequestOptions()
-            requestOptionsCover.placeholder(R.drawable.cover_picture)
-            requestOptionsCover.error(R.drawable.cover_picture)
+            requestOptionsCover.placeholder(R.drawable.cover_background_two)
+            requestOptionsCover.error(R.drawable.cover_background_two)
             if(me.profile.cover!=null) {
                 Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(cover_edit)
             }
             else
             {
-                Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(R.drawable.cover_picture).into(cover_edit)
+                Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(R.drawable.cover_background_two).into(cover_edit)
             }
             val requestOptionsAvatar = RequestOptions()
             requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
@@ -338,12 +319,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             select_age.text = if(me.profile.location == null) "" else me.profile.location
             contribution = me.profile.contribution.toString()
 
-            if (me.profile.contribution.equals("20%")) {
-                twenty_precent.setBackgroundResource(R.drawable.rounded_button)
-                twenty_precent.setTextColor(resources.getColor(R.color.white))
-            } else if (me.profile.contribution.equals("30%")) {
-                thirty_percent.setBackgroundResource(R.drawable.rounded_button)
-                thirty_percent.setTextColor(resources.getColor(R.color.white))
+            if (me.profile.contribution.equals("25%")) {
+                twenty_five_precent.setBackgroundResource(R.drawable.rounded_button)
+                twenty_five_precent.setTextColor(resources.getColor(R.color.white))
             } else if (me.profile.contribution.equals("50%")) {
                 fifty_percent.setBackgroundResource(R.drawable.rounded_button)
                 fifty_percent.setTextColor(resources.getColor(R.color.white))
