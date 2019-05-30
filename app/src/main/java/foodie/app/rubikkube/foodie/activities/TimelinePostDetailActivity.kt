@@ -154,6 +154,16 @@ class TimelinePostDetailActivity : Activity() {
                 like_icon?.setImageResource(R.drawable.like)
             }
 
+            if(timeLinePost.tags.size > 0){
+                txt_tagged_user.visibility = View.VISIBLE
+                txt_is_with.visibility = View.VISIBLE
+                txt_tagged_user.text = timeLinePost.tags.get(0).username
+            }
+            else{
+                txt_tagged_user.visibility = View.GONE
+                txt_is_with.visibility = View.GONE
+            }
+
 //            if (timeLinePost.commentsCount > 0) {
 //                txt_view_more_comments!!.visibility = View.VISIBLE
 //            } else {

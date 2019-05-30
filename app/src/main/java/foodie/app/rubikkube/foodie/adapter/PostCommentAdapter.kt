@@ -1,6 +1,7 @@
 package foodie.app.rubikkube.foodie.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.OtherUserProfileDetailActivity
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.CommentData
 import foodie.app.rubikkube.foodie.model.FeedData
@@ -49,6 +51,18 @@ class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)
         Log.d("UserName",listCommentData!!.get(position).user.username)
         Log.d("timeAgo",listCommentData!!.get(position).createdAt)
         Log.d("Content",listCommentData!!.get(position).content)
+
+        holder.profile_image.setOnClickListener {
+            var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+            intent.putExtra("id", listCommentData!!.get(position).user.id.toString())
+            mContext.startActivity(intent)
+        }
+
+        holder.user_name.setOnClickListener {
+            var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+            intent.putExtra("id", listCommentData!!.get(position).user.id.toString())
+            mContext.startActivity(intent)
+        }
     }
 
     inner class PostCommentHolder(val view: View) : RecyclerView.ViewHolder(view) {

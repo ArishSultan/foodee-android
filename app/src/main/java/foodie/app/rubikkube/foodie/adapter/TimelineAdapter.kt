@@ -19,6 +19,7 @@ import com.smarteist.autoimageslider.SliderLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.OtherUserProfileDetailActivity
 import foodie.app.rubikkube.foodie.activities.TimelinePostDetailActivity
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.*
@@ -96,6 +97,16 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
             holder.txt_view_more_comments.visibility = View.GONE
         }
 
+        if(listFeedData!!.get(position).tags.size > 0){
+            holder.txt_tagged_user.visibility = View.VISIBLE
+            holder.txt_is_with.visibility = View.VISIBLE
+            holder.txt_tagged_user.text = listFeedData!!.get(position).tags.get(0).username
+        }
+        else{
+            holder.txt_tagged_user.visibility = View.GONE
+            holder.txt_is_with.visibility = View.GONE
+        }
+
         if(listFeedData!!.get(position).commentsCount>0){
             holder.lyt_comment.visibility = View.VISIBLE
             val requestCommentOptionsAvatar = RequestOptions()
@@ -153,6 +164,18 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
             Hawk.put("DetailPost",listFeedData!!.get(position))
             mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
         }
+
+        holder.txt_tagged_user.setOnClickListener {
+            var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+            intent.putExtra("id", listFeedData!!.get(position).tags.get(0).pivot.userId.toString())
+            mContext.startActivity(intent)
+        }
+
+        holder.comment_profile_image.setOnClickListener {
+            var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+            intent.putExtra("id", listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).user.id.toString())
+            mContext.startActivity(intent)
+        }
     }
 
     inner class TimelineHolder(val view: View): RecyclerView.ViewHolder(view) {
@@ -173,6 +196,8 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
         val comment_time_ago:TextView = view.findViewById(R.id.comment_time_ago)
         val txt_comment_content:TextView = view.findViewById(R.id.txt_comment_content)
         val lyt_comment:RelativeLayout = view.findViewById(R.id.lyt_comment)
+        val txt_tagged_user:TextView = view.findViewById(R.id.txt_tagged_user)
+        val txt_is_with: TextView = view.findViewById(R.id.txt_is_with)
     }
 
     fun update(list : List<FeedData>?){

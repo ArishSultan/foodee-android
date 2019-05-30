@@ -17,8 +17,8 @@ interface SOService {
     @POST("/api/auth/login")
     fun login(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
 
-    @GET("/api/v1/me")
-    fun me(@HeaderMap header: Map<String, String>): Call<MeResponse>
+    @GET("/api/v1/profile/{userId}")
+    fun getProfile(@Path("userId") userId:String,@HeaderMap header: Map<String, String>): Call<MeResponse>
 
     @Multipart
     @POST("/api/v1/update/photo")
@@ -51,7 +51,7 @@ interface SOService {
 
     @Multipart
     @POST("/api/v1/posts")
-    fun addNewPost(@HeaderMap header: Map<String, String>,@Part photos: List<MultipartBody.Part>?, @Part("content") content: RequestBody, @Query("Lat")latitude:Double,@Query("lng")longitude:Double): Call<AddNewPostResponse>
+    fun addNewPost(@HeaderMap header: Map<String, String>,@Part photos: List<MultipartBody.Part>?, @Part("content") content: RequestBody,@Part("tags[]") tags: ArrayList<Int>? , @Query("Lat")latitude:Double,@Query("lng")longitude:Double): Call<AddNewPostResponse>
 
     @GET("/api/v1/posts")
     fun getTimelinePost(@HeaderMap header: Map<String, String>): Call<FeedResponse>
@@ -64,5 +64,11 @@ interface SOService {
 
     @GET("/api/v1/comments/{postId}")
     fun getComments(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<GetCommentResponse>
+
+    @GET("/api/v1/find/peoples")
+    fun searchUser(@HeaderMap header: Map<String, String>, @Query("username")food: String):Call<ArrayList<User>>
+
+    @GET("/api/v1/timeline/{userId}")
+    fun getMyPost(@Path("userId") userId:String,@HeaderMap header: Map<String, String>): Call<FeedResponse>
 
 }

@@ -72,24 +72,94 @@
     <EditText
         android:id="@+id/txt_caption"
         android:layout_below="@+id/user_avatar"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/rectangular_round"
+        android:textSize="16sp"
+        android:hint="Create your Foodee post!"
+        android:layout_centerVertical="true"
+        android:paddingLeft="20dp"
+        android:gravity="center_vertical"/>
+
+    <foodie.app.rubikkube.foodie.fonts.robotoLight
+        android:id="@+id/tag_user_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:textSize="18sp"
-        android:background="@null"
-        android:hint="what's on your mind?" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:layout_below="@id/txt_caption"
+        android:text="Tag User : "/>
+
+    <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
+        android:id="@+id/txt_tagged_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="1dp"
+        android:visibility="gone"
+        android:layout_toRightOf="@id/tag_user_heading"
+        android:layout_below="@id/txt_caption"
+        android:text="Faizan"/>
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_grid"
-        android:layout_below="@id/txt_caption"
+        android:layout_below="@id/tag_user_heading"
         android:visibility="visible"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
     </android.support.v7.widget.RecyclerView>
 
+        <LinearLayout
+            android:id="@+id/search_view"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rectangular_round"
+            android:layout_below="@id/rv_grid">
+
+            <EditText
+                android:id="@+id/edt_search_user"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:hint="Search User"
+                android:textColor="#404852"
+                android:padding="10dp"
+                android:textColorHint="#a9a3a3"
+                android:singleLine="true"
+                android:textSize="14sp"/>
+
+            <requestFocus android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/img_search"
+                android:layout_width="0dp"
+                android:layout_weight=".15"
+                android:layout_marginStart="6dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:tint="#707070"
+                android:src="@drawable/search_icon_nd" />
+        </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_tag_user"
+        android:layout_below="@id/search_view"
+        android:visibility="visible"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
 
 
 </RelativeLayout>

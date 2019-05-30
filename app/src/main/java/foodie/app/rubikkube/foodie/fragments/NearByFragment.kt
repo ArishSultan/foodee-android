@@ -229,6 +229,7 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
                 if (!marker.title.equals("Me")) {
                     var intent = Intent(activity, OtherUserProfileDetailActivity::class.java)
                     intent.putExtra("id", marker.title)
+                    Hawk.put("SendingFromNearBy","SendingFromNearBy")
                     startActivity(intent)
                 }
 

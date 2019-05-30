@@ -1,7 +1,6 @@
 package foodie.app.rubikkube.foodie.activities
 
 import android.app.Activity
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -25,13 +24,13 @@ import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
 import kotlinx.android.synthetic.main.activity_post.*
 import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
+import foodie.app.rubikkube.foodie.adapter.SearchUserAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.AddNewPostResponse
-import foodie.app.rubikkube.foodie.model.FeedResponse
 import foodie.app.rubikkube.foodie.model.MeResponse
+import foodie.app.rubikkube.foodie.model.User
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
-import kotlinx.android.synthetic.main.activity_other_user_profile_detail.*
 import net.alhazmy13.mediapicker.Image.ImagePicker
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -46,16 +45,22 @@ class PostActivity : AppCompatActivity() {
     private var imageList: ArrayList<String>? = null
     private var multimediaGridAdapter: MultimediaAdapter? = null
     private var rv_grid: RecyclerView? = null
+    private var rv_tag_user: RecyclerView?= null
     private var post_btn:TextView? = null
     private var pd: KProgressHUD? = null
     private var file: File? = null
     private var postImagesParts: List<MultipartBody.Part>? = null
     private var postBody:RequestBody? = null
+    private var searchUserList:ArrayList<User> = ArrayList()
+    private var userModel: User? = null
+    var user: String = ""
+    private var userid: ArrayList<Int>? = null
+    private lateinit var searchUserAdapter: SearchUserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
-
+        pd = Utils.progressDialog(this, "", "Please wait")
             if (Hawk.contains("profileResponse")) {
                 val meResponse = Hawk.get("profileResponse", "") as MeResponse
                 dataBindMe(meResponse)
@@ -66,11 +71,42 @@ class PostActivity : AppCompatActivity() {
         }
 
         rv_grid = findViewById(R.id.rv_grid)
+        rv_tag_user = findViewById(R.id.rv_tag_user)
         setMultimediaGridAdapter()
+        setupRecyclerView()
         post_btn = findViewById(R.id.post_btn)
         post_btn!!.setOnClickListener {
-            addPost(txt_caption.text.toString(),this)
+            addPost(txt_caption.text.toString(),userid,this)
         }
+
+        img_search!!.setOnClickListener {
+            user = edt_search_user.text.toString()
+            if(user.equals("") == false){
+                getSearchUserList(this, user)
+            }
+        }
+    }
+
+    private fun setupRecyclerView(){
+        searchUserList = ArrayList()
+        searchUserAdapter = SearchUserAdapter(this, searchUserList)
+        rv_tag_user!!.setItemAnimator(DefaultItemAnimator())
+        rv_tag_user!!.setAdapter(searchUserAdapter)
+        rv_tag_user!!.setLayoutManager(LinearLayoutManager(this, LinearLayout.VERTICAL, false))
+        rv_tag_user!!.addOnItemTouchListener(RecyclerTouchListener(this@PostActivity, rv_tag_user!!, object : RecyclerTouchListener.ClickListener {
+            override fun onClick(view: View, position: Int) {
+                userModel = User()
+                userid = ArrayList()
+                userModel = searchUserAdapter.getUser(position)
+                Log.d("User Model", userModel!!.username)
+                userid!!.add(userModel!!.id)
+                txt_tagged_user.visibility = View.VISIBLE
+                tag_user_heading.visibility = View.VISIBLE
+                txt_tagged_user.text = userModel!!.username
+            }
+            override fun onLongClick(view: View?, position: Int) {
+            }
+        }))
     }
 
     private fun setMultimediaGridAdapter() {
@@ -132,7 +168,7 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
-    private fun addPost(content:String,context: Context) {
+    private fun addPost(content:String,tag_id:ArrayList<Int>?,context: Context) {
         pd = Utils.progressDialog(this@PostActivity, "", "Post Uploading...")
         pd!!.show()
 
@@ -157,11 +193,10 @@ class PostActivity : AppCompatActivity() {
         }
             mService.addNewPost(hm, postImagesParts,
                     RequestBody.create(MediaType.parse("text/plain"),
-                    content),Prefs.getDouble("currentLat", 0.0),Prefs.getDouble("currentLng", 0.0)).enqueue(object : Callback<AddNewPostResponse> {
+                    content),tag_id,Prefs.getDouble("currentLat", 0.0),Prefs.getDouble("currentLng", 0.0)).enqueue(object : Callback<AddNewPostResponse> {
 
                 override fun onFailure(call: Call<AddNewPostResponse>?, t: Throwable?) {
                     pd!!.dismiss()
-
                 }
 
                 override fun onResponse(call: Call<AddNewPostResponse>?, response: Response<AddNewPostResponse>?) {
@@ -181,6 +216,34 @@ class PostActivity : AppCompatActivity() {
             })
 
     }
+
+    private fun getSearchUserList(context: Context, username: String) {
+        pd!!.show()
+
+        val mService = ApiUtils.getSOService() as SOService
+
+        val hm = java.util.HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["X-Requested-With"] = "XMLHttpRequest"
+
+        mService.searchUser(hm, username)
+                .enqueue(object : Callback<ArrayList<User>> {
+
+                    override fun onFailure(call: Call<ArrayList<User>>?, t: Throwable?) {
+                        pd!!.dismiss()
+                    }
+
+                    override fun onResponse(call: Call<ArrayList<User>>?, response: Response<ArrayList<User>>?) {
+                        Log.d("Search Users", "" + response?.body())
+                        pd!!.dismiss()
+                        searchUserList = response!!.body()
+                        searchUserAdapter.update(searchUserList)
+                        Log.d("Search Users Model", "" + searchUserList)
+                    }
+                })
+
+    }
+
 
 
     class RecyclerTouchListener(context: Context, recyclerView: RecyclerView, private val clickListener: ClickListener?) : RecyclerView.OnItemTouchListener {

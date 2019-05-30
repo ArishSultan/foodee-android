@@ -17,6 +17,7 @@ import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.Gson
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
 
@@ -27,13 +28,12 @@ import foodie.app.rubikkube.foodie.activities.Signup
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.Food
-import foodie.app.rubikkube.foodie.model.LoginSignUpResponse
-import foodie.app.rubikkube.foodie.model.MeResponse
+import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
+import kotlinx.android.synthetic.main.fragment_timeline.view.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -51,9 +51,12 @@ class ProfileFragment : Fragment() {
 
     private lateinit var profileAdapter: ProfileFoodAdapter
     private var pd: KProgressHUD? = null
+    private var pd1: KProgressHUD? = null
     private  lateinit var intent: Intent
     private var contribution: String? = null
 
+    private lateinit var timeLineAdapter: TimelineAdapter
+    private var feedData:List<FeedData>?= ArrayList()
     var builder: AlertDialog.Builder? = null
     var foodList: ArrayList<Food> = ArrayList()
 
@@ -67,6 +70,7 @@ class ProfileFragment : Fragment() {
         Log.d("onResume", "prun")
         getMe(this!!.view!!)
         getListOfFood(this!!.view!!)
+        getMyPost()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,7 +84,6 @@ class ProfileFragment : Fragment() {
         setUpRecyclerView(view)
         builder = AlertDialog.Builder(activity)
         intent = Intent(activity, EditProfileActivity::class.java)
-        pd = Utils.progressDialog(context!!, "", "Please wait").show()
         view.setting_icon.setOnClickListener {
             view.context.startActivity(intent)
         }
@@ -96,15 +99,22 @@ class ProfileFragment : Fragment() {
         val layoutManager = LinearLayoutManager(activity, LinearLayout.HORIZONTAL, false)
         view.friend_like_food.layoutManager = layoutManager
         view.friend_like_food.adapter = profileAdapter
+
+        timeLineAdapter = TimelineAdapter(context!!,feedData)
+        view.rv_my_posts.setHasFixedSize(false)
+        val layoutManager1 = LinearLayoutManager(activity)
+        layoutManager.orientation = LinearLayout.VERTICAL
+        view.rv_my_posts.layoutManager = layoutManager1
+        view.rv_my_posts.adapter = timeLineAdapter
     }
 
     private fun getMe(view: View) {
         val mService = ApiUtils.getSOService() as SOService
         val hm = HashMap<String, String>()
+        pd = Utils.progressDialog(context!!, "", "Please wait").show()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
-
-        mService.me(hm).enqueue(object : Callback<MeResponse> {
+        mService.getProfile(Prefs.getString(Constant.USERID,""),hm).enqueue(object : Callback<MeResponse> {
             override fun onFailure(call: Call<MeResponse>?, t: Throwable?) {
                 pd?.dismiss()
                 Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
@@ -211,28 +221,53 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun getMyPost(){
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        val mService = ApiUtils.getSOService() as SOService
+        pd1 = Utils.progressDialog(context!!, "", "Get my post").show()
+        mService.getMyPost(Prefs.getString(Constant.USERID,""),hm)
+            .enqueue(object : Callback<FeedResponse> {
+                override fun onFailure(call: Call<FeedResponse>?, t: Throwable?) {
+                    pd1?.dismiss()
+                    Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onResponse(call: Call<FeedResponse>?, response: Response<FeedResponse>?) {
+                    pd1?.dismiss()
+                    if(response!!.isSuccessful){
+                        Log.d("Response", Gson().toJson(response))
+                        feedData = response.body().data
+                        //intent.putExtra("foodList", response.body())
+                        //foodList = response!!.body()
+                        timeLineAdapter.update(feedData)
+                    }
+                }
+            })
+    }
+
     private fun getListOfFood(view: View){
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         mService.getMyFoodList(hm)
-                .enqueue(object : Callback<ArrayList<Food>>{
-                    override fun onFailure(call: Call<ArrayList<Food>>?, t: Throwable?) {
-                        Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
-                    }
-                    override fun onResponse(call: Call<ArrayList<Food>>?, response: Response<ArrayList<Food>>?) {
-                        if(response!!.isSuccessful){
-                            intent.putExtra("foodList", response.body())
-                            if(response.body().size!=0) {
-                                view.food_like.visibility = View.VISIBLE
-                                foodList = response!!.body()
-                                profileAdapter.update(foodList)
-                            }
-                            else{
-                                view.food_like.visibility = View.GONE
-                            }
+            .enqueue(object : Callback<ArrayList<Food>>{
+                override fun onFailure(call: Call<ArrayList<Food>>?, t: Throwable?) {
+                    Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+                }
+                override fun onResponse(call: Call<ArrayList<Food>>?, response: Response<ArrayList<Food>>?) {
+                    if(response!!.isSuccessful){
+                        intent.putExtra("foodList", response.body())
+                        if(response.body().size!=0) {
+                            view.food_like.visibility = View.VISIBLE
+                            foodList = response!!.body()
+                            profileAdapter.update(foodList)
+                        }
+                        else{
+                            view.food_like.visibility = View.GONE
                         }
                     }
-                })
+                }
+            })
     }
 }// Required empty public constructor

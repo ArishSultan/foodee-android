@@ -41,7 +41,7 @@
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:background="@drawable/rectangular_round"
-                android:text="what's on your mind?"
+            android:text="Create your Foodee post!"
             android:textSize="16sp"
             android:paddingLeft="20dp"
             android:layout_marginRight="5dp"

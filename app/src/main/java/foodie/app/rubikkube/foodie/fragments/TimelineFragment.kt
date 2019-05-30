@@ -130,7 +130,7 @@ class TimelineFragment : Fragment() {
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
 
-        mService.me(hm).enqueue(object : Callback<MeResponse> {
+        mService.getProfile(Prefs.getString(Constant.USERID,""),hm).enqueue(object : Callback<MeResponse> {
             override fun onFailure(call: Call<MeResponse>?, t: Throwable?) {
                 Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
             }

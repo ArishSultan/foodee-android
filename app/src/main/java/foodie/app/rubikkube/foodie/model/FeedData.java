@@ -45,6 +45,9 @@ public class FeedData {
     @SerializedName("user")
     @Expose
     private User user;
+    @SerializedName("tags")
+    @Expose
+    private List<Tags> tags = null;
 
     public Integer getId() {
         return id;
@@ -138,4 +141,8 @@ public class FeedData {
     public User getUser() { return user; }
 
     public void setUser(User user) { this.user = user; }
+
+    public List<Tags> getTags() { return tags; }
+
+    public void setTags(List<Tags> tags) { this.tags = tags; }
 }
