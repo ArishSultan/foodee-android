@@ -128,7 +128,7 @@ class PostActivity : AppCompatActivity() {
                             .directory(ImagePicker.Directory.DEFAULT)
                             .extension(ImagePicker.Extension.PNG)
                             .scale(600, 600)
-                            .allowMultipleImages(false)
+                            .allowMultipleImages(true)
                             .enableDebuggingMode(true)
                             .build()
                 }
@@ -144,9 +144,11 @@ class PostActivity : AppCompatActivity() {
 
 
         if (requestCode == ImagePicker.IMAGE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val mPaths = data!!.getStringArrayListExtra(ImagePicker.EXTRA_IMAGE_PATH)
-            Log.d("LOG",""+mPaths.get(0))
-            imageList!!.add(0,mPaths.get(0))
+            val mPaths:ArrayList<String> = data!!.getStringArrayListExtra(ImagePicker.EXTRA_IMAGE_PATH)
+            Log.d("LOG",""+mPaths)
+            //imageList!!.add(0,mPaths.get(0))
+            imageList!!.addAll(0,mPaths)
+            //imageList!!.addAll(mPaths)
             multimediaGridAdapter!!.notifyDataSetChanged()
             // Toast.makeText(DashboardActivity.this,"this is called here",Toast.LENGTH_LONG).show();
         }

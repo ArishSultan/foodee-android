@@ -13,13 +13,24 @@
         android:background="@color/black"
         android:layout_height="60dp">
 
+        <ImageView
+            android:id="@+id/back_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            app:srcCompat="@drawable/ic_keyboard_backspace_black_24dp"
+            android:tint="@color/white"
+            />
+
         <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Post Details"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
+            android:layout_toEndOf="@id/back_icon"
             android:textColor="@color/white"
             android:textSize="18sp"
             />
@@ -71,11 +82,22 @@
                     android:visibility="gone"
                     android:textSize="14sp" />
 
+                <ImageView
+                    android:id="@+id/img_is_with"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/tag_user"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:visibility="gone"
+                    android:layout_toEndOf="@id/user_name"
+                    android:layout_marginTop="8dp"/>
+
                 <foodie.app.rubikkube.foodie.fonts.robotoRegular
                     android:id="@+id/txt_tagged_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/txt_is_with"
+                    android:layout_toEndOf="@id/img_is_with"
                     android:layout_marginEnd="10dp"
                     android:layout_marginTop="13dp"
                     android:text="Amaan Rajput"
@@ -95,7 +117,17 @@
                     android:textColor="@color/black"
                     android:textSize="12sp" />
 
-                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                <!--<foodie.app.rubikkube.foodie.fonts.robotoRegular-->
+                    <!--android:id="@+id/txt_content"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_below="@+id/profile_image"-->
+                    <!--android:layout_marginStart="10dp"-->
+                    <!--android:layout_marginEnd="10dp"-->
+                    <!--android:textSize="14sp"-->
+                    <!--/>-->
+
+                <com.borjabravo.readmoretextview.ReadMoreTextView
                     android:id="@+id/txt_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -103,7 +135,9 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:textSize="14sp"
-                    />
+                    app:trimLength="250"
+                    app:trimMode="trimModeLength"
+                    app:colorClickableText="@color/lightBrown"/>
 
                 <RelativeLayout
                     android:id="@+id/slider_layout"

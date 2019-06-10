@@ -57,6 +57,8 @@ class TimelinePostDetailActivity : Activity() {
         edt_msg = findViewById(R.id.edt_msg)
         btn_send_msg = findViewById(R.id.btn_send_msg)
 
+        Glide.with(this).load(R.drawable.ic_keyboard_backspace_black_24dp).into(back_icon)
+
         if (Hawk.contains("DetailPost")) {
             timeLinePost = Hawk.get("DetailPost", "") as FeedData
             dataBindMe(timeLinePost!!)
@@ -66,6 +68,10 @@ class TimelinePostDetailActivity : Activity() {
 
         Log.d("Post_id",""+timeLinePost!!.id)
         //getAllComments(timeLinePost!!.id,this)
+
+        back_icon!!.setOnClickListener {
+            finish()
+        }
 
         like_icon!!.setOnClickListener {
             var imageFlat = timeLinePost?.isLiked
@@ -156,12 +162,14 @@ class TimelinePostDetailActivity : Activity() {
 
             if(timeLinePost.tags.size > 0){
                 txt_tagged_user.visibility = View.VISIBLE
-                txt_is_with.visibility = View.VISIBLE
+                //txt_is_with.visibility = View.VISIBLE
+                img_is_with.visibility = View.VISIBLE
                 txt_tagged_user.text = timeLinePost.tags.get(0).username
             }
             else{
                 txt_tagged_user.visibility = View.GONE
-                txt_is_with.visibility = View.GONE
+                //txt_is_with.visibility = View.GONE
+                img_is_with.visibility = View.GONE
             }
 
 //            if (timeLinePost.commentsCount > 0) {

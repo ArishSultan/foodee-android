@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
+import android.text.SpannableString
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -90,21 +94,23 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
             holder.like_icon.setImageResource(R.drawable.like)
         }
 
-        if(listFeedData!!.get(position).commentsCount>1){
+        /*if(listFeedData!!.get(position).commentsCount>1){
             holder.txt_view_more_comments.visibility = View.VISIBLE
         }
         else{
             holder.txt_view_more_comments.visibility = View.GONE
-        }
+        }*/
 
         if(listFeedData!!.get(position).tags.size > 0){
             holder.txt_tagged_user.visibility = View.VISIBLE
-            holder.txt_is_with.visibility = View.VISIBLE
+            //holder.txt_is_with.visibility = View.VISIBLE
+            holder.img_is_with.visibility = View.VISIBLE
             holder.txt_tagged_user.text = listFeedData!!.get(position).tags.get(0).username
         }
         else{
             holder.txt_tagged_user.visibility = View.GONE
-            holder.txt_is_with.visibility = View.GONE
+            holder.img_is_with.visibility = View.GONE
+            //holder.txt_is_with.visibility = View.GONE
         }
 
         if(listFeedData!!.get(position).commentsCount>0){
@@ -129,10 +135,13 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
         }
 
         holder.user_name.text = listFeedData!!.get(position).user.username
-        holder.txt_content.text = listFeedData!!.get(position).content
         holder.time_ago.text = listFeedData!!.get(position).createdAt
         holder.comment_txt.text = listFeedData!!.get(position).commentsCount.toString()
         holder.like_txt.text = listFeedData!!.get(position).likescount.toString()
+
+        var content = listFeedData!!.get(position).content
+        holder.txt_content.text = content
+
 
         holder.btn_send_msg.setOnClickListener {
             addComment(holder.edt_msg.text.toString(),listFeedData!!.get(position).id.toString(),mContext,position)
@@ -160,10 +169,15 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
             }
         }
 
-        holder.txt_view_more_comments.setOnClickListener {
+        holder.chat_bubble_icon.setOnClickListener {
             Hawk.put("DetailPost",listFeedData!!.get(position))
             mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
         }
+
+        /*holder.txt_view_more_comments.setOnClickListener {
+            Hawk.put("DetailPost",listFeedData!!.get(position))
+            mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
+        }*/
 
         holder.txt_tagged_user.setOnClickListener {
             var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
@@ -181,6 +195,8 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
     inner class TimelineHolder(val view: View): RecyclerView.ViewHolder(view) {
 
         val profile_image:CircleImageView = view.findViewById(R.id.profile_image)
+        val chat_bubble_icon:ImageView = view.findViewById(R.id.chat_bubble_icon)
+        val img_is_with:ImageView = view.findViewById(R.id.img_is_with)
         val user_name:TextView = view.findViewById(R.id.user_name)
         val time_ago:TextView = view.findViewById(R.id.time_ago)
         val txt_content:TextView = view.findViewById(R.id.txt_content)
@@ -190,7 +206,7 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
         val edt_msg:EditText = view.findViewById(R.id.edt_msg)
         val btn_send_msg:Button = view.findViewById(R.id.btn_send_msg)
         val like_icon:ImageView = view.findViewById(R.id.like_icon)
-        val txt_view_more_comments:TextView = view.findViewById(R.id.txt_view_more_comments)
+        //val txt_view_more_comments:TextView = view.findViewById(R.id.txt_view_more_comments)
         val comment_profile_image:CircleImageView = view.findViewById(R.id.comment_profile_image)
         val comment_user_name:TextView = view.findViewById(R.id.comment_user_name)
         val comment_time_ago:TextView = view.findViewById(R.id.comment_time_ago)

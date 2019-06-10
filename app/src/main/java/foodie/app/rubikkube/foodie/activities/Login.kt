@@ -61,7 +61,6 @@ class Login : AppCompatActivity() {
                 login(etEmail.text.toString().trim(), etPassword.text.toString().trim())
             }
 
-
         }
 
         val tvSignUp = findViewById<TextView>(R.id.tvSignUp)
@@ -97,50 +96,50 @@ class Login : AppCompatActivity() {
 
 
         mService.login(Utils.getRequestBody(jsonObject.toString()))
-                .enqueue(object : Callback<LoginSignUpResponse> {
-                    override fun onFailure(call: Call<LoginSignUpResponse>?, t: Throwable?) {
-                        pd?.dismiss()
-                        Toast.makeText(this@Login, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
-                    }
+            .enqueue(object : Callback<LoginSignUpResponse> {
+                override fun onFailure(call: Call<LoginSignUpResponse>?, t: Throwable?) {
+                    pd?.dismiss()
+                    Toast.makeText(this@Login, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+                }
 
-                    override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
-                        pd?.dismiss()
+                override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
+                    pd?.dismiss()
 
-                        Log.d("Response",""+response!!.body().user)
-                        Log.d("Rsp",""+response.isSuccessful)
+                    Log.d("Response",""+response!!.body().user)
+                    Log.d("Rsp",""+response.isSuccessful)
 
-                        if (response.isSuccessful) {
+                    if (response.isSuccessful) {
 
-                            if(response.body().status) {
-                                if (response.body().user.email_confirm == 0)
-                                {
-                                    Toasty.info(this@Login,"Account verification link sent to your Email address, Please verify your Email address before proceeding further",Toast.LENGTH_SHORT).show()
-                                }
-                                else {
-                                        Toasty.success(this@Login,"Logged in Successfully.",Toast.LENGTH_SHORT).show()
-                                        Prefs.putString(Constant.IS_LOGIN, "true")
-                                        Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
-                                        Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
-                                        Prefs.putString(Constant.NAME, response.body()?.user?.username)
-                                        Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
-                                        Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
-                                        Prefs.putInt(Constant.EMAIL_CONFIRM, response.body().user.email_confirm)
-                                        startActivity(Intent(this@Login, HomeActivity::class.java))
-                                        finish()
-
-                                }
-                            }else {
-                                Toast.makeText(this@Login, response.body().message, Toast.LENGTH_SHORT).show()
+                        if(response.body().status) {
+                            if (response.body().user.email_confirm == 0)
+                            {
+                                Toasty.info(this@Login,"Account verification link sent to your Email address, Please verify your Email address before proceeding further",Toast.LENGTH_SHORT).show()
+                            }
+                            else {
+                                    Toasty.success(this@Login,"Logged in Successfully.",Toast.LENGTH_SHORT).show()
+                                    Prefs.putString(Constant.IS_LOGIN, "true")
+                                    Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
+                                    Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
+                                    Prefs.putString(Constant.NAME, response.body()?.user?.username)
+                                    Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
+                                    Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
+                                    Prefs.putInt(Constant.EMAIL_CONFIRM, response.body().user.email_confirm)
+                                    startActivity(Intent(this@Login, HomeActivity::class.java))
+                                    finish()
 
                             }
-
-                        } else {
-                            Toast.makeText(this@Login, response.message(), Toast.LENGTH_SHORT).show()
+                        }else {
+                            Toast.makeText(this@Login, response.body().message, Toast.LENGTH_SHORT).show()
 
                         }
-                    }
 
-                })
+                    } else {
+                        Toast.makeText(this@Login, response.message(), Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+
+            })
     }
 
 

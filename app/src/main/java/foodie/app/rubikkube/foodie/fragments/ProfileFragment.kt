@@ -24,6 +24,7 @@ import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.EditProfileActivity
 import foodie.app.rubikkube.foodie.activities.HomeActivity
+import foodie.app.rubikkube.foodie.activities.PostActivity
 import foodie.app.rubikkube.foodie.activities.Signup
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
@@ -87,6 +88,10 @@ class ProfileFragment : Fragment() {
         view.setting_icon.setOnClickListener {
             view.context.startActivity(intent)
         }
+
+        view.add_post.setOnClickListener {
+            view.context.startActivity(Intent(activity, PostActivity::class.java))
+        }
 //        getMe(view)
 //        getListOfFood()
         return view
@@ -103,7 +108,7 @@ class ProfileFragment : Fragment() {
         timeLineAdapter = TimelineAdapter(context!!,feedData)
         view.rv_my_posts.setHasFixedSize(false)
         val layoutManager1 = LinearLayoutManager(activity)
-        layoutManager.orientation = LinearLayout.VERTICAL
+        layoutManager1.orientation = LinearLayout.VERTICAL
         view.rv_my_posts.layoutManager = layoutManager1
         view.rv_my_posts.adapter = timeLineAdapter
     }

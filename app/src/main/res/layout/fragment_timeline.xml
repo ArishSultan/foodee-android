@@ -23,7 +23,7 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
 
-            android:id="@+id/profile"
+            android:id="@+id/profile_image"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:padding="5dp"
@@ -35,7 +35,7 @@
 
         <foodie.app.rubikkube.foodie.fonts.robotoRegular
             android:id="@+id/content"
-            android:layout_toRightOf="@+id/profile"
+            android:layout_toRightOf="@+id/profile_image"
             android:layout_toLeftOf="@+id/photo_ic"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
