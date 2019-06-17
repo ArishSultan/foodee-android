@@ -24,6 +24,7 @@ import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
+import kotlinx.android.synthetic.main.fragment_timeline.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -91,7 +92,16 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
-        Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
+
+        if(me.profile.avatar!=null) {
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
+            Log.d("PRofileLink",ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar)
+        }
+        else
+        {
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(profile_pic)
+
+        }
 
         Log.d("agePrivate",""+me.profile.isAgePrivate+" "+me.profile.age);
         if(!me.profile.isAgePrivate) {
@@ -135,9 +145,10 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
             contribution_txt.text = me.profile.contribution.toString()
         }
 
+        foodList = me.profile.foods!!
+
         if(foodList.size!=0) {
             food_like.visibility = View.VISIBLE
-            foodList = me.profile.foods!!
             profileAdapter.update(foodList)
         }
         else{
@@ -149,14 +160,15 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
 
         profileAdapter = ProfileFoodAdapter(this, foodList)
         friend_like_food.setHasFixedSize(false)
-        val layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.orientation =  LinearLayout.HORIZONTAL
         friend_like_food.layoutManager = layoutManager
         friend_like_food.adapter = profileAdapter
 
-        timeLineAdapter = TimelineAdapter(this,feedData)
+        timeLineAdapter = TimelineAdapter(this,feedData,true)
         rv_my_posts.setHasFixedSize(false)
         val layoutManager1 = LinearLayoutManager(this)
-        layoutManager.orientation = LinearLayout.VERTICAL
+        layoutManager1.orientation = LinearLayout.VERTICAL
         rv_my_posts.layoutManager = layoutManager1
         rv_my_posts.adapter = timeLineAdapter
     }

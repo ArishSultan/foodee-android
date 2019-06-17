@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:background="@color/white"
     android:layout_height="match_parent"
-    tools:context=".activities.PostActivity">
+    tools:context=".activities.PostActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
 
     <RelativeLayout
@@ -73,14 +75,14 @@
         android:id="@+id/txt_caption"
         android:layout_below="@+id/user_avatar"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:background="@drawable/rectangular_round"
+        android:background="@null"
         android:textSize="16sp"
         android:hint="Create your Foodee post!"
         android:layout_centerVertical="true"
-        android:paddingLeft="20dp"
+        android:padding="10dp"
         android:gravity="center_vertical"/>
 
     <foodie.app.rubikkube.foodie.fonts.robotoLight
@@ -109,7 +111,7 @@
         android:id="@+id/rv_grid"
         android:layout_below="@id/tag_user_heading"
         android:visibility="visible"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>

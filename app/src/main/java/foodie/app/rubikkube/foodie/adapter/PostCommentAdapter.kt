@@ -11,11 +11,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.HomeActivity
 import foodie.app.rubikkube.foodie.activities.OtherUserProfileDetailActivity
+import foodie.app.rubikkube.foodie.activities.TimelinePostDetailActivity
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
+import foodie.app.rubikkube.foodie.classes.ObservableObject
+import foodie.app.rubikkube.foodie.fragments.ProfileFragment
 import foodie.app.rubikkube.foodie.model.CommentData
 import foodie.app.rubikkube.foodie.model.FeedData
+import foodie.app.rubikkube.foodie.utilities.Constant
+import android.app.Activity
+
+
 
 class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)  : RecyclerView.Adapter<PostCommentAdapter.PostCommentHolder>() {
 
@@ -53,15 +62,31 @@ class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)
         Log.d("Content",listCommentData!!.get(position).content)
 
         holder.profile_image.setOnClickListener {
-            var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
-            intent.putExtra("id", listCommentData!!.get(position).user.id.toString())
-            mContext.startActivity(intent)
+            if (listCommentData!!.get(position).user.id.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+                Prefs.putBoolean("comingPostCommentAdapter",true)
+                val intent = Intent(mContext, HomeActivity::class.java)
+                mContext.startActivity(intent)
+
+            } else {
+                val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+                intent.putExtra("id", listCommentData!!.get(position).user.id.toString())
+                mContext.startActivity(intent)
+            }
         }
 
         holder.user_name.setOnClickListener {
-            var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
-            intent.putExtra("id", listCommentData!!.get(position).user.id.toString())
-            mContext.startActivity(intent)
+            if (listCommentData!!.get(position).user.id.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+                Prefs.putBoolean("comingPostCommentAdapter",true)
+                val intent = Intent(mContext, HomeActivity::class.java)
+                mContext.startActivity(intent)
+                //(mContext as Activity).finish()
+
+            } else {
+                val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+                intent.putExtra("id", listCommentData!!.get(position).user.id.toString())
+                mContext.startActivity(intent)
+                //(mContext as Activity).finish()
+            }
         }
     }
 

@@ -309,8 +309,7 @@ private fun sendCurrentLocation(context: Context, currentLocation: LatLng?, goog
                 }
 
                 override fun onResponse(call: Call<LatLngResponse>?, response: Response<LatLngResponse>?) {
-                    Log.d("onf", "" + response!!.body().success)
-                    if (response.isSuccessful) {
+                    if (response!!.isSuccessful) {
                         val user_id = Prefs.getString(Constant.USERID, "")
                         Log.d("User_ID", user_id)
                         for (i in response.body().data.indices) {

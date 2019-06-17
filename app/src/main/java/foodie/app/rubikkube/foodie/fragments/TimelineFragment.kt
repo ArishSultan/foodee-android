@@ -88,7 +88,7 @@ class TimelineFragment : Fragment() {
 
     private fun setUpRecyclerView(view: View) {
 
-        timeLineAdapter = TimelineAdapter(context!!,feedData)
+        timeLineAdapter = TimelineAdapter(context!!,feedData,false)
         view.timeline_recyclerview.setHasFixedSize(false)
 
         val layoutManager = LinearLayoutManager(activity)

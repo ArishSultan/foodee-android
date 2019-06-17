@@ -1,7 +1,9 @@
 package foodie.app.rubikkube.foodie.adapter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.text.SpannableString
@@ -12,6 +14,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
@@ -23,9 +27,11 @@ import com.smarteist.autoimageslider.SliderLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.HomeActivity
 import foodie.app.rubikkube.foodie.activities.OtherUserProfileDetailActivity
 import foodie.app.rubikkube.foodie.activities.TimelinePostDetailActivity
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
+import foodie.app.rubikkube.foodie.fragments.ProfileFragment
 import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
@@ -36,7 +42,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerView.Adapter<TimelineAdapter.TimelineHolder>(){
+class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:Boolean) : RecyclerView.Adapter<TimelineAdapter.TimelineHolder>(){
 
     val mContext = context
     var listFeedData = feedDate
@@ -45,6 +51,7 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
     var me: MeResponse? = null
     var user: User? = null
     var profile: Profile? = null
+    var isMyProfile: Boolean = isMyProfile
 
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineHolder {
@@ -119,11 +126,12 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
             requestCommentOptionsAvatar.placeholder(R.drawable.profile_avatar)
             requestCommentOptionsAvatar.error(R.drawable.profile_avatar)
 
-            if(listFeedData?.get(position)!!.user.profile.avatar!=null) {
+            if(listFeedData?.get(position)!!.comments.get(listFeedData?.get(position)!!.comments.size-1).user.profile.avatar!=null) {
                 Glide.with(mContext).setDefaultRequestOptions(requestCommentOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + listFeedData?.get(position)!!.comments.get(listFeedData?.get(position)!!.comments.size-1).user.id + "/" + listFeedData?.get(position)!!.comments.get(listFeedData?.get(position)!!.comments.size-1).user.profile.avatar).into(holder.comment_profile_image)
                 Log.d("userProfileImage",""+listFeedData?.get(position)!!.user.profile.userId + "/" + listFeedData?.get(position)!!.user.profile.avatar)
             }
-            else {
+            else
+            {
                 Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(holder.comment_profile_image)
             }
             holder.comment_user_name.text = listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).user.username
@@ -144,10 +152,21 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
 
 
         holder.btn_send_msg.setOnClickListener {
-            addComment(holder.edt_msg.text.toString(),listFeedData!!.get(position).id.toString(),mContext,position)
-            listFeedData!!.get(position).commentsCount += 1
-            holder.comment_txt.text = listFeedData!!.get(position).commentsCount.toString()
-            holder.edt_msg.text.clear()
+            val imm = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            if(holder.edt_msg.text.toString().equals("")){
+                Toasty.error(mContext,"Enter Comment first.").show()
+                //holder.edt_msg.onEditorAction(EditorInfo.IME_ACTION_DONE)
+                imm.hideSoftInputFromWindow(holder.view.windowToken, 0)
+            }
+            else {
+                addComment(holder.edt_msg.text.toString(), listFeedData!!.get(position).id.toString(), mContext, position)
+                listFeedData!!.get(position).commentsCount += 1
+                holder.comment_txt.text = listFeedData!!.get(position).commentsCount.toString()
+                //holder.edt_msg.onEditorAction(EditorInfo.IME_ACTION_DONE)
+                holder.edt_msg.text.clear()
+                imm.hideSoftInputFromWindow(holder.view.windowToken, 0)
+
+            }
         }
 
         holder.like_icon.setOnClickListener {
@@ -174,21 +193,84 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
             mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
         }
 
+        holder.imageSlider.setOnClickListener {
+            Hawk.put("DetailPost",listFeedData!!.get(position))
+            mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
+        }
+
+        holder.txt_content.setOnClickListener {
+            Hawk.put("DetailPost",listFeedData!!.get(position))
+            mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
+        }
+
         /*holder.txt_view_more_comments.setOnClickListener {
             Hawk.put("DetailPost",listFeedData!!.get(position))
             mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
         }*/
 
+
+        holder.profile_image.setOnClickListener {
+            if (!isMyProfile) {
+                if (listFeedData!!.get(position).userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+                    //val activity: HomeActivity = mContext as HomeActivity
+                    //val myFragment = ProfileFragment()
+                    //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+                    val intent = Intent(mContext, HomeActivity::class.java)
+                    mContext.startActivity(intent)
+                    Prefs.putBoolean("comingFromTimelineAdapter",true)
+                } else {
+                    val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+                    intent.putExtra("id", listFeedData!!.get(position).userId.toString())
+                    mContext.startActivity(intent)
+                }
+            }
+        }
+
+        holder.user_name.setOnClickListener {
+            if (!isMyProfile) {
+                if (listFeedData!!.get(position).userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+                    //val activity: HomeActivity = mContext as HomeActivity
+                    //val myFragment = ProfileFragment()
+                    //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+                    val intent = Intent(mContext, HomeActivity::class.java)
+                    mContext.startActivity(intent)
+                    Prefs.putBoolean("comingFromTimelineAdapter",true)
+                } else {
+                    val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+                    intent.putExtra("id", listFeedData!!.get(position).userId.toString())
+                    mContext.startActivity(intent)
+                }
+            }
+        }
+
         holder.txt_tagged_user.setOnClickListener {
-            var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+            val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
             intent.putExtra("id", listFeedData!!.get(position).tags.get(0).pivot.userId.toString())
             mContext.startActivity(intent)
         }
 
         holder.comment_profile_image.setOnClickListener {
-            var intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
-            intent.putExtra("id", listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).user.id.toString())
-            mContext.startActivity(intent)
+            if (listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).user.id.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+                val activity: HomeActivity = mContext as HomeActivity
+                val myFragment = ProfileFragment()
+                activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+            } else {
+                val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+                intent.putExtra("id", listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).user.id.toString())
+                mContext.startActivity(intent)
+            }
+        }
+
+        holder.comment_user_name.setOnClickListener {
+            if (listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).user.id.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+                val activity: HomeActivity = mContext as HomeActivity
+                val myFragment = ProfileFragment()
+                activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+            } else {
+                val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+                intent.putExtra("id", listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).user.id.toString())
+                mContext.startActivity(intent)
+            }
         }
     }
 
@@ -275,5 +357,7 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?) : RecyclerVie
             }
         })
     }
+
+
 
 }

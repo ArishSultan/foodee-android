@@ -76,7 +76,13 @@ class PostActivity : AppCompatActivity() {
         setupRecyclerView()
         post_btn = findViewById(R.id.post_btn)
         post_btn!!.setOnClickListener {
-            addPost(txt_caption.text.toString(),userid,this)
+            if(txt_caption.text.toString().equals("")){
+                Toasty.error(this,"Enter post first.").show()
+            }
+            else
+            {
+                addPost(txt_caption.text.toString(),userid,this)
+            }
         }
 
         img_search!!.setOnClickListener {

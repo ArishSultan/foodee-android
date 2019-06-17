@@ -2,12 +2,15 @@ package foodie.app.rubikkube.foodie.activities
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
@@ -91,10 +94,55 @@ class TimelinePostDetailActivity : Activity() {
         }
 
         btn_send_msg!!.setOnClickListener {
-            addComment(edt_msg!!.text.toString(), timeLinePost!!.id.toString(), this)
-            timeLinePost!!.commentsCount += 1
-            comment_txt.text = timeLinePost!!.commentsCount.toString()
-            edt_msg!!.text.clear()
+            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            if (edt_msg!!.text.toString().equals("")) {
+                Toasty.error(this,"Enter Comment first.").show()
+                imm.hideSoftInputFromWindow(edt_msg!!.windowToken, 0)
+            }
+            else
+            {
+                addComment(edt_msg!!.text.toString(), timeLinePost!!.id.toString(), this)
+                timeLinePost!!.commentsCount += 1
+                comment_txt.text = timeLinePost!!.commentsCount.toString()
+                edt_msg!!.text.clear()
+                imm.hideSoftInputFromWindow(edt_msg!!.windowToken, 0)
+            }
+        }
+
+        profile_image.setOnClickListener {
+            if (timeLinePost!!.userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+                //val activity: HomeActivity = mContext as HomeActivity
+                //val myFragment = ProfileFragment()
+                //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                Prefs.putBoolean("comingFromPostDetail",true)
+            } else {
+                val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
+                intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
+                startActivity(intent)
+            }
+        }
+
+        user_name.setOnClickListener {
+            if (timeLinePost!!.userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+                //val activity: HomeActivity = mContext as HomeActivity
+                //val myFragment = ProfileFragment()
+                //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                Prefs.putBoolean("comingFromPostDetail",true)
+            } else {
+                val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
+                intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
+                startActivity(intent)
+            }
+        }
+
+        txt_tagged_user.setOnClickListener {
+                val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
+                intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
+                startActivity(intent)
         }
     }
 

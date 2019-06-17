@@ -14,6 +14,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -29,16 +30,19 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.pixplicity.easyprefs.library.Prefs
 
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.R.id.navigation_profile
+import foodie.app.rubikkube.foodie.classes.ObservableObject
 import foodie.app.rubikkube.foodie.fragments.ChatFragment
 import foodie.app.rubikkube.foodie.fragments.NearByFragment
 import foodie.app.rubikkube.foodie.fragments.ProfileFragment
 import foodie.app.rubikkube.foodie.fragments.SettingsFragment
 import foodie.app.rubikkube.foodie.fragments.TimelineFragment
-import java.util.ArrayList
+import kotlinx.android.synthetic.main.activity_home.*
+import java.util.*
 
 class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, Observer {
 
 
     private val mTextMessage: TextView? = null
@@ -55,14 +59,27 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        val navigation = findViewById<View>(R.id.navigation) as BottomNavigationView
+        Log.d("Bool",""+Prefs.getBoolean("comingPostCommentAdapter",false))
         setupLocationManager()
-        fragment = TimelineFragment()
-        loadFragment(fragment)
-
+        if(Prefs.getBoolean("comingPostCommentAdapter",false) || Prefs.getBoolean("comingFromTimelineAdapter",false)||Prefs.getBoolean("comingFromPostDetail",false)){
+            navigation.selectedItemId = R.id.navigation_profile
+            navigation.performClick()
+            fragment = ProfileFragment()
+            loadFragment(fragment)
+            Prefs.putBoolean("comingPostCommentAdapter",false)
+            Prefs.putBoolean("comingFromTimelineAdapter",false)
+            Prefs.putBoolean("comingFromPostDetail",false)
+        }
+        else
+        {
+            fragment = TimelineFragment()
+            loadFragment(fragment)
+        }
 //        Hawk.init(this).build();
 
+        //ObservableObject.getInstance().addObserver(this)
 
-        val navigation = findViewById<View>(R.id.navigation) as BottomNavigationView
         navigation.setOnNavigationItemSelectedListener { menuItem ->
 
             when (menuItem.itemId) {
@@ -201,7 +218,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         if (ActivityCompat.checkSelfPermission(this@HomeActivity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this@HomeActivity, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
+            // here to request the mis0sing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
@@ -256,4 +273,16 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
 
     }
 
+    override fun update(p0: Observable?, p1: Any?) {
+        if(p1 is Boolean){
+            if(p1){
+          //      fragment = ProfileFragment()
+//                loadFragment(fragment)
+
+                navigation.selectedItemId = R.id.navigation_profile
+                navigation.performClick()
+
+            }
+        }
+    }
 }

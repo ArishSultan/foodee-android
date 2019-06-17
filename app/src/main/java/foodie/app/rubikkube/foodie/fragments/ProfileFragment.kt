@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -92,6 +93,11 @@ class ProfileFragment : Fragment() {
         view.add_post.setOnClickListener {
             view.context.startActivity(Intent(activity, PostActivity::class.java))
         }
+
+        /*if(Prefs.getBoolean("comingFromTimelineAdapter",false)) {
+            val navigation = activity!!.findViewById(R.id.navigation) as BottomNavigationView
+            navigation.selectedItemId = R.id.navigation_profile
+        }*/
 //        getMe(view)
 //        getListOfFood()
         return view
@@ -105,7 +111,7 @@ class ProfileFragment : Fragment() {
         view.friend_like_food.layoutManager = layoutManager
         view.friend_like_food.adapter = profileAdapter
 
-        timeLineAdapter = TimelineAdapter(context!!,feedData)
+        timeLineAdapter = TimelineAdapter(context!!,feedData,true)
         view.rv_my_posts.setHasFixedSize(false)
         val layoutManager1 = LinearLayoutManager(activity)
         layoutManager1.orientation = LinearLayout.VERTICAL

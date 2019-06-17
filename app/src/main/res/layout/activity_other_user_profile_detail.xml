@@ -175,6 +175,16 @@
                         android:textStyle="bold"
                         android:textColor="@color/darkBrown" />
 
+                    <View
+                        android:id="@+id/divider_food_like"
+                        android:layout_below="@id/food_like"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="#e45947"
+                        />
+
                     <ImageView
                         android:layout_width="35dp"
                         android:layout_height="35dp"
@@ -189,7 +199,7 @@
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/friend_like_food"
                         android:visibility="visible"
-                        android:layout_below="@+id/food_like"
+                        android:layout_below="@+id/divider_food_like"
                         android:layout_marginTop="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_width="match_parent"
@@ -315,19 +325,29 @@
                         android:layout_below="@+id/age_val"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
                         android:text="My Contribution "
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/darkBrown" />
 
+                    <View
+                        android:id="@+id/divider_contribution"
+                        android:layout_below="@id/contribution"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="#e45947"
+                        />
+
                     <android.support.v7.widget.CardView
                         android:id="@+id/twenty_precent_crd"
-                        android:layout_below="@+id/contribution"
+                        android:layout_below="@+id/divider_contribution"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginBottom="40dp"
+                        android:layout_marginBottom="10dp"
                         app:cardCornerRadius="10dp"
                         android:visibility="gone"
                         app:cardElevation="4dp"
@@ -364,18 +384,28 @@
                     android:layout_below="@+id/profile_detail"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Foodee Encounter"
+                    android:text="Foodee Posts"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
+
+                <View
+                    android:id="@+id/divider_foodie_posts"
+                    android:layout_below="@id/txt_foodee_encounter"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="#e45947"
+                    />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_my_posts"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
-                    android:layout_below="@+id/txt_foodee_encounter"
+                    android:layout_below="@+id/divider_foodie_posts"
                     android:nestedScrollingEnabled="false">
 
                 </android.support.v7.widget.RecyclerView>
