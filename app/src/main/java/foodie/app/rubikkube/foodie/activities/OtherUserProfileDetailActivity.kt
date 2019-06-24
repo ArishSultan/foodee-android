@@ -35,12 +35,15 @@ import kotlin.math.log
 class OtherUserProfileDetailActivity : AppCompatActivity() {
 
     private lateinit var profileAdapter: ProfileFoodAdapter
-    var foodList: List<Food> = ArrayList()
+    var foodList: ArrayList<Food> = ArrayList()
     var meResponse:MeResponse? = null
     var id:String? = null
     private lateinit var timeLineAdapter: TimelineAdapter
     private var feedData:List<FeedData>?= ArrayList()
     private var pd1: KProgressHUD? = null
+    private var userName:String?= null
+    private var avatar:String?= null
+    private var toUserId:String?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +79,12 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         }
 
         chat_icon.setOnClickListener {
+            Prefs.putString("toUserId", toUserId)
+            Prefs.putString("fromUserId",Prefs.getString(Constant.USERID,""))
+            Prefs.putString("avatarUser",toUserId)
+            Prefs.putString("userName",userName)
+            Prefs.putString("avatar",avatar)
+
             startActivity(Intent(this,ChatActivity::class.java))
         }
     }
@@ -83,7 +92,9 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     fun dataBindMe(me: MeResponse) {
         default_cover.visibility = View.GONE
         view_shadow.visibility = View.VISIBLE
-
+        userName = me.username.toString()
+        avatar = me.profile.avatar
+        toUserId = me.id.toString()
         val requestOptionsCover = RequestOptions()
         requestOptionsCover.placeholder(R.drawable.cover_background_two)
         requestOptionsCover.error(R.drawable.cover_background_two)
@@ -112,7 +123,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
             age_title.visibility = View.VISIBLE
             age.visibility = View.VISIBLE
             age.text = me.profile.age.toString() }
-        profile_name.text = me.username.toString()
+                profile_name.text = me.username.toString()
 
         if(me.profile.location == null)
         {

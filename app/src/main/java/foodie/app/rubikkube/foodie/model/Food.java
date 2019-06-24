@@ -22,9 +22,9 @@ public class Food implements Serializable {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
-//    @SerializedName("pivot")
-//    @Expose
-//    private Pivot pivot;
+    @SerializedName("pivot")
+    @Expose
+    private FoodPivot pivot;
 
     public Integer getId() {
         return id;
@@ -66,13 +66,7 @@ public class Food implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-//    public Pivot getPivot() {
-//        return pivot;
-//    }
-//
-//    public void setPivot(Pivot pivot) {
-//        this.pivot = pivot;
-//    }
+    public FoodPivot getPivot() { return pivot; }
 
-
+    public void setPivot(FoodPivot pivot) { this.pivot = pivot; }
 }

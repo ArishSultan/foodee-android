@@ -6,17 +6,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragments.ChatFragment">
 
-
-
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_chat_list"
         android:layout_width="match_parent"
         android:divider="@android:color/transparent"
         android:layout_height="match_parent"
-        android:layout_margin="6dp"
-
-        >
-
-    </ListView>
+        android:layout_margin="6dp" />
 
 </RelativeLayout>

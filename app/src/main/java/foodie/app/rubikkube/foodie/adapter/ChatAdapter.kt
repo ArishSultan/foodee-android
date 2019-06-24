@@ -84,34 +84,23 @@
             internal  var _img_reciever_dp: CircleImageView? = null
             internal  var _tv_reciever_time: TextView? = null
             internal  var _tv_reciever_isseen: TextView? = null
-
-
-
             init {
-
                 _tv_reciever_msg = itemView.findViewById<View>(R.id.tv_reciever_msg) as TextView?
                 _tv_reciever_time = itemView.findViewById<View>(R.id.tv_reciever_time) as TextView?
                 _img_reciever_dp = itemView.findViewById<View>(R.id.img_reciever_dp) as CircleImageView?
-
                 //_tv_reciever_isseen = itemView.findViewById(R.id.tv_reciever_isseen) as TextView?
 
             }
         }
 
         inner class SenderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-
             internal var _tv_sender_msg: TextView? = null
             internal var _tv_message_time: TextView? = null
             internal var _img_waiting_clock: ImageView? = null
-
-
             init {
-
                 _tv_sender_msg = itemView.findViewById<View>(R.id.tv_sender_msg) as TextView?
                 _tv_message_time = itemView.findViewById<View>(R.id.tv_message_time) as TextView?
                 _img_waiting_clock = itemView.findViewById<View>(R.id.img_status) as ImageView?
-
             }
         }
 
@@ -122,8 +111,6 @@
         }
 
         fun updateMoreMessages(chatList: MutableList<Chats>) {
-
-
         }
 
     //    fun updateMessageId(randomId: String, id: Int?) {
@@ -141,10 +128,7 @@
     //
     //        chatList.filter { it -> it.isRead == 0 }.map {  it -> it.isRead = 1}.let { notifyDataSetChanged() }
     //    }
-
         fun setSingleMessage(singleChatMessage: Chats) {
-
-
             this.chatList?.add(singleChatMessage)
             notifyDataSetChanged()
 

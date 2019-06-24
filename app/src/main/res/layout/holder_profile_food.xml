@@ -15,18 +15,18 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <ImageView
                 android:id="@+id/food_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/p"
-                android:scaleType="fitXY"
-                />
+                android:scaleType="fitXY" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/ligth_Brown"/>
+                android:background="@color/ligth_Brown" />
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                 android:id="@+id/food_text"
@@ -37,7 +37,24 @@
                 android:layout_centerInParent="true"
                 android:textSize="20sp"
                 android:textColor="@android:color/white"
-                android:textStyle="bold"
+                android:textStyle="bold" />
+
+
+            <ImageView
+                android:id="@+id/edit_food_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:padding="5dp"
+                android:tint="@color/white"
+                />
+            <ImageView
+                android:id="@+id/delete_food_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_toStartOf="@+id/edit_food_icon"
+                android:padding="5dp"
+                android:tint="@color/white"
                 />
         </RelativeLayout>
 

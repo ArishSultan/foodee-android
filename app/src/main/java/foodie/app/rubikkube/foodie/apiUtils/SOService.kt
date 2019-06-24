@@ -40,6 +40,9 @@ interface SOService {
     @GET("/api/v1/food")
     fun getMyFoodList(@HeaderMap header: Map<String, String>): Call<ArrayList<Food>>
 
+    @POST("/api/v1/food/{food_id}")
+    fun deleteMyFood(@HeaderMap header: Map<String, String>,@Path("food_id")food_id:String,@Body requestBody: RequestBody): Call<DeleteFoodResponse>
+
     @POST("/api/v1/lat/lng")
     fun sendCurrentLatLng(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<LatLngResponse>
 
@@ -70,5 +73,14 @@ interface SOService {
 
     @GET("/api/v1/timeline/{userId}")
     fun getMyPost(@Path("userId") userId:String,@HeaderMap header: Map<String, String>): Call<FeedResponse>
+
+    @GET("/api/v1/chats")
+    fun getInboxList(@HeaderMap header: Map<String, String>): Call<ArrayList<InboxListResponse>>
+
+    @POST("/api/v1/send/message")
+    fun sendMessage(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody):Call<MessageListResponse>
+
+    @GET("/api/v1/messages/{from_id}/{to_id}")
+    fun getMessageList(@HeaderMap header: Map<String, String>,@Path("from_id")from_id:String,@Path("to_id")to_id:String):Call<ArrayList<MessageListResponse>>
 
 }

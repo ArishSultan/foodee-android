@@ -119,7 +119,7 @@ class TimelinePostDetailActivity : Activity() {
                 Prefs.putBoolean("comingFromPostDetail",true)
             } else {
                 val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
-                intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
+                intent.putExtra("id", timeLinePost!!.userId.toString())
                 startActivity(intent)
             }
         }
@@ -134,7 +134,7 @@ class TimelinePostDetailActivity : Activity() {
                 Prefs.putBoolean("comingFromPostDetail",true)
             } else {
                 val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
-                intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
+                intent.putExtra("id", timeLinePost!!.userId.toString())
                 startActivity(intent)
             }
         }

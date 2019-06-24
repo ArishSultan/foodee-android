@@ -78,6 +78,6 @@ class Profile() : Serializable {
 
         @SerializedName("foods")
         @Expose
-        val foods: List<Food>? = null
+        val foods: ArrayList<Food>? = null
 
 }
