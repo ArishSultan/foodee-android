@@ -25,6 +25,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.collections.ArrayList
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
+
 
 class ChatActivity : AppCompatActivity() {
 
@@ -49,6 +53,9 @@ class ChatActivity : AppCompatActivity() {
     private var userName:String?= null
     internal var avatar:String?= null
     internal var messageReciever:MessageReceiver?= null
+    var sdfDate:SimpleDateFormat?= null
+    private var now:Date?= null
+    var strDate:String?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,12 +64,13 @@ class ChatActivity : AppCompatActivity() {
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
 
-        fromUserId = Prefs.getString("fromUserId", "")
+        fromUserId = Prefs.getString(Constant.USERID, "")
         toUserId = Prefs.getString("toUserId", "")
         thread_id = Prefs.getString("threadId","")
         userName = Prefs.getString("userName","")
         userID = Prefs.getString("avatarUser","")
         avatar = Prefs.getString("avatar","")
+        sdfDate = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")//dd/MM/yyyy
         /* intent.putExtra("user_dp",item.userDP)
 //        intent.putExtra("fcmToken",item.deviceId)
           intent.putExtra("name",item.name)*/
@@ -104,7 +112,7 @@ class ChatActivity : AppCompatActivity() {
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
 
         val jsonObject = JSONObject()
-        jsonObject.put("from_id", Prefs.getString(Constant.USERID,""))
+        jsonObject.put("from_id", fromUserId)
         jsonObject.put("to_id", toUserId)
         jsonObject.put("message",message)
 
@@ -113,11 +121,13 @@ class ChatActivity : AppCompatActivity() {
             .enqueue(object : Callback<MessageListResponse> {
                 override fun onResponse(call: Call<MessageListResponse>?, response: Response<MessageListResponse>?) {
                     messageListResponse = MessageListResponse()
+                    now = Date()
+                    strDate = sdfDate!!.format(now)
                     messageListResponse!!.messageId = thread_id!!.toInt()
                     messageListResponse!!.message = message
                     messageListResponse!!.recipientId = toUserId!!.toInt()
-                    messageListResponse!!.updatedAt = "2019-06-20 18:24:30"
-                    messageListResponse!!.createdAt = "2019-06-20 18:24:30"
+                    messageListResponse!!.updatedAt = strDate
+                    messageListResponse!!.createdAt = strDate
                     messageReciever = MessageReceiver()
                     messageReciever!!.id = toUserId!!.toInt()
                     messageListResponse!!.receiver = messageReciever

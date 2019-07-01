@@ -58,6 +58,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var imageType: String = ""
     private var photoPath: String = ""
     private var isFoodPicAdded: Boolean = false
+    private var userName: String = ""
     private var message: String = ""
     private var age: String = ""
     private var location: String = ""
@@ -169,9 +170,10 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
            message = user_status.text.toString()
             age = user_age.text.toString()
             location = user_location.text.toString()
+            userName = user_name.text.toString()
             val gender = ""
 
-            if (formValidation(message, age, location, gender!!, contribution!!)) {
+            if (formValidation(userName,message, age, location, gender!!, contribution!!)) {
                 updateProfile(meResponse.id)
             }
         }
@@ -212,11 +214,14 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    private fun formValidation(status: String, age: String, location: String, gender: String, contribution: String): Boolean {
-        if (status.isEmpty() || age.isEmpty() || location.isEmpty() || contribution!!.isEmpty()) {
+    private fun formValidation(userName:String,status: String, age: String, location: String, gender: String, contribution: String): Boolean {
+        if (userName.isEmpty() || status.isEmpty() || age.isEmpty() || location.isEmpty() || contribution!!.isEmpty()) {
             Toast.makeText(this@EditProfileActivity, "Please enter detail first", Toast.LENGTH_SHORT).show()
             return false
-        } else if (status.isEmpty()) {
+        }else if(userName.isEmpty()) {
+            Toast.makeText(this@EditProfileActivity, "Please enter Your Username", Toast.LENGTH_SHORT).show()
+            return false
+        }else if (status.isEmpty()) {
             Toast.makeText(this@EditProfileActivity, "Please enter Your Status", Toast.LENGTH_SHORT).show()
             return false
         } else if (age.isEmpty()) {
@@ -296,8 +301,6 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
             }
             age_check_box.isChecked = me.profile.isAgePrivate
-
-            Log.d("is Age Private",""+me.profile.isAgePrivate);
             user_name.setText(me.username.toString())
             user_status.setText(if(me.profile.message == null) "" else me.profile.message)
             user_age.setText(if(me.profile.age == null) "" else me.profile.age.toString())
@@ -334,7 +337,6 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             var selectedImage = ImagePicker.getFirstImageOrNull(data)
             photoPath = selectedImage.getPath();
@@ -460,7 +462,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         val category = arrayOf(1, 1)
 
         val jsonObject = JSONObject()
-        jsonObject.put("username", meResponse.username)
+        jsonObject.put("username", userName)
         jsonObject.put("message", message)
         jsonObject.put("age",age)
         jsonObject.put("location", location)
@@ -501,6 +503,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         Log.d("onResume", "run")
 
     }
+
 
     fun addFoodBuilder(){
 

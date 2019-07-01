@@ -123,7 +123,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
             age_title.visibility = View.VISIBLE
             age.visibility = View.VISIBLE
             age.text = me.profile.age.toString() }
-                profile_name.text = me.username.toString()
+        profile_name.text = me.username.toString()
 
         if(me.profile.location == null)
         {

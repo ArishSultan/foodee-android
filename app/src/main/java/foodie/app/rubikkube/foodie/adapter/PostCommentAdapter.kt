@@ -54,15 +54,15 @@ class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)
         else{
             Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(holder.profile_image)
         }
-        holder.user_name.text = listCommentData!!.get(position).user.username
-        holder.time_ago.text = listCommentData!!.get(position).createdAt
-        holder.txt_content.text = listCommentData!!.get(position).content
-        Log.d("UserName",listCommentData!!.get(position).user.username)
-        Log.d("timeAgo",listCommentData!!.get(position).createdAt)
-        Log.d("Content",listCommentData!!.get(position).content)
+        holder.user_name.text = listCommentData!![position].user.username
+        holder.time_ago.text = listCommentData!![position].createdAt
+        holder.txt_content.text = listCommentData!![position].content
+        Log.d("UserName", listCommentData!![position].user.username)
+        Log.d("timeAgo", listCommentData!![position].createdAt)
+        Log.d("Content", listCommentData!![position].content)
 
         holder.profile_image.setOnClickListener {
-            if (listCommentData!!.get(position).user.id.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+            if (listCommentData!!.get(position).user.id.toString() == Prefs.getString(Constant.USERID, "")) {
                 Prefs.putBoolean("comingPostCommentAdapter",true)
                 val intent = Intent(mContext, HomeActivity::class.java)
                 mContext.startActivity(intent)

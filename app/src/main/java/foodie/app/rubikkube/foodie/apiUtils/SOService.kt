@@ -43,6 +43,12 @@ interface SOService {
     @POST("/api/v1/food/{food_id}")
     fun deleteMyFood(@HeaderMap header: Map<String, String>,@Path("food_id")food_id:String,@Body requestBody: RequestBody): Call<DeleteFoodResponse>
 
+    @POST("/api/v1/food/{food_id}")
+    fun updateFood(@HeaderMap header: Map<String, String>,
+                   @Part("name") type: RequestBody,
+                   @Part foodFile: MultipartBody.Part?,
+                   @Path("food_id")food_id:String,
+                   @Body requestBody: RequestBody):Call<AddFoodResp>
     @POST("/api/v1/lat/lng")
     fun sendCurrentLatLng(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<LatLngResponse>
 

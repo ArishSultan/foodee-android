@@ -191,8 +191,17 @@ class ProfileFragment : Fragment() {
 
             }
             view.profile_name.text = me.username.toString()
-            view.age.text = me.profile.age.toString()
-            view.age_val.text = me.profile.ages.toString()
+            if(!me.profile.isAgePrivate)
+            {
+                view.age.visibility = View.INVISIBLE
+                view.age_title.visibility = View.INVISIBLE
+            }
+            else
+            {
+                view.age.visibility = View.VISIBLE
+                view.age_title.visibility = View.VISIBLE
+                view.age.text = me.profile.age.toString()
+            }
 
             if(me.profile.location == null)
             {

@@ -84,6 +84,7 @@
 
 
                 <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
+                    android:id="@+id/txt_add_food_btn"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight=".8"

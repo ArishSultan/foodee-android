@@ -46,8 +46,7 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  :
         holder.txtStatus.text = inboxUserList!![position].message
         holder.mins_ago.text = Utils.timeAgo(inboxUserList!![position].created_at)
         holder.view.setOnClickListener {
-            Prefs.putString("toUserId", inboxUserList!![position].toId.toString())
-            Prefs.putString("fromUserId",inboxUserList!![position].fromId.toString())
+            Prefs.putString("toUserId",inboxUserList!![position].userId.toString())
             Prefs.putString("avatarUser",inboxUserList!![position].userId.toString())
             Prefs.putString("threadId", inboxUserList!![position].id.toString())
             Prefs.putString("userName",inboxUserList!![position].username)
