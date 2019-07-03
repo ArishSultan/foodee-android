@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "174597243973",
+    "firebase_url": "https://foodee-264fb.firebaseio.com",
+    "project_id": "foodee-264fb",
+    "storage_bucket": "foodee-264fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174597243973:android:e0d90fdadca106d4",
+        "android_client_info": {
+          "package_name": "foodie.app.rubikkube.foodie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "174597243973-5fct4f494fl1spclk0tg28k3tt3ht1el.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "foodie.app.rubikkube.foodie",
+            "certificate_hash": "6b24b749104a29e5a9210256c461ce88fbd891af"
+          }
+        },
+        {
+          "client_id": "174597243973-mcm28d1khgh7g71r8bebr7h9te88fss7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE1t3I-zptX3-wdzKnCQ8LvAG4P2qlK94"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "174597243973-mcm28d1khgh7g71r8bebr7h9te88fss7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

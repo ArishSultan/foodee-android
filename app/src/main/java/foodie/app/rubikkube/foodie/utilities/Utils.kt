@@ -6,15 +6,72 @@ import android.support.annotation.Nullable
 import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.kaopiz.kprogresshud.KProgressHUD
+import com.loopj.android.http.AsyncHttpClient
+import com.loopj.android.http.AsyncHttpResponseHandler
+import cz.msebera.android.httpclient.Header
+import cz.msebera.android.httpclient.entity.StringEntity
+import foodie.app.rubikkube.foodie.model.NotificationData
+import foodie.app.rubikkube.foodie.model.NotificationRequestModel
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Utils {
 
     companion object {
+
+
+
+        fun sentNotification(context: Context,title: String, details : String, to : String, clickAction : String) {
+
+            val notificationRequestModel =  NotificationRequestModel()
+            val  notificationData =  NotificationData()
+
+            notificationData.setmBody(details)
+            notificationData.setmBadge(1)
+            notificationData.setmContent(1)
+            notificationData.setmSound("default")
+            notificationData.setmTitle(title)
+            if(!clickAction.equals("nothing")) {
+                notificationData.setmClickAction(clickAction)
+            }
+            notificationRequestModel.data = notificationData;
+            notificationRequestModel.to = to
+            notificationRequestModel.setmPrioriy("high")
+
+            val gson =  Gson()
+            val type = object : TypeToken<NotificationRequestModel>() {
+            }.type
+
+            val json = gson.toJson(notificationRequestModel, type);
+
+            val client = AsyncHttpClient()
+            val entity =  StringEntity(json)
+            val data = entity.toString()
+            client.addHeader("Content-Type","application/json")
+            client.addHeader("Authorization","key=AIzaSyBNY5zRRaposivP94OO-LVcsimbOZmh-pY")
+
+            client.post(context,"https://fcm.googleapis.com/fcm/send",entity,"application/json",object : AsyncHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?) {
+
+                    val str = responseBody?.toString(Charset.defaultCharset())
+                    Log.d("fcm",str)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?, error: Throwable?) {
+                    // val str = responseBody?.toString(Charset.defaultCharset())
+                    Log.d("fcm",error?.message)
+                }
+
+            })
+        }
+
+
 
         fun getSimpleTextBody(param: String): RequestBody {
             return RequestBody.create(MediaType.parse("text/plain"), param)
