@@ -14,6 +14,9 @@ private Integer messageId;
 @SerializedName("recipient_id")
 @Expose
 private Integer recipientId;
+@SerializedName("sender_id")
+@Expose
+private Integer sender_id;
 @SerializedName("message")
 @Expose
 private String message;
@@ -60,9 +63,11 @@ public void setRecipientId(Integer recipientId) {
 this.recipientId = recipientId;
 }
 
-public String getMessage() {
-return message;
-}
+public Integer getSender_id() { return sender_id; }
+
+public void setSender_id(Integer sender_id) { this.sender_id = sender_id; }
+
+public String getMessage() { return message; }
 
 public void setMessage(String message) {
 this.message = message;

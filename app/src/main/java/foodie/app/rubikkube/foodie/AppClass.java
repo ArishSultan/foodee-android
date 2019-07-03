@@ -16,6 +16,7 @@ import io.socket.client.Socket;
 
 public class AppClass extends Application {
 
+    private Socket mSocket;
 
     @Override
     public void onCreate() {
@@ -29,18 +30,19 @@ public class AppClass extends Application {
                 .setUseDefaultSharedPreference(true)
                 .build();
 
-    }
-
-    private Socket mSocket;
-    {
-        try {
-            mSocket = IO.socket(Constant.CHAT_SERVER_URL);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+        {
+            try {
+                mSocket = IO.socket(Constant.CHAT_SERVER_URL);
+                //mSocket = IO.socket(Prefs.getString("socketUrl",""));
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
         }
+
     }
 
     public Socket getSocket() {
         return mSocket;
     }
+
 }

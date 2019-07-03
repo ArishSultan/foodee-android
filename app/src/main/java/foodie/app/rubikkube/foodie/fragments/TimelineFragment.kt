@@ -1,16 +1,13 @@
 package foodie.app.rubikkube.foodie.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
@@ -21,7 +18,6 @@ import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.AppClass
 
-
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.PostActivity
 import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
@@ -31,7 +27,6 @@ import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import io.socket.client.Socket
-import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,8 +47,8 @@ class TimelineFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val app = getActivity()!!.getApplication() as AppClass
-        mSocket = app.getSocket()
+        val app = activity!!.application as AppClass
+        mSocket = app.socket
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -74,10 +69,6 @@ class TimelineFragment : Fragment() {
         }
 
         return view;
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onResume() {

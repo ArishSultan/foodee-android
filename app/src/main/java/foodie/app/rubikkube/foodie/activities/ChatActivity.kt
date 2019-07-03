@@ -3,21 +3,27 @@ package foodie.app.rubikkube.foodie.activities
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
+import foodie.app.rubikkube.foodie.AppClass
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.ChatListAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.Chats
 import foodie.app.rubikkube.foodie.model.MessageListResponse
 import foodie.app.rubikkube.foodie.model.MessageReceiver
+import foodie.app.rubikkube.foodie.model.Profile
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
+import io.socket.client.Socket
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.custom_toolbar_for_chatscreen.*
 import org.json.JSONObject
@@ -53,13 +59,29 @@ class ChatActivity : AppCompatActivity() {
     private var userName:String?= null
     internal var avatar:String?= null
     internal var messageReciever:MessageReceiver?= null
+    internal var messageSender:MessageReceiver?= null
+    internal var profile: Profile? = null
     var sdfDate:SimpleDateFormat?= null
     private var now:Date?= null
     var strDate:String?= null
+    private var mSocket: Socket?= null
+    private var onMessageRecieved: Emitter.Listener? = null
+    private var gson:Gson?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+        val app = application as AppClass
+        mSocket = app.socket
+
+       // mSocket?.on("user-global-$fromUserId:new_message",onMessageRecieved)
+
+        mSocket!!.connect()
+
+
+
+        socketListener()
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
@@ -160,4 +182,97 @@ class ChatActivity : AppCompatActivity() {
                     }
                 })
     }
+
+    fun socketListener(){
+
+
+
+                onMessageRecieved = Emitter.Listener { args ->
+
+                    runOnUiThread {
+
+                        try {
+
+                            val jsonObject = JSONObject(args[0].toString())
+                            Log.d("SocketResponse",""+jsonObject)
+                            messageListResponse = MessageListResponse()
+                            gson = Gson()
+                            messageListResponse = gson!!.fromJson(jsonObject.toString(),MessageListResponse::class.java)
+
+                            /*messageListResponse!!.id = jsonObject.getInt("id")
+                            messageListResponse!!.messageId = jsonObject.getInt("message_id")
+                            messageListResponse!!.message = jsonObject.getString("message")
+                            messageListResponse!!.type = jsonObject.getString("type")
+                            messageListResponse!!.recipientId = jsonObject.getInt("recipient_id")
+                            messageListResponse!!.sender_id = jsonObject.getInt("sender_id")
+                            messageListResponse!!.updatedAt = jsonObject.getString("updated_at")
+                            messageListResponse!!.createdAt = jsonObject.getString("created_at")
+                            val receiverJsonObject = jsonObject.getJSONObject("receiver")
+                            messageReceiver = MessageReceiver()
+                            messageReceiver!!.id = receiverJsonObject.getInt("id")
+                            messageReceiver!!.username = receiverJsonObject.getString("username")
+                            val receiverProfileJsonObject = receiverJsonObject.getJSONObject("profile")
+                            profile = Profile()
+                            profile!!.userId = receiverProfileJsonObject.getInt("user_id")
+                            profile!!.avatar = receiverProfileJsonObject.getString("avatar")
+                            messageReceiver!!.profile = profile
+                            messageListResponse!!.receiver = messageReceiver
+
+                            val senderJsonObject = jsonObject.getJSONObject("sender")
+                            messageSender = MessageReceiver()
+                            messageSender!!.id = senderJsonObject.getInt("id")
+                            messageSender!!.username = senderJsonObject.getString("username")
+                            val senderProfileJsonObject = senderJsonObject.getJSONObject("profile")
+                            profile = Profile()
+                            profile!!.userId = senderProfileJsonObject.getInt("user_id")
+                            profile!!.avatar = senderProfileJsonObject.getString("avatar")
+                            messageSender!!.profile = profile
+                            messageListResponse!!.messageSender = messageSender*/
+                            chatAdapter?.addSingleMessage(messageListResponse!!)
+                            rv_chat?.scrollToPosition(chatAdapter!!.itemCount - 1)
+
+                        }catch (ex : Exception) {
+                            ex.printStackTrace()
+                        }
+                }
+
+            }
+        }
+
+
+
+
+    override fun onResume() {
+        super.onResume()
+
+        if(mSocket != null) {
+
+            mSocket?.on("user-global-$fromUserId:new_message",onMessageRecieved)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        if(mSocket != null) {
+
+            mSocket?.off("user-global-$fromUserId:new_message",onMessageRecieved)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if(mSocket != null) {
+
+            mSocket?.off("user-global-$fromUserId:send_msg",onMessageRecieved)
+        }
+    }
+
+
+
 }
