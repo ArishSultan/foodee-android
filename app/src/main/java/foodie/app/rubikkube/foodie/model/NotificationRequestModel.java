@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class NotificationRequestModel {
 
-    @SerializedName("notification")
+    @SerializedName("data")
      NotificationData mData;
     @SerializedName("to")
-     String mTo;
+    String mTo;
 
     @SerializedName("priority")
-     String mPrioriy;
+    String mPrioriy;
 
     public NotificationData getData() {
         return mData;

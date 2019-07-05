@@ -5,6 +5,7 @@ import android.content.ContextWrapper;
 import android.support.multidex.MultiDex;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -23,6 +24,7 @@ public class AppClass extends Application {
         super.onCreate();
         MultiDex.install(this);
 
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         new Prefs.Builder()
                 .setContext(this)
                 .setMode(ContextWrapper.MODE_PRIVATE)

@@ -4,11 +4,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class NotificationData {
 
+
+
+
+    @SerializedName("avatar")
+    String mMyProfilePicture;
+
+
+    @SerializedName("fromUserId")
+    String mFromUserID;
+
+    @SerializedName("for")
+    String mFor;
+
+    @SerializedName("toUserId")
+    String mToUserId;
+
     @SerializedName("body")
-     String mBody;
+    String mBody;
 
     @SerializedName("title")
-     String mTitle;
+    String mTitle;
 
     @SerializedName("badge")
     int mBadge;
@@ -69,6 +85,39 @@ public class NotificationData {
 
     public void setmClickAction(String mClickAction) {
         this.mClickAction = mClickAction;
+    }
+
+    public String getmFor() {
+        return mFor;
+    }
+
+    public void setmFor(String mFor) {
+        this.mFor = mFor;
+    }
+
+    public String getmToUserId() {
+        return mToUserId;
+    }
+
+    public void setmToUserId(String mToUserId) {
+        this.mToUserId = mToUserId;
+    }
+
+
+    public String getmMyProfilePicture() {
+        return mMyProfilePicture;
+    }
+
+    public void setmMyProfilePicture(String mMyProfilePicture) {
+        this.mMyProfilePicture = mMyProfilePicture;
+    }
+
+    public String getmFromUserID() {
+        return mFromUserID;
+    }
+
+    public void setmFromUserID(String mFromUserID) {
+        this.mFromUserID = mFromUserID;
     }
 }
 

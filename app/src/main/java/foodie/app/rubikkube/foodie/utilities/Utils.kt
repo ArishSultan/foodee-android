@@ -6,6 +6,8 @@ import android.support.annotation.Nullable
 import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.kaopiz.kprogresshud.KProgressHUD
@@ -27,12 +29,32 @@ class Utils {
 
 
 
-        fun sentNotification(context: Context,title: String, details : String, to : String, clickAction : String) {
+        fun getfcmToken() : String {
+
+            var fcmToken : String? = ""
+            FirebaseInstanceId.getInstance().instanceId
+                    .addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            Log.w("fcmToken", "getInstanceId failed", task.exception)
+                            return@OnCompleteListener
+                        }
+
+                        // Get new Instance ID token
+                        val token = task.result?.token
+                        fcmToken = token
+
+
+                    })
+
+            return  fcmToken!!
+        }
+
+        fun sentSimpleNotification(context: Context,title: String, message : String, toFcmToken : String, clickAction : String) {
 
             val notificationRequestModel =  NotificationRequestModel()
             val  notificationData =  NotificationData()
 
-            notificationData.setmBody(details)
+            notificationData.setmBody(message)
             notificationData.setmBadge(1)
             notificationData.setmContent(1)
             notificationData.setmSound("default")
@@ -41,7 +63,7 @@ class Utils {
                 notificationData.setmClickAction(clickAction)
             }
             notificationRequestModel.data = notificationData;
-            notificationRequestModel.to = to
+            notificationRequestModel.to = toFcmToken
             notificationRequestModel.setmPrioriy("high")
 
             val gson =  Gson()
@@ -54,7 +76,7 @@ class Utils {
             val entity =  StringEntity(json)
             val data = entity.toString()
             client.addHeader("Content-Type","application/json")
-            client.addHeader("Authorization","key=AIzaSyBNY5zRRaposivP94OO-LVcsimbOZmh-pY")
+            client.addHeader("Authorization","key=AAAAKKbOhEU:APA91bHQkeeHSBgZf6zp8VcPcMaJxbwbv2ANCgDV-McS7r0TZsDBzSM27UfWdgCliH41qyxvKoeGmUva3kzJ3iV-mV4L79reweSpZdJBSF8EJsZ3GNkRbZAA0gOp3NkaGmXiE1RHjAPG")
 
             client.post(context,"https://fcm.googleapis.com/fcm/send",entity,"application/json",object : AsyncHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?) {
@@ -71,6 +93,55 @@ class Utils {
             })
         }
 
+
+
+        fun sentMessageNotification(context: Context,title: String, message : String, toUserId : String,fromUserId : String,myProfilePicture : String, toFcmToken : String, clickAction : String) {
+
+            val notificationRequestModel =  NotificationRequestModel()
+            val  notificationData =  NotificationData()
+
+            notificationData.setmBody(message)
+            notificationData.setmBadge(1)
+            notificationData.setmContent(1)
+            notificationData.setmSound("default")
+            notificationData.setmTitle(title)
+            notificationData.setmFor("singleChat")
+            notificationData.setmToUserId(toUserId)
+            notificationData.setmToUserId(fromUserId)
+            notificationData.setmToUserId(myProfilePicture)
+            if(!clickAction.equals("nothing")) {
+                notificationData.setmClickAction(clickAction)
+            }
+            notificationRequestModel.data = notificationData;
+            notificationRequestModel.to = toFcmToken
+            notificationRequestModel.setmPrioriy("high")
+
+            val gson =  Gson()
+            val type = object : TypeToken<NotificationRequestModel>() {
+            }.type
+
+            val json = gson.toJson(notificationRequestModel, type);
+
+            val client = AsyncHttpClient()
+            val entity =  StringEntity(json)
+            val data = entity.toString()
+            client.addHeader("Content-Type","application/json")
+            client.addHeader("Authorization","key=AAAAKKbOhEU:APA91bHQkeeHSBgZf6zp8VcPcMaJxbwbv2ANCgDV-McS7r0TZsDBzSM27UfWdgCliH41qyxvKoeGmUva3kzJ3iV-mV4L79reweSpZdJBSF8EJsZ3GNkRbZAA0gOp3NkaGmXiE1RHjAPG")
+
+            client.post(context,"https://fcm.googleapis.com/fcm/send",entity,"application/json",object : AsyncHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?) {
+
+                    val str = responseBody?.toString(Charset.defaultCharset())
+                    Log.d("fcm",str)
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?, error: Throwable?) {
+                    // val str = responseBody?.toString(Charset.defaultCharset())
+                    Log.d("fcm",error?.message)
+                }
+
+            })
+        }
 
 
         fun getSimpleTextBody(param: String): RequestBody {

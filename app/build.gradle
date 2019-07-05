@@ -68,8 +68,11 @@ dependencies {
     implementation 'com.github.esafirm.android-image-picker:imagepicker:1.13.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.github.smarteist:autoimageslider:1.2.0'
+
+    implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.google.firebase:firebase-iid:17.1.0'
+    implementation 'com.google.firebase:firebase-messaging:17.4.0'
     implementation 'com.borjabravo:readmoretextview:2.1.0'
-    implementation 'com.google.firebase:firebase-core:17.0.0'
     implementation ('io.socket:socket.io-client:1.0.0') {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
@@ -82,3 +85,5 @@ repositories {
 
 
 apply plugin: 'com.google.gms.google-services'
+
+

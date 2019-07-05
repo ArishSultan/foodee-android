@@ -39,6 +39,7 @@ import kotlin.collections.HashMap
 class ChatActivity : AppCompatActivity() {
 
 
+    private var myProfilePicture: String? = ""
     val options =  RequestOptions()
             .centerCrop()
             .placeholder(R.drawable.avatar)
@@ -155,6 +156,19 @@ class ChatActivity : AppCompatActivity() {
                     messageListResponse!!.receiver = messageReciever
                     chatAdapter?.addSingleMessage(messageListResponse!!)
                     rv_chat?.scrollToPosition(chatAdapter!!.itemCount - 1)
+
+                    /* toUserId = Prefs.getString("toUserId", "")
+        thread_id = Prefs.getString("threadId","")
+        userName = Prefs.getString("userName","")
+        userID = Prefs.getString("avatarUser","")
+        avatar = Prefs.getString("avatar","")*/
+
+                    Utils.sentMessageNotification(this@ChatActivity,"Foodee",
+                            message!!,
+                            toUserId!!,
+                            myProfilePicture!!,
+                            fromUserId!!,
+                            "elS3dbU71cc:APA91bGZgyxtpGFwFXTgJdfJZR82aUQhUrMOiDpF6xokfsEbWv63rvKymW3pM3T_Y1kVNYsUaPW9g4zO3Y5-u1g6_0WbwYHoaIujirFleaOaYcHRa6jvbLGALppSHhT4HRkDI1MM1BPF","nothing")
                 }
 
                 override fun onFailure(call: Call<MessageListResponse>?, t: Throwable?) {
@@ -174,6 +188,12 @@ class ChatActivity : AppCompatActivity() {
                         if (response!!.body() != null) {
                             chatAdapter?.addMessageList(response!!.body())
                             rv_chat?.scrollToPosition(chatAdapter!!.itemCount - 1)
+                            if (response.body()[0].messageSender.id.toString() == Prefs.getString(Constant.USERID, "")) {
+                                myProfilePicture = ApiUtils.BASE_URL + "/storage/media/avatar/" + Prefs.getString(Constant.USERID, "") + "/" + response.body()[0].messageSender.profile.avatar
+                            }
+                            else{
+                                myProfilePicture = ApiUtils.BASE_URL + "/storage/media/avatar/" + Prefs.getString(Constant.USERID, "") + "/" + response.body()[0].messageReceiver.profile.avatar
+                            }
                         }
                     }
 
