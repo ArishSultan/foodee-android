@@ -65,17 +65,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
 
-        if(remoteMessage.getData().get("for") != null) {
+//        if(remoteMessage.getData().get("for") != null) {
+//
+//            if(remoteMessage.getData().get("for").equals("singleChat")){
+//                String toUserId = remoteMessage.getData().get("toUserId");
+//            }
+//        }
 
-            if(remoteMessage.getData().get("for").equals("singleChat")){
-                String toUserId = remoteMessage.getData().get("toUserId");
-            }
-        }
-
-        simplePushNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
-
-
-
+        simplePushNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("body"));
 
 
     }
@@ -242,8 +239,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void showNotificationsilentforsinglechat(String message, String from_user_id, String to_user_id, String userName) {
 
         Intent i = new Intent(this, HomeActivity.class);
-        Prefs.putString("toUserId",to_user_id);
-        Prefs.putString("avatarUser",to_user_id);
+
+//        Prefs.putString("toUserId", "");
+//        Prefs.putString("threadId","");
+//        Prefs.putString("userName","");
+//        Prefs.putString("avatarUser","");
+//        Prefs.putString("avatar","");
+
 //        Prefs.putString("userName",inboxUserList!![position].username)
 //        Prefs.putString("avatar",inboxUserList!![position].avatar)
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

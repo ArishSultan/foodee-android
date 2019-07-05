@@ -40,6 +40,7 @@ class ChatActivity : AppCompatActivity() {
 
 
     private var myProfilePicture: String? = ""
+    private var toUserFcmToken: String? = ""
     val options =  RequestOptions()
             .centerCrop()
             .placeholder(R.drawable.avatar)
@@ -93,6 +94,7 @@ class ChatActivity : AppCompatActivity() {
         userName = Prefs.getString("userName","")
         userID = Prefs.getString("avatarUser","")
         avatar = Prefs.getString("avatar","")
+        toUserFcmToken = Prefs.getString("toUserFcmToken","")
         sdfDate = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")//dd/MM/yyyy
         /* intent.putExtra("user_dp",item.userDP)
 //        intent.putExtra("fcmToken",item.deviceId)
@@ -146,7 +148,7 @@ class ChatActivity : AppCompatActivity() {
                     messageListResponse = MessageListResponse()
                     now = Date()
                     strDate = sdfDate!!.format(now)
-                    messageListResponse!!.messageId = thread_id!!.toInt()
+                   // messageListResponse!!.messageId = thread_id!!.toInt()
                     messageListResponse!!.message = message
                     messageListResponse!!.recipientId = toUserId!!.toInt()
                     messageListResponse!!.updatedAt = strDate
@@ -166,9 +168,9 @@ class ChatActivity : AppCompatActivity() {
                     Utils.sentMessageNotification(this@ChatActivity,"Foodee",
                             message!!,
                             toUserId!!,
-                            myProfilePicture!!,
                             fromUserId!!,
-                            "elS3dbU71cc:APA91bGZgyxtpGFwFXTgJdfJZR82aUQhUrMOiDpF6xokfsEbWv63rvKymW3pM3T_Y1kVNYsUaPW9g4zO3Y5-u1g6_0WbwYHoaIujirFleaOaYcHRa6jvbLGALppSHhT4HRkDI1MM1BPF","nothing")
+                            myProfilePicture!!,
+                            toUserFcmToken!!,"nothing")
                 }
 
                 override fun onFailure(call: Call<MessageListResponse>?, t: Throwable?) {
@@ -183,16 +185,26 @@ class ChatActivity : AppCompatActivity() {
 
         val mService = ApiUtils.getSOService() as SOService
         mService.getMessageList(hm, fromUserId!!,toUserId!!)
+
                 .enqueue(object : Callback<ArrayList<MessageListResponse>> {
                     override fun onResponse(call: Call<ArrayList<MessageListResponse>>?, response: Response<ArrayList<MessageListResponse>>?) {
                         if (response!!.body() != null) {
                             chatAdapter?.addMessageList(response!!.body())
                             rv_chat?.scrollToPosition(chatAdapter!!.itemCount - 1)
+
                             if (response.body()[0].messageSender.id.toString() == Prefs.getString(Constant.USERID, "")) {
                                 myProfilePicture = ApiUtils.BASE_URL + "/storage/media/avatar/" + Prefs.getString(Constant.USERID, "") + "/" + response.body()[0].messageSender.profile.avatar
                             }
                             else{
                                 myProfilePicture = ApiUtils.BASE_URL + "/storage/media/avatar/" + Prefs.getString(Constant.USERID, "") + "/" + response.body()[0].messageReceiver.profile.avatar
+                            }
+
+
+                            if (response.body()[0].messageSender.id.toString() != Prefs.getString(Constant.USERID, "")) {
+                                toUserFcmToken = response.body()[0].messageSender.device_token
+                            }
+                            else{
+                                toUserFcmToken = response.body()[0].messageReceiver.device_token
                             }
                         }
                     }

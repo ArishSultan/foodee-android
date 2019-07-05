@@ -44,6 +44,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     private var userName:String?= null
     private var avatar:String?= null
     private var toUserId:String?= null
+    private var toUserFcmToken:String?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +85,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
             Prefs.putString("avatarUser",toUserId)
             Prefs.putString("userName",userName)
             Prefs.putString("avatar",avatar)
+            Prefs.putString("toUserFcmToken",toUserFcmToken)
 
             startActivity(Intent(this,ChatActivity::class.java))
         }
@@ -95,6 +97,8 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         userName = me.username.toString()
         avatar = me.profile.avatar
         toUserId = me.id.toString()
+        toUserFcmToken = me.device_token
+
         val requestOptionsCover = RequestOptions()
         requestOptionsCover.placeholder(R.drawable.cover_background_two)
         requestOptionsCover.error(R.drawable.cover_background_two)

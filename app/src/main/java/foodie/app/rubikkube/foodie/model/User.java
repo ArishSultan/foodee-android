@@ -36,6 +36,10 @@ private String updatedAt;
 @Expose
 private Profile profile;
 
+    @SerializedName("device_token")
+    @Expose
+    private String device_token;
+
 public Integer getId() {
 return id;
 }
@@ -99,4 +103,12 @@ this.updatedAt = updatedAt;
 public Profile getProfile() { return profile; }
 
 public void setProfile(Profile profile) { this.profile = profile; }
+
+    public String getDevice_token() {
+        return device_token;
+    }
+
+    public void setDevice_token(String device_token) {
+        this.device_token = device_token;
+    }
 }
