@@ -50,6 +50,7 @@ class Signup : AppCompatActivity() {
             val phone = etPhone.text.toString()
             val password = etPassword.text.toString()
             val cpasword = etConfirmPassword.text.toString()
+            val fcm_token = Prefs.getString(Constant.FCM_TOKEN,"")
 
             if (fieldValidation(userName, email, password, cpasword)) {
 
@@ -60,6 +61,7 @@ class Signup : AppCompatActivity() {
                 jsonObject.put("phone", "")
                 jsonObject.put("password", password)
                 jsonObject.put("password_confirmation", cpasword)
+                jsonObject.put("device_token",fcm_token)
 
                 signUp(jsonObject);
             }

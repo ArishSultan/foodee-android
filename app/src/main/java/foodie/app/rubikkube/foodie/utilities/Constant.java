@@ -3,6 +3,7 @@ package foodie.app.rubikkube.foodie.utilities;
 public class Constant {
 
     public static final String  TOKEN = "token";
+    public static final String  FCM_TOKEN = "fcmToken";
     public static final String  IS_LOGIN = "is_login";
     public static final String  IS_PIN_CODE = "pin_code";
     public static final String  USERID = "id";

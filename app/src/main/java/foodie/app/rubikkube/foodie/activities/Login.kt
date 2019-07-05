@@ -91,6 +91,7 @@ class Login : AppCompatActivity() {
         val jsonObject = JSONObject()
         jsonObject.put("email", email)
         jsonObject.put("password", password)
+        jsonObject.put("device_token",Prefs.getString(Constant.FCM_TOKEN,""))
 
         pd?.show()
 
