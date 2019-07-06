@@ -89,4 +89,7 @@ interface SOService {
     @GET("/api/v1/messages/{from_id}/{to_id}")
     fun getMessageList(@HeaderMap header: Map<String, String>,@Path("from_id")from_id:String,@Path("to_id")to_id:String):Call<ArrayList<MessageListResponse>>
 
+    @GET("/api/v1/notifications")
+    fun getNotificationList(@HeaderMap header: Map<String, String>): Call<ArrayList<NotificationCenter>>
+
 }

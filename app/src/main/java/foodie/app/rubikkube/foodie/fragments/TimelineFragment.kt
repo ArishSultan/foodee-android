@@ -7,7 +7,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
@@ -19,6 +21,7 @@ import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.AppClass
 
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.NotificationCenterActivity
 import foodie.app.rubikkube.foodie.activities.PostActivity
 import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
@@ -27,6 +30,7 @@ import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import io.socket.client.Socket
+import kotlinx.android.synthetic.main.activity_notification_center.*
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,6 +46,8 @@ class TimelineFragment : Fragment() {
     private var rv_grid: RecyclerView? = null
     private var feedData:List<FeedData>?= ArrayList()
     private var mSocket:Socket? = null
+    private var img_bell:ImageView? = null
+    private var title_toolbar:TextView? = null
 
     private lateinit var timeLineAdapter: TimelineAdapter
 
@@ -59,6 +65,15 @@ class TimelineFragment : Fragment() {
 
         Hawk.init(context!!).build();
 
+        img_bell = view.toolbar_id!!.findViewById(R.id.img_notification_bell)
+        title_toolbar = view.toolbar_id!!.findViewById(R.id.toolbar_title)
+        title_toolbar!!.text = "Timeline"
+
+        img_bell!!.visibility = View.VISIBLE
+        img_bell!!.setOnClickListener {
+            val intent = Intent(context, NotificationCenterActivity::class.java)
+            startActivity(intent)
+        }
         setUpRecyclerView(view)
 
 

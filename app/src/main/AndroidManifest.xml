@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="foodie.app.rubikkube.foodie">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -16,14 +15,15 @@
     <application
         android:name=".AppClass"
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:usesCleartextTraffic="true"
-        android:hardwareAccelerated="false"
-        android:largeHeap="true">
+        android:usesCleartextTraffic="true">
+        <activity android:name=".activities.NotificationCenterActivity"></activity>
         <activity android:name=".activities.PostActivity" />
         <activity android:name=".activities.OtherUserProfileDetailActivity" />
         <activity android:name=".activities.SplashScreen">
@@ -43,11 +43,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-
 
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
@@ -55,13 +53,12 @@
             </intent-filter>
         </service>
 
-
         <activity
             android:name=".activities.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".activities.TimelineRV" />
         <activity android:name=".activities.Settings" />
-        <activity android:name=".activities.TimelinePostDetailActivity"></activity>
+        <activity android:name=".activities.TimelinePostDetailActivity" />
     </application>
 
 </manifest>
