@@ -226,11 +226,13 @@ class ProfileFragment : Fragment() {
             if (me.profile.contribution == null) {
                 view.contribution.visibility = View.GONE
                 view.twenty_precent_crd.visibility = View.GONE
+                view.divider_contribution.visibility = View.GONE
             }
             else {
 
                 view.contribution.visibility = View.VISIBLE
                 view.twenty_precent_crd.visibility = View.VISIBLE
+                view.divider_contribution.visibility = View.VISIBLE
                 view.contribution_txt.text = me.profile.contribution.toString()
             }
 //            if (me.profile.interest.equals("Male")) {
@@ -280,11 +282,13 @@ class ProfileFragment : Fragment() {
                         intent.putExtra("foodList", response.body())
                         if(response.body().size!=0) {
                             view.food_like.visibility = View.VISIBLE
+                            view.divider_food_like.visibility = View.VISIBLE
                             foodList = response!!.body()
                             profileAdapter.update(foodList)
                         }
                         else{
                             view.food_like.visibility = View.GONE
+                            view.divider_food_like.visibility = View.GONE
                         }
                     }
                 }

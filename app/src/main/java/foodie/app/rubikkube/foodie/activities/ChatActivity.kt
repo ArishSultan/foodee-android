@@ -16,7 +16,6 @@ import foodie.app.rubikkube.foodie.AppClass
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.ChatListAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.Chats
 import foodie.app.rubikkube.foodie.model.MessageListResponse
 import foodie.app.rubikkube.foodie.model.MessageReceiver
 import foodie.app.rubikkube.foodie.model.Profile
@@ -51,8 +50,6 @@ class ChatActivity : AppCompatActivity() {
     internal var chatAdapter: ChatListAdapter? =null
     private var manager: LinearLayoutManager? = null
     internal var messageListResponse:MessageListResponse?= null
-    internal var chatList: MutableList<Chats>? = ArrayList<Chats>()
-    internal var tempChatList: MutableList<Chats>? = ArrayList<Chats>()
     private var fromUserId:String?= null
     internal var toUserId:String?= null
     internal var message:String?= null
@@ -60,14 +57,13 @@ class ChatActivity : AppCompatActivity() {
     private var userID:String?= null
     private var userName:String?= null
     internal var avatar:String?= null
-    internal var messageReciever:MessageReceiver?= null
-    internal var messageSender:MessageReceiver?= null
+    internal var messageReceiver:MessageReceiver?= null
     internal var profile: Profile? = null
     var sdfDate:SimpleDateFormat?= null
     private var now:Date?= null
     var strDate:String?= null
     private var mSocket: Socket?= null
-    private var onMessageRecieved: Emitter.Listener? = null
+    private var onMessageReceived: Emitter.Listener? = null
     private var gson:Gson?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +73,7 @@ class ChatActivity : AppCompatActivity() {
         val app = application as AppClass
         mSocket = app.socket
 
-       // mSocket?.on("user-global-$fromUserId:new_message",onMessageRecieved)
+       // mSocket?.on("user-global-$fromUserId:new_message",onMessageReceived)
 
         mSocket!!.connect()
 
@@ -153,9 +149,9 @@ class ChatActivity : AppCompatActivity() {
                     messageListResponse!!.recipientId = toUserId!!.toInt()
                     messageListResponse!!.updatedAt = strDate
                     messageListResponse!!.createdAt = strDate
-                    messageReciever = MessageReceiver()
-                    messageReciever!!.id = toUserId!!.toInt()
-                    messageListResponse!!.receiver = messageReciever
+                    messageReceiver = MessageReceiver()
+                    messageReceiver!!.id = toUserId!!.toInt()
+                    messageListResponse!!.receiver = messageReceiver
                     chatAdapter?.addSingleMessage(messageListResponse!!)
                     rv_chat?.scrollToPosition(chatAdapter!!.itemCount - 1)
 
@@ -221,7 +217,7 @@ class ChatActivity : AppCompatActivity() {
 
 
 
-                onMessageRecieved = Emitter.Listener { args ->
+                onMessageReceived = Emitter.Listener { args ->
 
                     runOnUiThread {
 
@@ -281,7 +277,7 @@ class ChatActivity : AppCompatActivity() {
 
         if(mSocket != null) {
 
-            mSocket?.on("user-global-$fromUserId:new_message",onMessageRecieved)
+            mSocket?.on("user-global-$fromUserId:new_message",onMessageReceived)
         }
     }
 
@@ -290,7 +286,7 @@ class ChatActivity : AppCompatActivity() {
 
         if(mSocket != null) {
 
-            mSocket?.off("user-global-$fromUserId:new_message",onMessageRecieved)
+            mSocket?.off("user-global-$fromUserId:new_message",onMessageReceived)
         }
     }
 
@@ -303,7 +299,7 @@ class ChatActivity : AppCompatActivity() {
 
         if(mSocket != null) {
 
-            mSocket?.off("user-global-$fromUserId:send_msg",onMessageRecieved)
+            mSocket?.off("user-global-$fromUserId:send_msg",onMessageReceived)
         }
     }
 
