@@ -165,12 +165,14 @@ class ChatActivity : AppCompatActivity() {
         userID = Prefs.getString("avatarUser","")
         avatar = Prefs.getString("avatar","")*/
 
-                    Utils.sentMessageNotification(this@ChatActivity,"Foodee",
-                            message!!,
-                            toUserId!!,
-                            fromUserId!!,
-                            myProfilePicture!!,
-                            toUserFcmToken!!,"nothing")
+                    if(toUserFcmToken.isNullOrEmpty()) "" else toUserFcmToken?.let {
+                        Utils.sentMessageNotification(this@ChatActivity,"Foodee",
+                                message!!,
+                                toUserId!!,
+                                fromUserId!!,
+                                myProfilePicture!!,
+                                it,"nothing")
+                    }
                 }
 
                 override fun onFailure(call: Call<MessageListResponse>?, t: Throwable?) {
