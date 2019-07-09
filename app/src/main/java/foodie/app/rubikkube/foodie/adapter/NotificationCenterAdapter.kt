@@ -36,15 +36,15 @@ class NotificationCenterAdapter(context: Context, list : List<NotificationCenter
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
-        if (notificationList!![position].author.profile.avatar!= null) {
+        if (notificationList!![position].user.profile.avatar!= null) {
             Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + notificationList!![position].author.profile.userId+ "/" + notificationList!![position].author.profile.avatar).into(holder.userImg)
         } else {
             Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(holder.userImg)
         }
 
-        val spannable = SpannableStringBuilder(notificationList!![position].author.username +" "+notificationList!![position].message)
-        spannable.setSpan( android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, notificationList!![position].author.username.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-        spannable.setSpan( ForegroundColorSpan(Color.BLACK), 0, notificationList!![position].author.username.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        val spannable = SpannableStringBuilder(notificationList!![position].user.username +" "+notificationList!![position].message)
+        spannable.setSpan( android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, notificationList!![position].user.username.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        spannable.setSpan( ForegroundColorSpan(Color.BLACK), 0, notificationList!![position].user.username.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
 
         holder.txtNotificationMessage.text = spannable
         holder.txtMinsAgo.text = notificationList!![position].createdAt
@@ -61,7 +61,7 @@ class NotificationCenterAdapter(context: Context, list : List<NotificationCenter
     }
 
     fun update(updateNotificationList : List<NotificationCenter>){
-        notificationList = updateNotificationList
+        notificationList = updateNotificationList.asReversed()
         notifyDataSetChanged()
     }
 }

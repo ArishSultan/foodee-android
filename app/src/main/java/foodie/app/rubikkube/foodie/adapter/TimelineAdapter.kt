@@ -56,7 +56,7 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineHolder {
         val inflater = LayoutInflater.from(parent?.context)
-        Hawk.init(mContext).build();
+        Hawk.init(mContext).build()
         return TimelineHolder(inflater.inflate(R.layout.holder_timelinefragment, parent, false))
     }
 

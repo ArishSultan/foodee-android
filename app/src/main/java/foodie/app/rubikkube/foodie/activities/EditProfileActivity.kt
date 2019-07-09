@@ -362,9 +362,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
             try {
                 compressedImage = Compressor(this@EditProfileActivity)
-                        .setMaxWidth(280)
-                        .setMaxHeight(280)
-                        .setQuality(50)
+                        .setMaxWidth(640)
+                        .setMaxHeight(480)
+                        .setQuality(75)
                         .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
                                 Environment.DIRECTORY_PICTURES).absolutePath)
                         .compressToFile(File(strings[0]))
