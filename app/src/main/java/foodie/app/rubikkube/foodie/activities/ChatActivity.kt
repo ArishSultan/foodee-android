@@ -90,7 +90,8 @@ class ChatActivity : AppCompatActivity() {
         userName = Prefs.getString("userName","")
         userID = Prefs.getString("avatarUser","")
         avatar = Prefs.getString("avatar","")
-        toUserFcmToken = Prefs.getString("toUserFcmToken","")
+        //toUserFcmToken = Prefs.getString("toUserFcmToken","")
+        toUserFcmToken = Utils.getfcmToken()
         sdfDate = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")//dd/MM/yyyy
         /* intent.putExtra("user_dp",item.userDP)
 //        intent.putExtra("fcmToken",item.deviceId)
