@@ -274,14 +274,12 @@ class TimelinePostDetailActivity : Activity() {
                     (listCommentData as java.util.ArrayList<CommentData>).add(commentData!!)
                     postCommentAdapter.update(listCommentData)
 
-                    if(Prefs.getString(Constant.USERID,"").toInt() != commentData!!.user.id) {
+                    if(Prefs.getString(Constant.USERID,"").toInt() != timeLinePost!!.user.id) {
                         val myName = Prefs.getString(Constant.NAME,"")
 
-                        if(commentData!!.user.device_token != null) {
-                            Utils.sentSimpleNotification(this@TimelinePostDetailActivity,"Foodee","$myName likes your post",commentData!!.user.device_token,"nothing")
-
+                        if(!timeLinePost!!.user.device_token.isNullOrEmpty()) {
+                            Utils.sentSimpleNotification(this@TimelinePostDetailActivity,"Foodee","$myName commented your post",timeLinePost!!.user.device_token,"nothing")
                         }
-
                     }
                     Toasty.success(context, "Comment Posted Successfully").show()
                 }

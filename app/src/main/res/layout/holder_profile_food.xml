@@ -46,13 +46,14 @@
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:padding="5dp"
+                android:visibility="gone"
                 android:tint="@color/white"
                 />
             <ImageView
                 android:id="@+id/delete_food_icon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_toStartOf="@+id/edit_food_icon"
+                android:layout_alignParentRight="true"
                 android:padding="5dp"
                 android:tint="@color/white"
                 />

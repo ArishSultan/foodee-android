@@ -108,9 +108,9 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>)  : RecyclerVi
 
 
     inner class ProfileFoodHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val foodImage: ImageView = view.findViewById(foodie.app.rubikkube.foodie.R.id.food_image)
-        val foodText: TextView = view.findViewById(foodie.app.rubikkube.foodie.R.id.food_text)
-        val foodDeleteImage: ImageView = view.findViewById(foodie.app.rubikkube.foodie.R.id.delete_food_icon)
+        val foodImage: ImageView = view.findViewById(R.id.food_image)
+        val foodText: TextView = view.findViewById(R.id.food_text)
+        val foodDeleteImage: ImageView = view.findViewById(R.id.delete_food_icon)
         val foodEditImage: ImageView = view.findViewById(R.id.edit_food_icon)
     }
 
