@@ -90,6 +90,16 @@ class TimelinePostDetailActivity : Activity() {
                 timeLinePost?.isLiked = true
                 timeLinePost!!.likescount += 1
                 like_txt.text = (timeLinePost!!.likescount).toString()
+
+                if(Prefs.getString(Constant.USERID,"").toInt() != timeLinePost!!.user.id) {
+                    val myName = Prefs.getString(Constant.NAME,"")
+
+                    if(!timeLinePost!!.user.device_token.isNullOrEmpty()) {
+
+                        Utils.sentSimpleNotification(this@TimelinePostDetailActivity,"Foodee","$myName likes your post",timeLinePost!!.user.device_token,"nothing")
+                    }
+
+                }
             }
         }
 
@@ -263,6 +273,16 @@ class TimelinePostDetailActivity : Activity() {
                     commentData!!.user = user
                     (listCommentData as java.util.ArrayList<CommentData>).add(commentData!!)
                     postCommentAdapter.update(listCommentData)
+
+                    if(Prefs.getString(Constant.USERID,"").toInt() != commentData!!.user.id) {
+                        val myName = Prefs.getString(Constant.NAME,"")
+
+                        if(commentData!!.user.device_token != null) {
+                            Utils.sentSimpleNotification(this@TimelinePostDetailActivity,"Foodee","$myName likes your post",commentData!!.user.device_token,"nothing")
+
+                        }
+
+                    }
                     Toasty.success(context, "Comment Posted Successfully").show()
                 }
             })

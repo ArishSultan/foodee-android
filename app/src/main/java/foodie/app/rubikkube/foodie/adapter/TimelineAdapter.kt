@@ -185,6 +185,15 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
                 listFeedData?.get(position)?.isLiked = true
                 listFeedData!!.get(position).likescount += 1
                 holder.like_txt.text = (listFeedData!!.get(position).likescount).toString()
+                if(Prefs.getString(Constant.USERID,"").toInt() != listFeedData!![position].user.id) {
+                    val myName = Prefs.getString(Constant.NAME,"")
+
+                    if(listFeedData!![position].user.device_token != null) {
+                        Utils.sentSimpleNotification(mContext,"Foodee","$myName likes your post",listFeedData!![position].user.device_token,"nothing")
+
+                    }
+
+                }
             }
         }
 
@@ -337,6 +346,16 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
                 commentData!!.user = user
                 listFeedData!!.get(position).comments.add(commentData)
                 update(listFeedData)
+
+                if(Prefs.getString(Constant.USERID,"").toInt() != listFeedData!![position].user.id) {
+                    val myName = Prefs.getString(Constant.NAME,"")
+
+                    if(listFeedData!![position].user.device_token != null) {
+                        Utils.sentSimpleNotification(mContext,"Foodee","$myName commented on your post",listFeedData!![position].user.device_token,"nothing")
+
+                    }
+
+                }
                 Toasty.success(context,"Comment Posted Successfully").show()
             }
         })

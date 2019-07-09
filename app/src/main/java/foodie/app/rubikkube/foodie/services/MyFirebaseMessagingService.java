@@ -72,7 +72,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //            }
 //        }
 
-        simplePushNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("body"));
+        simplePushNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
 
 
     }

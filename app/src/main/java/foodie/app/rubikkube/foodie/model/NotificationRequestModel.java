@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class NotificationRequestModel {
 
-    @SerializedName("data")
+    @SerializedName("notification")
      NotificationData mData;
     @SerializedName("to")
     String mTo;
