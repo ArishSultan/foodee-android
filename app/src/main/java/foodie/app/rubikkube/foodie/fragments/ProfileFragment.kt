@@ -58,7 +58,7 @@ class ProfileFragment : Fragment() {
     private var contribution: String? = null
 
     private lateinit var timeLineAdapter: TimelineAdapter
-    private var feedData:List<FeedData>?= ArrayList()
+    private var feedData:ArrayList<FeedData>?= ArrayList()
     var builder: AlertDialog.Builder? = null
     var foodList: ArrayList<Food> = ArrayList()
 
@@ -105,7 +105,7 @@ class ProfileFragment : Fragment() {
 
     private fun setUpRecyclerView(view: View) {
 
-        profileAdapter = ProfileFoodAdapter(context!!,foodList)
+        profileAdapter = ProfileFoodAdapter(context!!,foodList,"ComingFromProfileFragment")
         view.friend_like_food.setHasFixedSize(false)
         val layoutManager = LinearLayoutManager(activity, LinearLayout.HORIZONTAL, false)
         view.friend_like_food.layoutManager = layoutManager
@@ -259,7 +259,7 @@ class ProfileFragment : Fragment() {
                     pd1?.dismiss()
                     if(response!!.isSuccessful){
                         Log.d("Response", Gson().toJson(response))
-                        feedData = response.body().data
+                        feedData = response.body().data as ArrayList<FeedData>?
                         //intent.putExtra("foodList", response.body())
                         //foodList = response!!.body()
                         timeLineAdapter.update(feedData)

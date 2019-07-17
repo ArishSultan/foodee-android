@@ -32,6 +32,9 @@ import foodie.app.rubikkube.foodie.utilities.Utils
 import io.socket.client.Socket
 import kotlinx.android.synthetic.main.activity_notification_center.*
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,7 +47,7 @@ class TimelineFragment : Fragment() {
     private var multimediaGridAdapter: MultimediaAdapter? = null
     private var pd: KProgressHUD? = null
     private var rv_grid: RecyclerView? = null
-    private var feedData:List<FeedData>?= ArrayList()
+    private var feedData:ArrayList<FeedData>?= ArrayList()
     private var mSocket:Socket? = null
     private var img_bell:ImageView? = null
     private var title_toolbar:TextView? = null
@@ -88,8 +91,8 @@ class TimelineFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        updateFcmToken()
         getMe(this!!.view!!)
-        getTimelinePost()
     }
 
     private fun setUpRecyclerView(view: View) {
@@ -121,7 +124,7 @@ class TimelineFragment : Fragment() {
                     pd?.dismiss()
                     if(response!!.isSuccessful){
                         Log.d("Response", Gson().toJson(response))
-                        feedData = response.body().data
+                        feedData = response.body().data as ArrayList<FeedData>?
                         //intent.putExtra("foodList", response.body())
                         //foodList = response!!.body()
                         timeLineAdapter.update(feedData)
@@ -167,6 +170,29 @@ class TimelineFragment : Fragment() {
 
         }
     }
+
+    private fun updateFcmToken() {
+        val mService = ApiUtils.getSOService() as SOService
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["X-Requested-With"] = "XMLHttpRequest"
+
+        val jsonObject = JSONObject()
+        jsonObject.put("device_token", Prefs.getString(Constant.FCM_TOKEN,""))
+        mService.updateFcmToken(hm,Utils.getRequestBody(jsonObject.toString()))
+            .enqueue(object : Callback<UpdateFcmTokenResponse> {
+                override fun onFailure(call: Call<UpdateFcmTokenResponse>?, t: Throwable?) {
+                    Toast.makeText(activity, t!!.message, Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onResponse(call: Call<UpdateFcmTokenResponse>?, response: Response<UpdateFcmTokenResponse>?) {
+                    if (response!!.isSuccessful) {
+                        getTimelinePost()
+                    }
+                }
+            })
+    }
+
 }
 //    private fun setMultimediaGridAdapter() {
 //        imageList = ArrayList<String>()

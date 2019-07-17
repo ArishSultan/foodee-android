@@ -3,7 +3,7 @@ package foodie.app.rubikkube.foodie.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class DeleteFoodResponse {
+public class DeleteFoodAndPostResponse {
 
     @SerializedName("success")
     @Expose

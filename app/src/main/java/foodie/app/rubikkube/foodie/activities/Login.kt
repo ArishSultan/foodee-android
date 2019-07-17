@@ -27,7 +27,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.HashMap
+import java.util.*
 
 
 class Login : AppCompatActivity() {
@@ -44,6 +44,7 @@ class Login : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         pd = Utils.progressDialog(this, "", "Please wait")
 
+        val tz = TimeZone.getDefault()
 //        loginBtn = findViewById(R.id.btnLogin)
 
         btnLogin?.setOnClickListener {
@@ -54,11 +55,14 @@ class Login : AppCompatActivity() {
             } else if (!isValidEmail(etEmail.text.toString())) {
                 Toast.makeText(this@Login, "Please enter correct email address", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
+            } else if (etPassword.text.toString().length<8) {
+                Toast.makeText(this@Login, "Password length should be at least 8 characters", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             } else if (!isConnectedOnline(this)) {
                 Toast.makeText(this@Login, "No internet Connection", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else {
-                login(etEmail.text.toString().trim(), etPassword.text.toString().trim())
+                login(etEmail.text.toString().trim(), etPassword.text.toString().trim(),tz.id)
             }
 
         }
@@ -84,14 +88,16 @@ class Login : AppCompatActivity() {
 
     }
 
-    private fun login(email: String, password: String) {
+    private fun login(email: String, password: String, timeZone: String) {
 
         val mService = ApiUtils.getSOService() as SOService
 
         val jsonObject = JSONObject()
         jsonObject.put("email", email)
         jsonObject.put("password", password)
+        jsonObject.put("timezone",timeZone)
         jsonObject.put("device_token",Prefs.getString(Constant.FCM_TOKEN,""))
+        Log.d("TimeZone",timeZone)
 
         pd?.show()
 
@@ -100,7 +106,7 @@ class Login : AppCompatActivity() {
             .enqueue(object : Callback<LoginSignUpResponse> {
                 override fun onFailure(call: Call<LoginSignUpResponse>?, t: Throwable?) {
                     pd?.dismiss()
-                    Toast.makeText(this@Login, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Login, t!!.message, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {

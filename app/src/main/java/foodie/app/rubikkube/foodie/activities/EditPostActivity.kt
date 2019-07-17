@@ -27,6 +27,7 @@ import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
 import foodie.app.rubikkube.foodie.adapter.SearchUserAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.AddNewPostResponse
+import foodie.app.rubikkube.foodie.model.FeedData
 import foodie.app.rubikkube.foodie.model.MeResponse
 import foodie.app.rubikkube.foodie.model.User
 import foodie.app.rubikkube.foodie.utilities.Constant
@@ -41,7 +42,7 @@ import retrofit2.Response
 import java.io.File
 import java.util.ArrayList
 
-class PostActivity : AppCompatActivity() {
+class EditPostActivity : AppCompatActivity() {
     private var imageList: ArrayList<String>? = null
     private var multimediaGridAdapter: MultimediaAdapter? = null
     private var rv_grid: RecyclerView? = null
@@ -59,12 +60,18 @@ class PostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_post)
+        setContentView(R.layout.activity_edit_post)
+        imageList = ArrayList()
+        imageList!!.add("start")
         pd = Utils.progressDialog(this, "", "Please wait")
-            if (Hawk.contains("profileResponse")) {
-                val meResponse = Hawk.get("profileResponse", "") as MeResponse
-                dataBindMe(meResponse)
-            }
+        if (Hawk.contains("profileResponse")) {
+            val meResponse = Hawk.get("profileResponse", "") as MeResponse
+            dataBindMe(meResponse)
+        }
+        if(Hawk.contains("EditPostObject")){
+            val editPost = Hawk.get("EditPostObject", "") as FeedData
+            dataBindPost(editPost)
+        }
 
         back_icon.setOnClickListener {
             finish()
@@ -76,18 +83,18 @@ class PostActivity : AppCompatActivity() {
         setupRecyclerView()
         post_btn = findViewById(R.id.post_btn)
         post_btn!!.setOnClickListener {
-            if(txt_caption.text.toString().equals("")){
+            if(txt_caption.text.toString() == ""){
                 Toasty.error(this,"Enter post first.").show()
             }
             else
             {
-                addPost(txt_caption.text.toString(),userid,this)
+                updatePost(txt_caption.text.toString(),userid,this)
             }
         }
 
         img_search!!.setOnClickListener {
             user = edt_search_user.text.toString()
-            if(user.equals("") == false){
+            if(user != ""){
                 getSearchUserList(this, user)
             }
         }
@@ -99,7 +106,7 @@ class PostActivity : AppCompatActivity() {
         rv_tag_user!!.itemAnimator = DefaultItemAnimator()
         rv_tag_user!!.adapter = searchUserAdapter
         rv_tag_user!!.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        rv_tag_user!!.addOnItemTouchListener(RecyclerTouchListener(this@PostActivity, rv_tag_user!!, object : RecyclerTouchListener.ClickListener {
+        rv_tag_user!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_tag_user!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 userModel = User()
                 userid = ArrayList()
@@ -116,19 +123,17 @@ class PostActivity : AppCompatActivity() {
     }
 
     private fun setMultimediaGridAdapter() {
-        imageList = ArrayList()
-        imageList!!.add("start")
-        multimediaGridAdapter = MultimediaAdapter(this, imageList,"addPost")
+        multimediaGridAdapter = MultimediaAdapter(this, imageList,"updatePost")
         rv_grid!!.itemAnimator = DefaultItemAnimator()
         rv_grid!!.adapter = multimediaGridAdapter
         rv_grid!!.layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
-        rv_grid!!.addOnItemTouchListener(RecyclerTouchListener(this@PostActivity, rv_grid!!, object : RecyclerTouchListener.ClickListener {
+        rv_grid!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_grid!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 val lastPos = imageList?.size?.minus(1)
                 //String aray[] = multimedia.get(position).split("@");
                 if (position == lastPos) {
 
-                    ImagePicker.Builder(this@PostActivity)
+                    ImagePicker.Builder(this@EditPostActivity)
                             .mode(ImagePicker.Mode.CAMERA_AND_GALLERY)
                             .compressLevel(ImagePicker.ComperesLevel.MEDIUM)
                             .directory(ImagePicker.Directory.DEFAULT)
@@ -176,8 +181,22 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
-    private fun addPost(content:String,tag_id:ArrayList<Int>?,context: Context) {
-        pd = Utils.progressDialog(this@PostActivity, "", "Post Uploading...")
+    fun dataBindPost(editPost: FeedData) {
+        post_desc_txt.text = editPost.content
+        txt_tagged_user.text = editPost.tags[0].username
+        if(editPost.photos!=null){
+            if(!editPost.photos.contains("")) {
+                for (i in editPost!!.photos.indices) {
+                    imageList!!.add(ApiUtils.BASE_URL + "/storage/media/post/" + editPost!!.photos[i])
+                }
+            }
+        }
+        multimediaGridAdapter!!.addMultimedia(imageList)
+
+    }
+
+    private fun updatePost(content:String,tag_id:ArrayList<Int>?,context: Context) {
+        pd = Utils.progressDialog(this@EditPostActivity, "", "Post Uploading...")
         pd!!.show()
 
         val mService = ApiUtils.getSOService() as SOService
@@ -188,40 +207,40 @@ class PostActivity : AppCompatActivity() {
 
         for (i in imageList?.indices!!) {
 
-            Log.d( "ImagePath","post image " + i + "  " + imageList!!.get(i))
-            if(imageList!!.get(i).contains("start")){
+            Log.d( "ImagePath","post image " + i + "  " + imageList!![i])
+            if(imageList!![i].contains("start")){
 
-                Log.d( "ImagePath","post image " + i + "  " + imageList!!.get(i))
+                Log.d( "ImagePath","post image " + i + "  " + imageList!![i])
                 break
             }
-            file = File(imageList!!.get(i))
-            postBody = RequestBody.create(MediaType.parse("image/*"), file)
-            (postImagesParts as ArrayList<MultipartBody.Part>).add(MultipartBody.Part.createFormData("photos["+i+"]", file!!.getName(), postBody))
+            file = File(imageList!![i])
+            postBody = RequestBody.create(MediaType.parse("image/*"), file!!)
+            (postImagesParts as ArrayList<MultipartBody.Part>).add(MultipartBody.Part.createFormData("photos[$i]", file!!.name, postBody!!))
 
         }
-            mService.addNewPost(hm, postImagesParts,
-                    RequestBody.create(MediaType.parse("text/plain"),
-                    content),tag_id,Prefs.getDouble("currentLat", 0.0),Prefs.getDouble("currentLng", 0.0)).enqueue(object : Callback<AddNewPostResponse> {
+        mService.addNewPost(hm, postImagesParts,
+                RequestBody.create(MediaType.parse("text/plain"),
+                        content),tag_id,Prefs.getDouble("currentLat", 0.0),Prefs.getDouble("currentLng", 0.0)).enqueue(object : Callback<AddNewPostResponse> {
 
-                override fun onFailure(call: Call<AddNewPostResponse>?, t: Throwable?) {
-                    pd!!.dismiss()
-                }
+            override fun onFailure(call: Call<AddNewPostResponse>?, t: Throwable?) {
+                pd!!.dismiss()
+            }
 
-                override fun onResponse(call: Call<AddNewPostResponse>?, response: Response<AddNewPostResponse>?) {
-                    pd!!.dismiss()
-                    Log.d("Specific food", "" + response?.body())
-                    Log.d("User_ID",""+response!!.body().id)
-                    Log.d("content",response!!.body().content)
-                    Log.d("CreatedAt",response!!.body().createdAt)
-                    Log.d("UpdatedAt",response!!.body().updatedAt)
-                    Log.d("post_id",""+response.body().id)
-                    //Log.d("photo 1",response!!.body().photos.get(0))
-                    //Log.d("photo 2",""+response.body().photos.get(1))
+            override fun onResponse(call: Call<AddNewPostResponse>?, response: Response<AddNewPostResponse>?) {
+                pd!!.dismiss()
+                Log.d("Specific food", "" + response?.body())
+                Log.d("User_ID",""+response!!.body().id)
+                Log.d("content",response!!.body().content)
+                Log.d("CreatedAt",response!!.body().createdAt)
+                Log.d("UpdatedAt",response!!.body().updatedAt)
+                Log.d("post_id",""+response.body().id)
+                //Log.d("photo 1",response!!.body().photos.get(0))
+                //Log.d("photo 2",""+response.body().photos.get(1))
 
-                    Toasty.success(context,"Post Updated Successfully").show()
-                    finish()
-                }
-            })
+                Toasty.success(context,"Post Updated Successfully").show()
+                finish()
+            }
+        })
 
     }
 
@@ -268,7 +287,7 @@ class PostActivity : AppCompatActivity() {
 
                 override fun onLongPress(e: MotionEvent) {
 
-                    val child = recyclerView.findChildViewUnder(e.getX(), e.getY())
+                    val child = recyclerView.findChildViewUnder(e.x, e.y)
 
                     if (child != null && clickListener != null) {
 
@@ -282,7 +301,7 @@ class PostActivity : AppCompatActivity() {
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
 
-            val child = rv.findChildViewUnder(e.getX(), e.getY())
+            val child = rv.findChildViewUnder(e.x, e.y)
 
             if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
 

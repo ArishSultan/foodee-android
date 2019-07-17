@@ -31,13 +31,12 @@ class NotificationCenterAdapter(context: Context, list : List<NotificationCenter
     override fun getItemCount(): Int {
         return notificationList!!.size
     }
-
     override fun onBindViewHolder(holder: NotificationCenterHolder, position: Int) {
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
         if (notificationList!![position].user.profile.avatar!= null) {
-            Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + notificationList!![position].author.profile.userId+ "/" + notificationList!![position].author.profile.avatar).into(holder.userImg)
+            Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + notificationList!![position].user.profile.userId+ "/" + notificationList!![position].user.profile.avatar).into(holder.userImg)
         } else {
             Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(holder.userImg)
         }

@@ -20,6 +20,9 @@ interface SOService {
     @GET("/api/v1/profile/{userId}")
     fun getProfile(@Path("userId") userId:String,@HeaderMap header: Map<String, String>): Call<MeResponse>
 
+    @POST("/api/v1/fcm/token")
+    fun updateFcmToken(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<UpdateFcmTokenResponse>
+
     @Multipart
     @POST("/api/v1/update/photo")
     fun uploadImage(@HeaderMap header: Map<String, String>,
@@ -41,7 +44,7 @@ interface SOService {
     fun getMyFoodList(@HeaderMap header: Map<String, String>): Call<ArrayList<Food>>
 
     @POST("/api/v1/food/{food_id}")
-    fun deleteMyFood(@HeaderMap header: Map<String, String>,@Path("food_id")food_id:String,@Body requestBody: RequestBody): Call<DeleteFoodResponse>
+    fun deleteMyFood(@HeaderMap header: Map<String, String>,@Path("food_id")food_id:String,@Body requestBody: RequestBody): Call<DeleteFoodAndPostResponse>
 
     @POST("/api/v1/food/{food_id}")
     fun updateFood(@HeaderMap header: Map<String, String>,
@@ -49,6 +52,7 @@ interface SOService {
                    @Part foodFile: MultipartBody.Part?,
                    @Path("food_id")food_id:String,
                    @Body requestBody: RequestBody):Call<AddFoodResp>
+
     @POST("/api/v1/lat/lng")
     fun sendCurrentLatLng(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<LatLngResponse>
 
@@ -64,6 +68,15 @@ interface SOService {
 
     @GET("/api/v1/posts")
     fun getTimelinePost(@HeaderMap header: Map<String, String>): Call<FeedResponse>
+
+    @GET("/api/v1/posts/{postId}")
+    fun getPostById(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<FeedData>
+
+    @POST("/api/v1/posts/{postId}")
+    fun updatePost(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<AddNewPostResponse>
+
+    @POST("/api/v1/posts/{postId}")
+    fun deletePost(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<DeleteFoodAndPostResponse>
 
     @POST("/api/v1/comments")
     fun addNewComment(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<CommentResponse>

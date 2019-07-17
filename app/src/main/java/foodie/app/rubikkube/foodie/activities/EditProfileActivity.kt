@@ -596,7 +596,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun setUpRecyclerView() {
-        profileAdapter = ProfileFoodAdapter(this!!,foodList)
+        profileAdapter = ProfileFoodAdapter(this!!,foodList,"")
         friend_like_food.setHasFixedSize(false)
         val layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
         friend_like_food.layoutManager = layoutManager

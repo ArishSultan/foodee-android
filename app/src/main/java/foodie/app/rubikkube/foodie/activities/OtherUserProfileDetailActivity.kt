@@ -39,7 +39,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     var meResponse:MeResponse? = null
     var id:String? = null
     private lateinit var timeLineAdapter: TimelineAdapter
-    private var feedData:List<FeedData>?= ArrayList()
+    private var feedData:ArrayList<FeedData>?= ArrayList()
     private var pd1: KProgressHUD? = null
     private var userName:String?= null
     private var avatar:String?= null
@@ -173,7 +173,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
 
     private fun setUpRecyclerView() {
 
-        profileAdapter = ProfileFoodAdapter(this, foodList)
+        profileAdapter = ProfileFoodAdapter(this, foodList,"")
         friend_like_food.setHasFixedSize(false)
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation =  LinearLayout.HORIZONTAL
@@ -228,7 +228,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
                // pd1?.dismiss()
                 if(response!!.isSuccessful){
                     Log.d("Response", Gson().toJson(response))
-                    feedData = response.body().data
+                    feedData = response.body().data as ArrayList<FeedData>?
                     //intent.putExtra("foodList", response.body())
                     //foodList = response!!.body()
                     timeLineAdapter.update(feedData)

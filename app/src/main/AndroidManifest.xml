@@ -22,7 +22,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.NotificationCenterActivity"></activity>
+        <activity android:name=".activities.EditPostActivity"></activity>
+        <activity android:name=".activities.NotificationCenterActivity" />
         <activity android:name=".activities.PostActivity" />
         <activity android:name=".activities.OtherUserProfileDetailActivity" />
         <activity android:name=".activities.SplashScreen">

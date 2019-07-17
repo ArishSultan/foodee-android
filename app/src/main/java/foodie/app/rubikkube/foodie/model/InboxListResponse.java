@@ -33,6 +33,8 @@ private String message_id;
 @Expose
 private Integer userId;
 
+private Boolean isNewMessage = Boolean.FALSE;
+
 public Integer getId() {
 return id;
 }
@@ -93,4 +95,11 @@ public void setUserId(Integer userId) {
 this.userId = userId;
 }
 
+    public Boolean getNewMessage() {
+        return isNewMessage;
+    }
+
+    public void setNewMessage(Boolean newMessage) {
+        isNewMessage = newMessage;
+    }
 }

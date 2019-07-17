@@ -11,50 +11,77 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
+import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
+import foodie.app.rubikkube.foodie.AppClass
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.ChatInboxListAdapter
 import foodie.app.rubikkube.foodie.adapter.ChatUserListAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
+import foodie.app.rubikkube.foodie.classes.ObservableObject
 import foodie.app.rubikkube.foodie.model.ChatUserList
 import foodie.app.rubikkube.foodie.model.Food
 import foodie.app.rubikkube.foodie.model.InboxListResponse
+import foodie.app.rubikkube.foodie.model.MessageListResponse
 import foodie.app.rubikkube.foodie.utilities.Constant
+import io.socket.client.Socket
+import io.socket.emitter.Emitter
+import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.fragment_chat.view.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.HashMap
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
  * A simple [Fragment] subclass.
  */
-class ChatFragment : Fragment() {
+class ChatFragment : Fragment(), Observer {
+
+    override fun update(o: Observable?, arg: Any?) {
+
+
+        if(arg is MessageListResponse){
+
+            messageListResponse = arg
+            chatInboxListAdapter!!.iterateForNewMessageIndication(messageListResponse!!)
+
+
+        }
+
+    }
 
 
     var chatInboxListAdapter:ChatInboxListAdapter?= null
     var inboxUserListResponse:List<InboxListResponse>?= ArrayList()
-    private var chatuserAdapter: ChatUserListAdapter? = null
+    var inboxListResponse:InboxListResponse?= null
+    private var messageListResponse:MessageListResponse?= null
+    private var fromUserId:String?= null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        ObservableObject.getInstance().addObserver(this)
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
-
         setUpRecyclerView(view)
+
 
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        getInboxList(this.view!!)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        fromUserId = Prefs.getString(Constant.USERID,"")
+
+
     }
 
     private fun setUpRecyclerView(view: View) {
@@ -93,4 +120,23 @@ class ChatFragment : Fragment() {
                     }
                 })
     }
+
+    override fun onResume() {
+        super.onResume()
+        getInboxList(this.view!!)
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
 }// Required empty public constructor

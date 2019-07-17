@@ -35,7 +35,7 @@ class SplashScreen : AppCompatActivity() {
         FirebaseInstanceId.getInstance().instanceId
                 .addOnCompleteListener(OnCompleteListener { task ->
                     if (!task.isSuccessful) {
-                        Log.w("fcm", "getInstanceId failed", task.exception)
+                        Log.d("fcm", "getInstanceId failed", task.exception)
                         return@OnCompleteListener
                     }
 

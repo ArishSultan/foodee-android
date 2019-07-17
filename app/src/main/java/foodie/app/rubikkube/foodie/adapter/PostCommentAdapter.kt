@@ -29,7 +29,7 @@ import android.app.Activity
 class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)  : RecyclerView.Adapter<PostCommentAdapter.PostCommentHolder>() {
 
     val mContext = context
-    var listCommentData = listCommentData
+    var listCommentData = listCommentData!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostCommentAdapter.PostCommentHolder {
 
@@ -97,7 +97,7 @@ class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)
         val txt_content: TextView = view.findViewById(R.id.txt_content)
     }
 
-    fun update(listCommentData: List<CommentData>?){
+    fun update(listCommentData: List<CommentData>){
         this.listCommentData = listCommentData
         notifyDataSetChanged()
     }

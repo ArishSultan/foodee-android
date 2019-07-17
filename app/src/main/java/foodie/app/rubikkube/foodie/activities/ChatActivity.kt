@@ -1,5 +1,6 @@
 package foodie.app.rubikkube.foodie.activities
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -120,6 +121,12 @@ class ChatActivity : AppCompatActivity() {
                 msg_text.text = null
             }
         }
+
+        chat_user_img.setOnClickListener {
+            val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
+            intent.putExtra("id", userID)
+            startActivity(intent)
+        }
     }
 
     private fun intializeAdapter() {
@@ -162,15 +169,18 @@ class ChatActivity : AppCompatActivity() {
         userID = Prefs.getString("avatarUser","")
         avatar = Prefs.getString("avatar","")*/
 
-                    if(toUserFcmToken.isNullOrEmpty()) "" else toUserFcmToken?.let {
+
+                    if(toUserFcmToken != null) {
                         Utils.sentMessageNotification(this@ChatActivity,"Foodee",
                                 message!!,
                                 toUserId!!,
                                 fromUserId!!,
                                 myProfilePicture!!,
-                                it,"nothing")
+                                toUserFcmToken!!,"nothing")
                     }
-                }
+                    }
+
+
 
                 override fun onFailure(call: Call<MessageListResponse>?, t: Throwable?) {
                     Toast.makeText(this@ChatActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()

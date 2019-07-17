@@ -82,7 +82,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onNewToken(String token) {
         Prefs.putString("fcmToken",token);
         Log.d("fcmToken",token);
-
     }
 
 

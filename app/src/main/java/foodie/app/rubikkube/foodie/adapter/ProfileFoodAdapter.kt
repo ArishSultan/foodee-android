@@ -1,9 +1,6 @@
 package foodie.app.rubikkube.foodie.adapter
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Environment
 import android.support.v7.widget.RecyclerView
@@ -17,23 +14,16 @@ import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.Food
 import android.support.v7.app.AlertDialog
-import android.text.TextUtils
 import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
-import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.model.Image
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
-import foodie.app.rubikkube.foodie.activities.EditProfileActivity
-import foodie.app.rubikkube.foodie.activities.HomeActivity
-import foodie.app.rubikkube.foodie.fragments.ProfileFragment
 import foodie.app.rubikkube.foodie.model.AddFoodResp
-import foodie.app.rubikkube.foodie.model.DeleteFoodResponse
+import foodie.app.rubikkube.foodie.model.DeleteFoodAndPostResponse
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import id.zelory.compressor.Compressor
-import kotlinx.android.synthetic.main.activity_edit_profile.*
-import kotlinx.android.synthetic.main.fragment_timeline.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -46,11 +36,12 @@ import java.io.IOException
 import java.util.HashMap
 
 
-class ProfileFoodAdapter(context: Context, list : ArrayList<Food>)  : RecyclerView.Adapter<ProfileFoodAdapter.ProfileFoodHolder>() {
+class ProfileFoodAdapter(context: Context, list : ArrayList<Food>,comingFrom:String)  : RecyclerView.Adapter<ProfileFoodAdapter.ProfileFoodHolder>() {
 
     val mContext = context
     var foodList = list
-    var deleteFoodResponse = DeleteFoodResponse()
+    var deleteFoodResponse = DeleteFoodAndPostResponse()
+    private var comingFrom:String = comingFrom
     var KProgressHUD: KProgressHUD? = null
     internal var cv: MultipartBody.Part? = null
     private var image: ArrayList<Image>? = null
@@ -83,6 +74,11 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>)  : RecyclerVi
         holder.foodText.text = foodList[position].name
 
         if(foodList[position].pivot.profileId != Prefs.getString(Constant.USERID,"")){
+            holder.foodEditImage.visibility = View.INVISIBLE
+            holder.foodDeleteImage.visibility = View.INVISIBLE
+        }
+
+        if(comingFrom == "ComingFromProfileFragment"){
             holder.foodEditImage.visibility = View.INVISIBLE
             holder.foodDeleteImage.visibility = View.INVISIBLE
         }
@@ -121,7 +117,7 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>)  : RecyclerVi
 
     private fun removeFood(position: Int) {
         foodList.removeAt(position)
-        notifyItemRemoved(position)
+        notifyDataSetChanged()
     }
 
     private fun deleteSpecificFood(food_id:String){
@@ -131,13 +127,13 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>)  : RecyclerVi
         val jsonObject = JSONObject()
         jsonObject.put("_method", "DELETE")
         mService.deleteMyFood(hm,food_id, Utils.getRequestBody(jsonObject.toString()))
-        .enqueue(object : Callback<DeleteFoodResponse> {
-            override fun onFailure(call: Call<DeleteFoodResponse>?, t: Throwable?) {
+        .enqueue(object : Callback<DeleteFoodAndPostResponse> {
+            override fun onFailure(call: Call<DeleteFoodAndPostResponse>?, t: Throwable?) {
                 Toasty.error(mContext, ""+t!!.message, Toast.LENGTH_SHORT).show()
             }
-            override fun onResponse(call: Call<DeleteFoodResponse>?, response: Response<DeleteFoodResponse>?) {
-                if(response!!.isSuccessful){
-                    deleteFoodResponse = response.body()
+            override fun onResponse(call: Call<DeleteFoodAndPostResponse>?, andPostResponse: Response<DeleteFoodAndPostResponse>?) {
+                if(andPostResponse!!.isSuccessful){
+                    deleteFoodResponse = andPostResponse.body()
                     Toasty.success(mContext,deleteFoodResponse.message,Toast.LENGTH_SHORT).show()
                 }
             }

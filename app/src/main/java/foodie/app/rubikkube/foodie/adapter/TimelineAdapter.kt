@@ -3,8 +3,10 @@ package foodie.app.rubikkube.foodie.adapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v4.content.ContextCompat.startActivity
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.text.SpannableString
 import android.text.TextPaint
@@ -27,6 +29,7 @@ import com.smarteist.autoimageslider.SliderLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.EditPostActivity
 import foodie.app.rubikkube.foodie.activities.HomeActivity
 import foodie.app.rubikkube.foodie.activities.OtherUserProfileDetailActivity
 import foodie.app.rubikkube.foodie.activities.TimelinePostDetailActivity
@@ -40,14 +43,16 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.HashMap
 
 
-class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:Boolean) : RecyclerView.Adapter<TimelineAdapter.TimelineHolder>(){
+class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProfile:Boolean) : RecyclerView.Adapter<TimelineAdapter.TimelineHolder>(){
 
     val mContext = context
     var listFeedData = feedDate
     var imageFlat = false
     var commentData:CommentData? = null
+    var deletePostResponse = DeleteFoodAndPostResponse()
     var me: MeResponse? = null
     var user: User? = null
     var profile: Profile? = null
@@ -79,8 +84,6 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
         holder.imageSlider.clearSliderViews()
         if(listFeedData?.get(position)!!.photos!=null ){
             if(!(listFeedData?.get(position)!!.photos.contains(""))) {
-                Log.d("EMpty", "" + listFeedData?.get(position)!!.photos.contains(""))
-                Log.d("content",listFeedData?.get(position)!!.content)
                 for (i in listFeedData?.get(position)!!.photos.indices) {
                     holder.imageSlider.visibility = View.VISIBLE
                     val sliderView = DefaultSliderView(mContext)
@@ -142,6 +145,13 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
             holder.lyt_comment.visibility = View.GONE
         }
 
+        if(listFeedData!![position].userId.toString() == Prefs.getString(Constant.USERID,"")){
+            holder.txtViewOptions.visibility = View.VISIBLE
+        }
+        else{
+            holder.txtViewOptions.visibility = View.GONE
+        }
+
         holder.user_name.text = listFeedData!!.get(position).user.username
         holder.time_ago.text = listFeedData!!.get(position).createdAt
         holder.comment_txt.text = listFeedData!!.get(position).commentsCount.toString()
@@ -167,6 +177,37 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
                 imm.hideSoftInputFromWindow(holder.view.windowToken, 0)
 
             }
+        }
+
+        holder.txtViewOptions.setOnClickListener {
+                //creating a popup menu
+                val popup:PopupMenu =  PopupMenu(mContext, holder.txtViewOptions)
+                //inflating menu from xml resource
+                popup.inflate(R.menu.post_option_menu)
+                //adding click listener
+                popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+                when(item.itemId) {
+                    R.id.update_post -> {
+                        //Hawk.put("EditPostObject", listFeedData!![position])
+                        //mContext.startActivity(Intent(mContext, EditPostActivity::class.java))
+                    }
+                    R.id.delete_post -> {
+                        val alert = AlertDialog.Builder(mContext)
+                        alert.setTitle("Delete Post")
+                        alert.setMessage("Are you sure you want to delete the Post?")
+                        alert.setPositiveButton(android.R.string.yes) { dialog, which ->
+                            deletePost(listFeedData!![position].id)
+                            removePost(position)
+                        }
+                        alert.setNegativeButton(android.R.string.no) { dialog, which ->
+                            dialog.cancel()
+                        }
+                        alert.show()
+                    }
+                }
+                true
+            })
+            popup.show()
         }
 
         holder.like_icon.setOnClickListener {
@@ -305,10 +346,16 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
         val lyt_comment:RelativeLayout = view.findViewById(R.id.lyt_comment)
         val txt_tagged_user:TextView = view.findViewById(R.id.txt_tagged_user)
         val txt_is_with: TextView = view.findViewById(R.id.txt_is_with)
+        val txtViewOptions: TextView = view.findViewById(R.id.txtViewOptions)
     }
 
-    fun update(list : List<FeedData>?){
+    fun update(list : ArrayList<FeedData>?){
         listFeedData = list
+        notifyDataSetChanged()
+    }
+
+    private fun removePost(position: Int) {
+        listFeedData!!.removeAt(position)
         notifyDataSetChanged()
     }
 
@@ -352,9 +399,7 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
 
                     if(listFeedData!![position].user.device_token != null) {
                         Utils.sentSimpleNotification(mContext,"Foodee","$myName commented on your post",listFeedData!![position].user.device_token,"nothing")
-
                     }
-
                 }
                 Toasty.success(context,"Comment Posted Successfully").show()
             }
@@ -377,6 +422,23 @@ class TimelineAdapter(context: Context, feedDate: List<FeedData>?, isMyProfile:B
         })
     }
 
-
-
+    private fun deletePost(post_id:Int){
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        val mService = ApiUtils.getSOService() as SOService
+        val jsonObject = JSONObject()
+        jsonObject.put("_method", "DELETE")
+        mService.deletePost(post_id,hm, Utils.getRequestBody(jsonObject.toString()))
+        .enqueue(object : Callback<DeleteFoodAndPostResponse> {
+            override fun onFailure(call: Call<DeleteFoodAndPostResponse>?, t: Throwable?) {
+                Toasty.error(mContext, ""+t!!.message, Toast.LENGTH_SHORT).show()
+            }
+            override fun onResponse(call: Call<DeleteFoodAndPostResponse>?, andPostResponse: Response<DeleteFoodAndPostResponse>?) {
+                if(andPostResponse!!.isSuccessful){
+                    deletePostResponse = andPostResponse.body()
+                    Toasty.success(mContext,deletePostResponse.message,Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+    }
 }

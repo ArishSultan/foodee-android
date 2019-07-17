@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:background="@color/white"
     android:layout_height="match_parent"
-    tools:context=".activities.ChatActivity">
+    tools:context=".activities.ChatActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <include layout="@layout/custom_toolbar_for_chatscreen"
         android:id="@+id/chat_toolbar"

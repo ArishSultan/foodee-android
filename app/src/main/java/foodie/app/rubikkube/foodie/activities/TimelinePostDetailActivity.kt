@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
@@ -34,6 +35,7 @@ import org.w3c.dom.Comment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.HashMap
 
 class TimelinePostDetailActivity : Activity() {
 
@@ -44,6 +46,7 @@ class TimelinePostDetailActivity : Activity() {
     var btn_send_msg: Button? = null
     var timeLinePost: FeedData? = null
     var listCommentData:List<CommentData>? = ArrayList()
+    var deletePostResponse: DeleteFoodAndPostResponse = DeleteFoodAndPostResponse()
     var commentData:CommentData? = null
     var me: MeResponse? = null
     var user: User? = null
@@ -163,7 +166,7 @@ class TimelinePostDetailActivity : Activity() {
 
     private fun setUpRecyclerView() {
 
-        postCommentAdapter = PostCommentAdapter(this,listCommentData)
+        postCommentAdapter = PostCommentAdapter(this,listCommentData!!.reversed())
         rv_post_comments.setHasFixedSize(false)
 
         val layoutManager = LinearLayoutManager(this)
@@ -230,11 +233,42 @@ class TimelinePostDetailActivity : Activity() {
                 img_is_with.visibility = View.GONE
             }
 
-//            if (timeLinePost.commentsCount > 0) {
-//                txt_view_more_comments!!.visibility = View.VISIBLE
-//            } else {
-//                txt_view_more_comments!!.visibility = View.GONE
-//            }
+            if(timeLinePost.userId.toString() == Prefs.getString(Constant.USERID,"")){
+                txtViewOptions.visibility = View.VISIBLE
+            }
+            else{
+                txtViewOptions.visibility = View.GONE
+            }
+
+            txtViewOptions.setOnClickListener {
+                //creating a popup menu
+                val popup:PopupMenu =  PopupMenu(this, txtViewOptions)
+                //inflating menu from xml resource
+                popup.inflate(R.menu.post_option_menu)
+                //adding click listener
+                popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+                    when(item.itemId) {
+                        R.id.update_post ->
+                            Toast.makeText(this, "You Clicked : Update Post", Toast.LENGTH_SHORT).show()
+                        R.id.delete_post ->{
+
+                            val alert = AlertDialog.Builder(this@TimelinePostDetailActivity)
+                            alert.setTitle("Delete Post")
+                            alert.setMessage("Are you sure you want to delete the Post?")
+                            alert.setPositiveButton(android.R.string.yes) { dialog, which ->
+                                deletePost(timeLinePost.id)
+                            }
+                            alert.setNegativeButton(android.R.string.no) { dialog, which ->
+                                dialog.cancel()
+                            }
+                            alert.show()
+                        }
+                    }
+                    true
+                })
+                popup.show()
+            }
+
         }
     }
 
@@ -272,7 +306,7 @@ class TimelinePostDetailActivity : Activity() {
                     user!!.profile = profile
                     commentData!!.user = user
                     (listCommentData as java.util.ArrayList<CommentData>).add(commentData!!)
-                    postCommentAdapter.update(listCommentData)
+                    postCommentAdapter.update(listCommentData!!.reversed())
 
                     if(Prefs.getString(Constant.USERID,"").toInt() != timeLinePost!!.user.id) {
                         val myName = Prefs.getString(Constant.NAME,"")
@@ -318,11 +352,33 @@ class TimelinePostDetailActivity : Activity() {
                     if (response!!.isSuccessful) {
                         listCommentData = ArrayList()
                         listCommentData = response!!.body().data
-                        postCommentAdapter.update(listCommentData)
+                        postCommentAdapter.update(listCommentData!!.reversed())
                     }else{
                         Log.d("Response","Response Failed")
                     }
                 }
             })
         }
+
+    private fun deletePost(post_id:Int){
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        val mService = ApiUtils.getSOService() as SOService
+        val jsonObject = JSONObject()
+        jsonObject.put("_method", "DELETE")
+        mService.deletePost(post_id,hm, Utils.getRequestBody(jsonObject.toString()))
+                .enqueue(object : Callback<DeleteFoodAndPostResponse> {
+                    override fun onFailure(call: Call<DeleteFoodAndPostResponse>?, t: Throwable?) {
+                        Toasty.error(this@TimelinePostDetailActivity, ""+t!!.message, Toast.LENGTH_SHORT).show()
+                    }
+                    override fun onResponse(call: Call<DeleteFoodAndPostResponse>?, andPostResponse: Response<DeleteFoodAndPostResponse>?) {
+                        if(andPostResponse!!.isSuccessful){
+                            deletePostResponse = andPostResponse.body()
+                            Toasty.success(this@TimelinePostDetailActivity,deletePostResponse.message,Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this@TimelinePostDetailActivity,HomeActivity::class.java))
+                            finish()
+                        }
+                    }
+                })
+    }
 }

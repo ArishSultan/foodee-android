@@ -33,8 +33,7 @@ class SettingsFragment : Fragment() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
-            getActivity()?.finish();
-
+            activity?.finish()
         }
 
         return view

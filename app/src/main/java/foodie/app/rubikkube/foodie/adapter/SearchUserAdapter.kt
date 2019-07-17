@@ -37,7 +37,7 @@ class SearchUserAdapter(context: Context, list : List<User>)  : RecyclerView.Ada
         requestOptionsCover.error(R.drawable.profile_avatar)
         Glide.with(mContext).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/post/"+searchUser.get(position).profile.avatar).into(holder.searchUserImage)
         */
-        holder.textSearchUser.text = searchUser.get(position).username
+        holder.textSearchUser.text = searchUser[position].username
     }
 
 
@@ -47,7 +47,7 @@ class SearchUserAdapter(context: Context, list : List<User>)  : RecyclerView.Ada
     }
 
     fun getUser(position: Int):User{
-        return searchUser.get(position)
+        return searchUser[position]
     }
 
 

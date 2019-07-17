@@ -1,23 +1,16 @@
 package foodie.app.rubikkube.foodie.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import foodie.app.rubikkube.foodie.R;
 
@@ -31,12 +24,14 @@ public class MultimediaAdapter extends RecyclerView.Adapter<MultimediaAdapter.my
 
     private final LayoutInflater inflater;
     private Context context;
-    public static List<String> filePaths;
+    public static ArrayList<String> filePaths = new ArrayList<String>();
+    private String comingFrom;
 
-    public MultimediaAdapter(Context context, List<String> _filePath){
+    public MultimediaAdapter(Context context, ArrayList<String> _filePath,String comingFrom){
         inflater = LayoutInflater.from(context);
         this.context = context;
         this.filePaths = _filePath;
+        this.comingFrom = comingFrom;
     }
 
     @Override
@@ -54,12 +49,23 @@ public class MultimediaAdapter extends RecyclerView.Adapter<MultimediaAdapter.my
         String file = filePaths.get(position);
         //int lastPosition = filePaths.size() - 1;
 
-        if(position == filePaths.size() -1) {
-            Glide.with(context).load(R.drawable.ic_add_black_24dp).into(holder.imgOne);
-            holder._deleteIcon.setVisibility(View.INVISIBLE);
-        } else {
+        if(this.comingFrom.equals("addPost")) {
+            if (position == filePaths.size() - 1) {
+                Glide.with(context).load(R.drawable.ic_add_black_24dp).into(holder.imgOne);
+                holder._deleteIcon.setVisibility(View.INVISIBLE);
+            } else {
                 Glide.with(context).load(file).into(holder.imgOne);
                 holder._deleteIcon.setVisibility(View.VISIBLE);
+            }
+        }
+        else{
+            if (position == filePaths.size() - 1) {
+                Glide.with(context).load(R.drawable.ic_add_black_24dp).into(holder.imgOne);
+                holder._deleteIcon.setVisibility(View.INVISIBLE);
+            } else {
+                Glide.with(context).load(file).into(holder.imgOne);
+                holder._deleteIcon.setVisibility(View.VISIBLE);
+            }
         }
 
         holder._deleteIcon.setOnClickListener(new View.OnClickListener() {
@@ -74,11 +80,17 @@ public class MultimediaAdapter extends RecyclerView.Adapter<MultimediaAdapter.my
 
     }
 
+
     @Override
     public int getItemCount() {
         return filePaths.size();
     }
 
+
+    public void addMultimedia(ArrayList<String> filePath){
+        filePaths = filePath;
+        notifyDataSetChanged();
+    }
 
     public class myViewHolder extends RecyclerView.ViewHolder {
 
