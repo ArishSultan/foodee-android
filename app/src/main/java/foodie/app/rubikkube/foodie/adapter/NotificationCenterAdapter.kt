@@ -1,6 +1,7 @@
 package foodie.app.rubikkube.foodie.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
@@ -13,7 +14,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.orhanobut.hawk.Hawk
+import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.TimelinePostDetailActivity
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.NotificationCenter
 import foodie.app.rubikkube.foodie.utilities.Utils
@@ -48,8 +52,10 @@ class NotificationCenterAdapter(context: Context, list : List<NotificationCenter
         holder.txtNotificationMessage.text = spannable
         holder.txtMinsAgo.text = notificationList!![position].createdAt
         holder.view.setOnClickListener {
-//           val intent = Intent(mContext, ChatActivity::class.java)
-//           mContext.startActivity(intent)
+            //Prefs.putString("NotificationPostID", notificationList!![position].postId.toString())
+            val intent = Intent(mContext, TimelinePostDetailActivity::class.java)
+            intent.putExtra("PostID", notificationList!![position].postId.toString())
+            mContext.startActivity(intent)
         }
     }
 

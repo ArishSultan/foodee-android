@@ -45,7 +45,7 @@ class SplashScreen : AppCompatActivity() {
                     // Log and toast
                     //val msg = "Token $token"
                     Prefs.putString(Constant.FCM_TOKEN,token)
-                    Log.w("fcm", token)
+                    Log.d("fcm", token)
                     Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
                 })
 

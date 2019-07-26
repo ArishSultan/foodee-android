@@ -66,17 +66,21 @@ interface SOService {
     @POST("/api/v1/posts")
     fun addNewPost(@HeaderMap header: Map<String, String>,@Part photos: List<MultipartBody.Part>?, @Part("content") content: RequestBody,@Part("tags[]") tags: ArrayList<Int>? , @Query("Lat")latitude:Double,@Query("lng")longitude:Double): Call<AddNewPostResponse>
 
+    @Multipart
+    @POST("/api/v1/posts/{postId}")
+    fun updatePost(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>,@Part photos: List<MultipartBody.Part>?, @Part("content") content: RequestBody,@Part("tags[]") tags: ArrayList<Int>? , @Query("Lat")latitude:Double,@Query("lng")longitude:Double, @Part("_method") method: RequestBody): Call<AddNewPostResponse>
+
+    @POST("/api/v1/posts/{postId}")
+    fun deletePost(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<DeleteFoodAndPostResponse>
+
     @GET("/api/v1/posts")
     fun getTimelinePost(@HeaderMap header: Map<String, String>): Call<FeedResponse>
 
     @GET("/api/v1/posts/{postId}")
-    fun getPostById(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<FeedData>
+    fun getPostById(@Path("postId") userId:String,@HeaderMap header: Map<String, String>): Call<FeedData>
 
-    @POST("/api/v1/posts/{postId}")
-    fun updatePost(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<AddNewPostResponse>
-
-    @POST("/api/v1/posts/{postId}")
-    fun deletePost(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<DeleteFoodAndPostResponse>
+    @POST("/api/v1/posts/delete/image")
+    fun deletePostImage(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody):Call<LoginSignUpResponse>
 
     @POST("/api/v1/comments")
     fun addNewComment(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<CommentResponse>

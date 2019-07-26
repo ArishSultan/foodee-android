@@ -17,12 +17,12 @@ import android.widget.TextView
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.gson.JsonObject
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
-import kotlinx.android.synthetic.main.activity_post.*
 import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
 import foodie.app.rubikkube.foodie.adapter.SearchUserAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
@@ -32,10 +32,19 @@ import foodie.app.rubikkube.foodie.model.MeResponse
 import foodie.app.rubikkube.foodie.model.User
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
+import kotlinx.android.synthetic.main.activity_post.back_icon
+import kotlinx.android.synthetic.main.activity_post.edt_search_user
+import kotlinx.android.synthetic.main.activity_post.img_search
+import kotlinx.android.synthetic.main.activity_post.tag_user_heading
+import kotlinx.android.synthetic.main.activity_post.txt_caption
+import kotlinx.android.synthetic.main.activity_post.txt_tagged_user
+import kotlinx.android.synthetic.main.activity_post.user_avatar
+import kotlinx.android.synthetic.main.activity_post.user_name
 import net.alhazmy13.mediapicker.Image.ImagePicker
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,11 +52,13 @@ import java.io.File
 import java.util.ArrayList
 
 class EditPostActivity : AppCompatActivity() {
-    private var imageList: ArrayList<String>? = null
+    private var imageNameList: ArrayList<String>? = null
+    private var imageUrlList: ArrayList<String>? = null
+    private var imagePath:ArrayList<String>? = null
     private var multimediaGridAdapter: MultimediaAdapter? = null
     private var rv_grid: RecyclerView? = null
     private var rv_tag_user: RecyclerView?= null
-    private var post_btn:TextView? = null
+    private var edit_post_btn:TextView? = null
     private var pd: KProgressHUD? = null
     private var file: File? = null
     private var postImagesParts: List<MultipartBody.Part>? = null
@@ -56,21 +67,28 @@ class EditPostActivity : AppCompatActivity() {
     private var userModel: User? = null
     var user: String = ""
     private var userid: ArrayList<Int>? = null
+    private var editPost:FeedData? = null
     private lateinit var searchUserAdapter: SearchUserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_post)
-        imageList = ArrayList()
-        imageList!!.add("start")
+
+        imageNameList = ArrayList()
+        imageUrlList = ArrayList()
+        userid = ArrayList()
         pd = Utils.progressDialog(this, "", "Please wait")
         if (Hawk.contains("profileResponse")) {
             val meResponse = Hawk.get("profileResponse", "") as MeResponse
             dataBindMe(meResponse)
         }
         if(Hawk.contains("EditPostObject")){
-            val editPost = Hawk.get("EditPostObject", "") as FeedData
-            dataBindPost(editPost)
+            editPost = Hawk.get("EditPostObject", "") as FeedData
+            Prefs.putString("EditPostId",editPost!!.id.toString())
+            dataBindPost(editPost!!)
+            if(editPost!!.tags.size!=0) {
+                userid!!.add(editPost!!.tags[0].pivot.userId)
+            }
         }
 
         back_icon.setOnClickListener {
@@ -81,14 +99,15 @@ class EditPostActivity : AppCompatActivity() {
         rv_tag_user = findViewById(R.id.rv_tag_user)
         setMultimediaGridAdapter()
         setupRecyclerView()
-        post_btn = findViewById(R.id.post_btn)
-        post_btn!!.setOnClickListener {
+
+        edit_post_btn = findViewById(R.id.edit_post_btn)
+        edit_post_btn!!.setOnClickListener {
             if(txt_caption.text.toString() == ""){
                 Toasty.error(this,"Enter post first.").show()
             }
             else
             {
-                updatePost(txt_caption.text.toString(),userid,this)
+                updatePost(editPost!!.id,txt_caption.text.toString(),userid,this)
             }
         }
 
@@ -109,7 +128,7 @@ class EditPostActivity : AppCompatActivity() {
         rv_tag_user!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_tag_user!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 userModel = User()
-                userid = ArrayList()
+                userid  =   ArrayList()
                 userModel = searchUserAdapter.getUser(position)
                 Log.d("User Model", userModel!!.username)
                 userid!!.add(userModel!!.id)
@@ -123,13 +142,15 @@ class EditPostActivity : AppCompatActivity() {
     }
 
     private fun setMultimediaGridAdapter() {
-        multimediaGridAdapter = MultimediaAdapter(this, imageList,"updatePost")
+        imageNameList!!.add("start")
+        imageUrlList!!.add("start")
+        multimediaGridAdapter = MultimediaAdapter(this, imageNameList,imageUrlList,"updatePost")
         rv_grid!!.itemAnimator = DefaultItemAnimator()
         rv_grid!!.adapter = multimediaGridAdapter
         rv_grid!!.layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
         rv_grid!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_grid!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
-                val lastPos = imageList?.size?.minus(1)
+                val lastPos = imageNameList?.size?.minus(1)
                 //String aray[] = multimedia.get(position).split("@");
                 if (position == lastPos) {
 
@@ -157,9 +178,10 @@ class EditPostActivity : AppCompatActivity() {
         if (requestCode == ImagePicker.IMAGE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val mPaths:ArrayList<String> = data!!.getStringArrayListExtra(ImagePicker.EXTRA_IMAGE_PATH)
             Log.d("LOG",""+mPaths)
-            //imageList!!.add(0,mPaths.get(0))
-            imageList!!.addAll(0,mPaths)
-            //imageList!!.addAll(mPaths)
+            //imageNameList!!.add(0,mPaths.get(0))
+            //imageNameList!!.addAll(mPaths)
+            imageNameList!!.addAll(0,mPaths)
+            imageUrlList!!.addAll(0,mPaths)
             multimediaGridAdapter!!.notifyDataSetChanged()
             // Toast.makeText(DashboardActivity.this,"this is called here",Toast.LENGTH_LONG).show();
         }
@@ -177,25 +199,35 @@ class EditPostActivity : AppCompatActivity() {
         else
         {
             Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(user_avatar)
-
         }
     }
 
     fun dataBindPost(editPost: FeedData) {
-        post_desc_txt.text = editPost.content
-        txt_tagged_user.text = editPost.tags[0].username
-        if(editPost.photos!=null){
+        txt_caption.setText(editPost.content)
+        if(editPost.tags.size!=0) {
+            tag_user_heading.visibility = View.VISIBLE
+            txt_tagged_user.visibility = View.VISIBLE
+            txt_tagged_user.text = editPost.tags[0].username
+        }
+        else {
+            tag_user_heading.visibility = View.GONE
+            txt_tagged_user.visibility = View.GONE
+        }
+        if(editPost.photos.size!=0){
+            imagePath = ArrayList()
             if(!editPost.photos.contains("")) {
                 for (i in editPost!!.photos.indices) {
-                    imageList!!.add(ApiUtils.BASE_URL + "/storage/media/post/" + editPost!!.photos[i])
+                    imagePath!!.add(i,editPost!!.photos[i])
+                    imageUrlList!!.add(i,ApiUtils.BASE_URL + "/storage/media/post/" + editPost!!.photos[i])
+                    Log.d("Image$i",editPost!!.photos[i])
                 }
             }
+            imageNameList!!.addAll(0,imagePath!!)
+            multimediaGridAdapter = MultimediaAdapter(this, imageNameList,imageUrlList,"updatePost")
         }
-        multimediaGridAdapter!!.addMultimedia(imageList)
-
     }
 
-    private fun updatePost(content:String,tag_id:ArrayList<Int>?,context: Context) {
+    private fun updatePost(postId:Int,content:String,tag_id:ArrayList<Int>?,context:Context) {
         pd = Utils.progressDialog(this@EditPostActivity, "", "Post Uploading...")
         pd!!.show()
 
@@ -204,23 +236,27 @@ class EditPostActivity : AppCompatActivity() {
         val hm = java.util.HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
+        val jsonObject = JSONObject()
+        jsonObject.put("_method", "PATCH")
 
-        for (i in imageList?.indices!!) {
+        for (i in imageUrlList?.indices!!) {
 
-            Log.d( "ImagePath","post image " + i + "  " + imageList!![i])
-            if(imageList!![i].contains("start")){
+            Log.d( "ImagePath","post image " + i + "  " + imageUrlList!![i])
+            if(imageUrlList!![i].contains("start") || imageUrlList!![i].contains("http")){
 
-                Log.d( "ImagePath","post image " + i + "  " + imageList!![i])
+                Log.d( "ImagePath","post image " + i + "  " + imageUrlList!![i])
                 break
             }
-            file = File(imageList!![i])
+            file = File(imageUrlList!![i])
             postBody = RequestBody.create(MediaType.parse("image/*"), file!!)
             (postImagesParts as ArrayList<MultipartBody.Part>).add(MultipartBody.Part.createFormData("photos[$i]", file!!.name, postBody!!))
 
         }
-        mService.addNewPost(hm, postImagesParts,
-                RequestBody.create(MediaType.parse("text/plain"),
-                        content),tag_id,Prefs.getDouble("currentLat", 0.0),Prefs.getDouble("currentLng", 0.0)).enqueue(object : Callback<AddNewPostResponse> {
+        mService.updatePost(postId,hm, postImagesParts,
+                RequestBody.create(MediaType.parse("text/plain"), content),
+                tag_id,Prefs.getDouble("currentLat", 0.0),
+                Prefs.getDouble("currentLng", 0.0),
+                RequestBody.create(MediaType.parse("text/plain"),"PATCH")).enqueue(object : Callback<AddNewPostResponse> {
 
             override fun onFailure(call: Call<AddNewPostResponse>?, t: Throwable?) {
                 pd!!.dismiss()
@@ -228,14 +264,8 @@ class EditPostActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<AddNewPostResponse>?, response: Response<AddNewPostResponse>?) {
                 pd!!.dismiss()
-                Log.d("Specific food", "" + response?.body())
-                Log.d("User_ID",""+response!!.body().id)
-                Log.d("content",response!!.body().content)
-                Log.d("CreatedAt",response!!.body().createdAt)
-                Log.d("UpdatedAt",response!!.body().updatedAt)
-                Log.d("post_id",""+response.body().id)
-                //Log.d("photo 1",response!!.body().photos.get(0))
-                //Log.d("photo 2",""+response.body().photos.get(1))
+                Log.d("Edit",response!!.body().toString())
+
 
                 Toasty.success(context,"Post Updated Successfully").show()
                 finish()
@@ -325,7 +355,5 @@ class EditPostActivity : AppCompatActivity() {
             fun onLongClick(view: View?, position: Int)
         }
     }
-
-
 }
 

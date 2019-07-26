@@ -42,12 +42,13 @@ class TimelinePostDetailActivity : Activity() {
     var imageSlider: SliderLayout? = null
     var like_icon: ImageView? = null
     var txt_view_more_comments: TextView? = null
+    var postID: String? = null
     var edt_msg: EditText? = null
     var btn_send_msg: Button? = null
     var timeLinePost: FeedData? = null
-    var listCommentData:List<CommentData>? = ArrayList()
+    var listCommentData: List<CommentData>? = ArrayList()
     var deletePostResponse: DeleteFoodAndPostResponse = DeleteFoodAndPostResponse()
-    var commentData:CommentData? = null
+    var commentData: CommentData? = null
     var me: MeResponse? = null
     var user: User? = null
     var profile: Profile? = null
@@ -56,7 +57,7 @@ class TimelinePostDetailActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline_post_detail)
-
+        intent = getIntent()
         imageSlider = findViewById(R.id.imageSlider)
         like_icon = findViewById(R.id.like_icon)
         txt_view_more_comments = findViewById(R.id.txt_view_more_comments)
@@ -64,16 +65,16 @@ class TimelinePostDetailActivity : Activity() {
         btn_send_msg = findViewById(R.id.btn_send_msg)
 
         Glide.with(this).load(R.drawable.ic_keyboard_backspace_black_24dp).into(back_icon)
-
-        if (Hawk.contains("DetailPost")) {
+        postID = intent.getStringExtra("PostID")
+/*        if (Hawk.contains("DetailPost")) {
             timeLinePost = Hawk.get("DetailPost", "") as FeedData
-            dataBindMe(timeLinePost!!)
-        }
+            postID = ""
+            postID = timeLinePost!!.id.toString()
+            timeLinePost = FeedData()
+        }*/
 
+        getPostById(postID!!)
         setUpRecyclerView()
-
-        Log.d("Post_id",""+timeLinePost!!.id)
-        //getAllComments(timeLinePost!!.id,this)
 
         back_icon!!.setOnClickListener {
             finish()
@@ -94,12 +95,12 @@ class TimelinePostDetailActivity : Activity() {
                 timeLinePost!!.likescount += 1
                 like_txt.text = (timeLinePost!!.likescount).toString()
 
-                if(Prefs.getString(Constant.USERID,"").toInt() != timeLinePost!!.user.id) {
-                    val myName = Prefs.getString(Constant.NAME,"")
+                if (Prefs.getString(Constant.USERID, "").toInt() != timeLinePost!!.user.id) {
+                    val myName = Prefs.getString(Constant.NAME, "")
 
-                    if(!timeLinePost!!.user.device_token.isNullOrEmpty()) {
+                    if (!timeLinePost!!.user.device_token.isNullOrEmpty()) {
 
-                        Utils.sentSimpleNotification(this@TimelinePostDetailActivity,"Foodee","$myName likes your post",timeLinePost!!.user.device_token,"nothing")
+                        Utils.sentSimpleNotification(this@TimelinePostDetailActivity, "Foodee", "$myName likes your post", timeLinePost!!.user.device_token, "nothing")
                     }
 
                 }
@@ -109,11 +110,9 @@ class TimelinePostDetailActivity : Activity() {
         btn_send_msg!!.setOnClickListener {
             val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             if (edt_msg!!.text.toString().equals("")) {
-                Toasty.error(this,"Enter Comment first.").show()
+                Toasty.error(this, "Enter Comment first.").show()
                 imm.hideSoftInputFromWindow(edt_msg!!.windowToken, 0)
-            }
-            else
-            {
+            } else {
                 addComment(edt_msg!!.text.toString(), timeLinePost!!.id.toString(), this)
                 timeLinePost!!.commentsCount += 1
                 comment_txt.text = timeLinePost!!.commentsCount.toString()
@@ -129,7 +128,7 @@ class TimelinePostDetailActivity : Activity() {
                 //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
-                Prefs.putBoolean("comingFromPostDetail",true)
+                Prefs.putBoolean("comingFromPostDetail", true)
             } else {
                 val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
                 intent.putExtra("id", timeLinePost!!.userId.toString())
@@ -144,7 +143,7 @@ class TimelinePostDetailActivity : Activity() {
                 //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
-                Prefs.putBoolean("comingFromPostDetail",true)
+                Prefs.putBoolean("comingFromPostDetail", true)
             } else {
                 val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
                 intent.putExtra("id", timeLinePost!!.userId.toString())
@@ -153,20 +152,19 @@ class TimelinePostDetailActivity : Activity() {
         }
 
         txt_tagged_user.setOnClickListener {
-                val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
-                intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
-                startActivity(intent)
+            val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
+            intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
+            startActivity(intent)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        getAllComments(timeLinePost!!.id,this)
     }
 
     private fun setUpRecyclerView() {
 
-        postCommentAdapter = PostCommentAdapter(this,listCommentData!!.reversed())
+        postCommentAdapter = PostCommentAdapter(this, listCommentData!!.reversed())
         rv_post_comments.setHasFixedSize(false)
 
         val layoutManager = LinearLayoutManager(this)
@@ -205,9 +203,14 @@ class TimelinePostDetailActivity : Activity() {
                     //sliderView.setImageScaleType(ImageView.ScaleType.FIT_XY)
                     Log.d("ImageURL", ApiUtils.BASE_URL + "/storage/media/post/" + timeLinePost!!.photos.get(i) + " Size " + timeLinePost!!.photos.size)
                 }
-            } else {
+            }
+            else {
                 imageSlider!!.visibility = View.GONE
             }
+        }
+        else {
+            imageSlider!!.visibility = View.GONE
+        }
 
             user_name.text = timeLinePost.user.username
             time_ago.text = timeLinePost.createdAt
@@ -221,44 +224,44 @@ class TimelinePostDetailActivity : Activity() {
                 like_icon?.setImageResource(R.drawable.like)
             }
 
-            if(timeLinePost.tags.size > 0){
+            if (timeLinePost.tags.size > 0) {
                 txt_tagged_user.visibility = View.VISIBLE
                 //txt_is_with.visibility = View.VISIBLE
                 img_is_with.visibility = View.VISIBLE
                 txt_tagged_user.text = timeLinePost.tags.get(0).username
-            }
-            else{
+            } else {
                 txt_tagged_user.visibility = View.GONE
                 //txt_is_with.visibility = View.GONE
                 img_is_with.visibility = View.GONE
             }
 
-            if(timeLinePost.userId.toString() == Prefs.getString(Constant.USERID,"")){
+            if (timeLinePost.userId.toString() == Prefs.getString(Constant.USERID, "")) {
                 txtViewOptions.visibility = View.VISIBLE
-            }
-            else{
+            } else {
                 txtViewOptions.visibility = View.GONE
             }
 
             txtViewOptions.setOnClickListener {
                 //creating a popup menu
-                val popup:PopupMenu =  PopupMenu(this, txtViewOptions)
+                val popup: PopupMenu = PopupMenu(this, txtViewOptions)
                 //inflating menu from xml resource
                 popup.inflate(R.menu.post_option_menu)
                 //adding click listener
                 popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
-                    when(item.itemId) {
-                        R.id.update_post ->
-                            Toast.makeText(this, "You Clicked : Update Post", Toast.LENGTH_SHORT).show()
-                        R.id.delete_post ->{
+                    when (item.itemId) {
+                        R.id.update_post -> {
+                            Hawk.put("EditPostObject", timeLinePost)
+                            startActivity(Intent(this, EditPostActivity::class.java))
+                        }
+                        R.id.delete_post -> {
 
                             val alert = AlertDialog.Builder(this@TimelinePostDetailActivity)
                             alert.setTitle("Delete Post")
                             alert.setMessage("Are you sure you want to delete the Post?")
-                            alert.setPositiveButton(android.R.string.yes) { dialog, which ->
+                            alert.setPositiveButton(resources.getString(R.string.yes)) { dialog, which ->
                                 deletePost(timeLinePost.id)
                             }
-                            alert.setNegativeButton(android.R.string.no) { dialog, which ->
+                            alert.setNegativeButton(resources.getString(R.string.no)) { dialog, which ->
                                 dialog.cancel()
                             }
                             alert.show()
@@ -268,115 +271,137 @@ class TimelinePostDetailActivity : Activity() {
                 })
                 popup.show()
             }
-
-        }
     }
 
-        fun addComment(content: String, post_id: String, context: Context) {
-            val mService = ApiUtils.getSOService() as SOService
-            val hm = java.util.HashMap<String, String>()
-            hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
-            hm["X-Requested-With"] = "XMLHttpRequest"
-            val jsonObject = JSONObject()
-            jsonObject.put("content", content)
-            jsonObject.put("post_id", post_id)
-            mService.addNewComment(hm, Utils.getRequestBody(jsonObject.toString())).enqueue(object : Callback<CommentResponse> {
-                override fun onFailure(call: Call<CommentResponse>?, t: Throwable?) {
-                    Toasty.error(context, "There is a Network Connectivity issue.").show()
-                }
+    fun addComment(content: String, post_id: String, context: Context) {
+        val mService = ApiUtils.getSOService() as SOService
+        val hm = java.util.HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["X-Requested-With"] = "XMLHttpRequest"
+        val jsonObject = JSONObject()
+        jsonObject.put("content", content)
+        jsonObject.put("post_id", post_id)
+        mService.addNewComment(hm, Utils.getRequestBody(jsonObject.toString())).enqueue(object : Callback<CommentResponse> {
+            override fun onFailure(call: Call<CommentResponse>?, t: Throwable?) {
+                Toasty.error(context, "There is a Network Connectivity issue.").show()
+            }
 
-                override fun onResponse(call: Call<CommentResponse>?, response: Response<CommentResponse>?) {
-                    Log.d("content", response!!.body().content)
-                    Log.d("CreatedAt", response!!.body().createdAt)
-                    Log.d("UpdatedAt", response!!.body().updatedAt)
-                    Log.d("post_id", "" + response.body().postId)
-                    Log.d("user_id", "" + response.body().userId)
-                    Log.d("comment_id", "" + response.body().id)
-                    me = Hawk.get("profileResponse")
-                    commentData = CommentData()
-                    commentData!!.id = response.body().id
-                    commentData!!.content = response.body().content
-                    commentData!!.createdAt = "Just now"
-                    commentData!!.postId = response.body().postId.toInt()
-                    user = User()
-                    profile = Profile()
-                    profile!!.avatar = me!!.profile.avatar
-                    user!!.username = me!!.username
-                    user!!.id = me!!.id
-                    user!!.profile = profile
-                    commentData!!.user = user
-                    (listCommentData as java.util.ArrayList<CommentData>).add(commentData!!)
+            override fun onResponse(call: Call<CommentResponse>?, response: Response<CommentResponse>?) {
+                Log.d("content", response!!.body().content)
+                Log.d("CreatedAt", response!!.body().createdAt)
+                Log.d("UpdatedAt", response!!.body().updatedAt)
+                Log.d("post_id", "" + response.body().postId)
+                Log.d("user_id", "" + response.body().userId)
+                Log.d("comment_id", "" + response.body().id)
+                me = Hawk.get("profileResponse")
+                commentData = CommentData()
+                commentData!!.id = response.body().id
+                commentData!!.content = response.body().content
+                commentData!!.createdAt = "Just now"
+                commentData!!.postId = response.body().postId.toInt()
+                user = User()
+                profile = Profile()
+                profile!!.userId = me!!.id
+                profile!!.avatar = me!!.profile.avatar
+                user!!.username = me!!.username
+                user!!.id = me!!.id
+                user!!.profile = profile
+                commentData!!.user = user
+                (listCommentData as java.util.ArrayList<CommentData>).add(commentData!!)
+                postCommentAdapter.update(listCommentData!!.reversed())
+
+                if (Prefs.getString(Constant.USERID, "").toInt() != timeLinePost!!.user.id) {
+                    val myName = Prefs.getString(Constant.NAME, "")
+
+                    if (!timeLinePost!!.user.device_token.isNullOrEmpty()) {
+                        Utils.sentSimpleNotification(this@TimelinePostDetailActivity, "Foodee", "$myName commented your post", timeLinePost!!.user.device_token, "nothing")
+                    }
+                }
+                Toasty.success(context, "Comment Posted Successfully").show()
+            }
+        })
+    }
+
+
+    fun likeAndUnlike(post_id: Int, context: Context) {
+        val mService = ApiUtils.getSOService() as SOService
+        val hm = java.util.HashMap<String, String>()
+        var flag = false
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["X-Requested-With"] = "XMLHttpRequest"
+        mService.likeAndUnlike(post_id, hm).enqueue(object : Callback<LikeResponse> {
+            override fun onFailure(call: Call<LikeResponse>?, t: Throwable?) {
+                Toasty.error(context, "There is a Network Connectivity issue.").show()
+            }
+
+            override fun onResponse(call: Call<LikeResponse>?, response: Response<LikeResponse>?) {
+                Log.d("status", response!!.body().status.toString())
+                Log.d("post_count", response!!.body().postCount.toString())
+            }
+        })
+    }
+
+    fun getAllComments(post_id: Int, context: Context) {
+        val mService = ApiUtils.getSOService() as SOService
+        val hm = java.util.HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["X-Requested-With"] = "XMLHttpRequest"
+        mService.getComments(post_id, hm).enqueue(object : Callback<GetCommentResponse> {
+            override fun onFailure(call: Call<GetCommentResponse>?, t: Throwable?) {
+                Toasty.error(context, "There is a Network Connectivity issue.").show()
+            }
+
+            override fun onResponse(call: Call<GetCommentResponse>?, response: Response<GetCommentResponse>?) {
+                if (response!!.isSuccessful) {
+                    listCommentData = ArrayList()
+                    listCommentData = response!!.body().data
                     postCommentAdapter.update(listCommentData!!.reversed())
-
-                    if(Prefs.getString(Constant.USERID,"").toInt() != timeLinePost!!.user.id) {
-                        val myName = Prefs.getString(Constant.NAME,"")
-
-                        if(!timeLinePost!!.user.device_token.isNullOrEmpty()) {
-                            Utils.sentSimpleNotification(this@TimelinePostDetailActivity,"Foodee","$myName commented your post",timeLinePost!!.user.device_token,"nothing")
-                        }
-                    }
-                    Toasty.success(context, "Comment Posted Successfully").show()
+                } else {
+                    Log.d("Response", "Response Failed")
                 }
-            })
-        }
+            }
+        })
+    }
 
-
-        fun likeAndUnlike(post_id: Int, context: Context) {
-            val mService = ApiUtils.getSOService() as SOService
-            val hm = java.util.HashMap<String, String>()
-            var flag = false
-            hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
-            hm["X-Requested-With"] = "XMLHttpRequest"
-            mService.likeAndUnlike(post_id, hm).enqueue(object : Callback<LikeResponse> {
-                override fun onFailure(call: Call<LikeResponse>?, t: Throwable?) {
-                    Toasty.error(context, "There is a Network Connectivity issue.").show()
-                }
-
-                override fun onResponse(call: Call<LikeResponse>?, response: Response<LikeResponse>?) {
-                    Log.d("status", response!!.body().status.toString())
-                    Log.d("post_count", response!!.body().postCount.toString())
-                }
-            })
-        }
-
-        fun getAllComments(post_id:Int,context: Context) {
-            val mService = ApiUtils.getSOService() as SOService
-            val hm = java.util.HashMap<String, String>()
-            hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
-            hm["X-Requested-With"] = "XMLHttpRequest"
-            mService.getComments(post_id,hm).enqueue(object : Callback<GetCommentResponse> {
-                override fun onFailure(call: Call<GetCommentResponse>?, t: Throwable?) {
-                    Toasty.error(context,"There is a Network Connectivity issue.").show()
-                }
-                override fun onResponse(call: Call<GetCommentResponse>?, response: Response<GetCommentResponse>?) {
-                    if (response!!.isSuccessful) {
-                        listCommentData = ArrayList()
-                        listCommentData = response!!.body().data
-                        postCommentAdapter.update(listCommentData!!.reversed())
-                    }else{
-                        Log.d("Response","Response Failed")
-                    }
-                }
-            })
-        }
-
-    private fun deletePost(post_id:Int){
+    private fun deletePost(post_id: Int) {
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         val jsonObject = JSONObject()
         jsonObject.put("_method", "DELETE")
-        mService.deletePost(post_id,hm, Utils.getRequestBody(jsonObject.toString()))
+        mService.deletePost(post_id, hm, Utils.getRequestBody(jsonObject.toString()))
                 .enqueue(object : Callback<DeleteFoodAndPostResponse> {
                     override fun onFailure(call: Call<DeleteFoodAndPostResponse>?, t: Throwable?) {
-                        Toasty.error(this@TimelinePostDetailActivity, ""+t!!.message, Toast.LENGTH_SHORT).show()
+                        Toasty.error(this@TimelinePostDetailActivity, "" + t!!.message, Toast.LENGTH_SHORT).show()
                     }
+
                     override fun onResponse(call: Call<DeleteFoodAndPostResponse>?, andPostResponse: Response<DeleteFoodAndPostResponse>?) {
-                        if(andPostResponse!!.isSuccessful){
+                        if (andPostResponse!!.isSuccessful) {
                             deletePostResponse = andPostResponse.body()
-                            Toasty.success(this@TimelinePostDetailActivity,deletePostResponse.message,Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this@TimelinePostDetailActivity,HomeActivity::class.java))
+                            Toasty.success(this@TimelinePostDetailActivity, deletePostResponse.message, Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this@TimelinePostDetailActivity, HomeActivity::class.java))
                             finish()
+                        }
+                    }
+                })
+    }
+
+    private fun getPostById(post_id: String) {
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        val mService = ApiUtils.getSOService() as SOService
+        mService.getPostById(post_id, hm)
+                .enqueue(object : Callback<FeedData> {
+                    override fun onFailure(call: Call<FeedData>?, t: Throwable?) {
+                        Toasty.error(this@TimelinePostDetailActivity, "" + t!!.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onResponse(call: Call<FeedData>?, feedDataResponse: Response<FeedData>?) {
+                        if (feedDataResponse!!.isSuccessful) {
+                            timeLinePost = feedDataResponse.body()
+                            dataBindMe(timeLinePost!!)
+                            getAllComments(timeLinePost!!.id, this@TimelinePostDetailActivity)
+                            //finish()
                         }
                     }
                 })

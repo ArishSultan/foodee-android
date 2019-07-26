@@ -23,17 +23,15 @@ import foodie.app.rubikkube.foodie.AppClass
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.NotificationCenterActivity
 import foodie.app.rubikkube.foodie.activities.PostActivity
-import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import io.socket.client.Socket
-import kotlinx.android.synthetic.main.activity_notification_center.*
+import io.socket.emitter.Emitter
+import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -43,13 +41,13 @@ import java.util.HashMap
 
 class TimelineFragment : Fragment() {
 
-    private var imageList: ArrayList<String>? = null
-    private var multimediaGridAdapter: MultimediaAdapter? = null
     private var pd: KProgressHUD? = null
     private var rv_grid: RecyclerView? = null
     private var feedData:ArrayList<FeedData>?= ArrayList()
     private var mSocket:Socket? = null
+    private var onNotificationReceived: Emitter.Listener? = null
     private var img_bell:ImageView? = null
+    private var img_notification_dot:ImageView? = null
     private var title_toolbar:TextView? = null
 
     private lateinit var timeLineAdapter: TimelineAdapter
@@ -58,6 +56,10 @@ class TimelineFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val app = activity!!.application as AppClass
         mSocket = app.socket
+
+        mSocket!!.connect()
+
+        socketListener()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -66,14 +68,16 @@ class TimelineFragment : Fragment() {
 //        view.toolbar_title.setText("TimeLine")
 //        view.text.setText("TimeLine")
 
-        Hawk.init(context!!).build();
+        Hawk.init(context!!).build()
 
         img_bell = view.toolbar_id!!.findViewById(R.id.img_notification_bell)
+        img_notification_dot = view.toolbar_id!!.findViewById(R.id.img_notification_dot)
         title_toolbar = view.toolbar_id!!.findViewById(R.id.toolbar_title)
         title_toolbar!!.text = "Timeline"
 
         img_bell!!.visibility = View.VISIBLE
         img_bell!!.setOnClickListener {
+            img_notification_dot!!.visibility = View.GONE
             val intent = Intent(context, NotificationCenterActivity::class.java)
             startActivity(intent)
         }
@@ -93,6 +97,41 @@ class TimelineFragment : Fragment() {
         super.onResume()
         updateFcmToken()
         getMe(this!!.view!!)
+
+        if(mSocket != null) {
+
+            mSocket?.on("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(mSocket != null) {
+
+            mSocket?.off("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(mSocket != null) {
+
+            mSocket?.off("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
+        }
+    }
+
+    fun socketListener(){
+        onNotificationReceived = Emitter.Listener { args ->
+            activity!!.runOnUiThread {
+                try {
+                    val jsonObject = JSONObject(args[0].toString())
+                    Log.d("SocketResponse",""+jsonObject)
+                    img_notification_dot!!.visibility = View.VISIBLE
+                }catch (ex : Exception) {
+                    ex.printStackTrace()
+                }
+            }
+        }
     }
 
     private fun setUpRecyclerView(view: View) {
@@ -194,36 +233,3 @@ class TimelineFragment : Fragment() {
     }
 
 }
-//    private fun setMultimediaGridAdapter() {
-//        imageList = ArrayList<String>()
-//        imageList?.add("start")
-//        multimediaGridAdapter = MultimediaAdapter(getContext(), imageList)
-//        rv_grid?.setItemAnimator(DefaultItemAnimator())
-//        rv_grid?.setAdapter(multimediaGridAdapter)
-//        rv_grid?.setLayoutManager(LinearLayoutManager(getActivity(), LinearLayout.HORIZONTAL, false))
-//        rv_grid?.addOnItemTouchListener(RecyclerTouchListener(getActivity() , rv_grid!!, object : RecyclerTouchListener.ClickListener() {
-//            fun onClick(view: View, position: Int) {
-//
-//                val lastPos = imageList.size - 1
-//                //String aray[] = multimedia.get(position).split("@");
-//                if (position == lastPos) {
-//
-//                    ImagePicker.Builder(getActivity())
-//                            .mode(ImagePicker.Mode.CAMERA_AND_GALLERY)
-//                            .compressLevel(ImagePicker.ComperesLevel.MEDIUM)
-//                            .directory(ImagePicker.Directory.DEFAULT)
-//                            .extension(ImagePicker.Extension.PNG)
-//                            .scale(600, 600)
-//                            .allowMultipleImages(false)
-//                            .enableDebuggingMode(true)
-//                            .build()
-//                }
-//
-//            }
-//
-//            fun onLongClick(view: View, position: Int) {
-//
-//            }
-//        }))
-//
-//    }

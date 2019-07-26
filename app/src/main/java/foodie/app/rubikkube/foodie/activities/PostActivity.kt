@@ -43,6 +43,7 @@ import java.util.ArrayList
 
 class PostActivity : AppCompatActivity() {
     private var imageList: ArrayList<String>? = null
+    private var imageUrlList: ArrayList<String>? = null
     private var multimediaGridAdapter: MultimediaAdapter? = null
     private var rv_grid: RecyclerView? = null
     private var rv_tag_user: RecyclerView?= null
@@ -117,8 +118,10 @@ class PostActivity : AppCompatActivity() {
 
     private fun setMultimediaGridAdapter() {
         imageList = ArrayList()
+        imageUrlList = ArrayList()
         imageList!!.add("start")
-        multimediaGridAdapter = MultimediaAdapter(this, imageList,"addPost")
+        imageUrlList!!.add("start")
+        multimediaGridAdapter = MultimediaAdapter(this, imageList,imageUrlList,"addPost")
         rv_grid!!.itemAnimator = DefaultItemAnimator()
         rv_grid!!.adapter = multimediaGridAdapter
         rv_grid!!.layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
@@ -154,6 +157,7 @@ class PostActivity : AppCompatActivity() {
             Log.d("LOG",""+mPaths)
             //imageList!!.add(0,mPaths.get(0))
             imageList!!.addAll(0,mPaths)
+            imageUrlList!!.addAll(0,mPaths)
             //imageList!!.addAll(mPaths)
             multimediaGridAdapter!!.notifyDataSetChanged()
             // Toast.makeText(DashboardActivity.this,"this is called here",Toast.LENGTH_LONG).show();

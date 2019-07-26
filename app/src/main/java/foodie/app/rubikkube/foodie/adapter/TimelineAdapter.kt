@@ -97,6 +97,9 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
                 holder.imageSlider.visibility = View.GONE
             }
         }
+        else {
+            holder.imageSlider.visibility = View.GONE
+        }
         if (listFeedData!!.get(position).isLiked) {
             holder.like_icon.setImageResource(R.drawable.ic_liked)
         }
@@ -188,18 +191,18 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
                 popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
                 when(item.itemId) {
                     R.id.update_post -> {
-                        //Hawk.put("EditPostObject", listFeedData!![position])
-                        //mContext.startActivity(Intent(mContext, EditPostActivity::class.java))
+                        Hawk.put("EditPostObject", listFeedData!![position])
+                        mContext.startActivity(Intent(mContext, EditPostActivity::class.java))
                     }
                     R.id.delete_post -> {
                         val alert = AlertDialog.Builder(mContext)
                         alert.setTitle("Delete Post")
                         alert.setMessage("Are you sure you want to delete the Post?")
-                        alert.setPositiveButton(android.R.string.yes) { dialog, which ->
+                        alert.setPositiveButton(mContext.resources.getString(R.string.yes)) { dialog, which ->
                             deletePost(listFeedData!![position].id)
                             removePost(position)
                         }
-                        alert.setNegativeButton(android.R.string.no) { dialog, which ->
+                        alert.setNegativeButton(mContext.resources.getString(R.string.no)) { dialog, which ->
                             dialog.cancel()
                         }
                         alert.show()
@@ -239,18 +242,24 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         }
 
         holder.chat_bubble_icon.setOnClickListener {
-            Hawk.put("DetailPost",listFeedData!!.get(position))
-            mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
+            //Hawk.put("DetailPost",listFeedData!!.get(position))
+            val intent = Intent(mContext, TimelinePostDetailActivity::class.java)
+            intent.putExtra("PostID", listFeedData!![position].id.toString())
+            mContext.startActivity(intent)
         }
 
         holder.imageSlider.setOnClickListener {
-            Hawk.put("DetailPost",listFeedData!!.get(position))
-            mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
+            //Hawk.put("DetailPost",listFeedData!!.get(position))
+            val intent = Intent(mContext, TimelinePostDetailActivity::class.java)
+            intent.putExtra("PostID", listFeedData!![position].id.toString())
+            mContext.startActivity(intent)
         }
 
         holder.txt_content.setOnClickListener {
-            Hawk.put("DetailPost",listFeedData!!.get(position))
-            mContext.startActivity(Intent(mContext, TimelinePostDetailActivity::class.java))
+            //Hawk.put("DetailPost",listFeedData!!.get(position))
+            val intent = Intent(mContext, TimelinePostDetailActivity::class.java)
+            intent.putExtra("PostID", listFeedData!![position].id.toString())
+            mContext.startActivity(intent)
         }
 
         /*holder.txt_view_more_comments.setOnClickListener {

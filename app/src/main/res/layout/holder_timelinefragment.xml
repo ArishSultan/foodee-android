@@ -40,16 +40,15 @@
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                 android:id="@+id/txtViewOptions"
-                android:layout_width="10dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_width="20dp"
+                android:layout_height="40dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="12dp"
                 android:gravity="center"
                 android:text="&#8942;"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="18sp" />
 
             <foodie.app.rubikkube.foodie.fonts.robotoThinBold
                 android:id="@+id/txt_is_with"
@@ -245,7 +244,7 @@
                         android:layout_marginStart="10dp"
                         android:text="Mitchell Simpson"
                         android:textColor="@color/black"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <foodie.app.rubikkube.foodie.fonts.robotoThinBold
                         android:id="@+id/comment_time_ago"
