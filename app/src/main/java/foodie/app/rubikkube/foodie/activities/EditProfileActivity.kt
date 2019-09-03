@@ -66,7 +66,6 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
     var isPublic = 0
 
-
     var KProgressHUD: KProgressHUD? = null
     internal var cv: MultipartBody.Part? = null
     private var dialog: android.support.v7.app.AlertDialog? = null
@@ -103,9 +102,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             ageBuilder(this)
         }
         if (v?.id == R.id.location_dropdown) {
-
         }
-
 
         if (v?.id == R.id.female_card_bg) {
             meResponse.profile.gender = "Female"
@@ -124,12 +121,10 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
         if (v?.id == R.id.twenty_five_precent) {
 
-
             contribution = "25%"
             twenty_five_precent.setBackgroundResource(R.drawable.rounded_button)
             fifty_percent.setBackgroundResource(R.drawable.rectangular_line)
             treat_me.setBackgroundResource(R.drawable.rectangular_line)
-
             twenty_five_precent.setTextColor(resources.getColor(R.color.white))
             fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
             treat_me.setTextColor(resources.getColor(R.color.d_gray))
@@ -146,12 +141,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             treat_me.setTextColor(resources.getColor(R.color.d_gray))
         }
         if (v?.id == R.id.treat_me) {
-            contribution = "Treatme"
+            contribution = "Treat Me"
 
             twenty_five_precent.setBackgroundResource(R.drawable.rectangular_line)
             fifty_percent.setBackgroundResource(R.drawable.rectangular_line)
             treat_me.setBackgroundResource(R.drawable.rounded_button)
-
             twenty_five_precent.setTextColor(resources.getColor(R.color.d_gray))
             fifty_percent.setTextColor(resources.getColor(R.color.d_gray))
             treat_me.setTextColor(resources.getColor(R.color.white))
@@ -179,6 +173,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
         if (v?.id == R.id.food_add_btn) {
             addFoodBuilder()
+        }
+        if (v?.id == R.id.user_status) {
+            addAboutBuilder()
         }
     }
 
@@ -255,6 +252,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         fifty_percent.setOnClickListener(this)
         treat_me.setOnClickListener(this)
         food_add_btn.setOnClickListener(this)
+        user_status.setOnClickListener(this)
 
     }
 
@@ -306,6 +304,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             user_age.setText(if(me.profile.age == null) "" else me.profile.age.toString())
             user_location.setText(if(me.profile.location == null) "" else me.profile.location.toString())
 
+
 //            if (me.profile.gender.equals("Male")) {
 ////                me.profile.gender = "Male"
 ////                male_card_bg.setBackgroundResource(R.drawable.rounded_button)
@@ -317,6 +316,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 ////                female_card_bg.setBackgroundResource(R.drawable.rounded_button)
 ////                female_txt.setTextColor(resources.getColor(R.color.white))
 ////            }
+
 
             select_age.text = if(me.profile.age == null) "" else me.profile.age.toString()
             select_age.text = if(me.profile.location == null) "" else me.profile.location
@@ -355,6 +355,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         override fun onPreExecute() {
             super.onPreExecute()
             KProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait for a moment...")
+
             KProgressHUD!!.show()
         }
 
@@ -505,6 +506,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
+
+
+
+
+
     fun addFoodBuilder(){
 
         imageFile = null
@@ -549,6 +555,36 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
         dialog!!.show()
     }
+    fun addAboutBuilder(){
+
+        val builder = android.support.v7.app.AlertDialog.Builder(this)
+        val inflater = LayoutInflater.from(this)
+
+        val dialog_layout = inflater.inflate(R.layout.show_bio_dialog_layout, null)
+        builder.setView(dialog_layout)
+
+        var edit_text = dialog_layout.findViewById<View>(R.id.bio_et) as EditText
+        var done_btn = dialog_layout.findViewById<View>(R.id.btn_done) as TextView
+
+        edit_text.setText(user_status.text.toString())
+        edit_text.isEnabled = true
+
+        done_btn.setOnClickListener {
+
+            if(edit_text.text.toString().isNullOrEmpty()) {
+
+                Toast.makeText(this@EditProfileActivity,"Please enter your bio",Toast.LENGTH_SHORT).show()
+            }else {
+                dialog?.dismiss()
+                user_status.text = edit_text.text.toString()
+            }
+        }
+
+        dialog = builder.create()
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+        dialog!!.show()
+    }
+
 
     fun addFood(foodName : String){
         KProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait...")

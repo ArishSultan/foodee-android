@@ -33,6 +33,12 @@ private String message_id;
 @Expose
 private Integer userId;
 
+@SerializedName("message_count")
+@Expose
+private Integer message_count;
+
+
+
 private Boolean isNewMessage = Boolean.FALSE;
 
 public Integer getId() {
@@ -101,5 +107,13 @@ this.userId = userId;
 
     public void setNewMessage(Boolean newMessage) {
         isNewMessage = newMessage;
+    }
+
+    public Integer getMessage_count() {
+        return message_count;
+    }
+
+    public void setMessage_count(Integer message_count) {
+        this.message_count = message_count;
     }
 }

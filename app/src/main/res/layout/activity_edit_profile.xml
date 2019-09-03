@@ -159,7 +159,7 @@
                         android:layout_margin="10dp">
 
 
-                        <EditText
+                        <TextView
                             android:id="@+id/user_status"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

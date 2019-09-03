@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -30,6 +31,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.AppClass
+import foodie.app.rubikkube.foodie.JavaUtils
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.R.id.navigation_profile
@@ -126,6 +128,10 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
                 R.id.navigation_chat -> {
                     fragment = ChatFragment()
                     loadFragment(fragment)
+                    JavaUtils.removeBadge(navigation,R.id.navigation_chat)
+                    Prefs.putBoolean("showChatBadge",false)
+
+
 //                    toast("Chat")
                 }
                 R.id.navigation_settings -> {
@@ -138,6 +144,15 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
             }
             true
         }
+
+
+        if(Prefs.getBoolean("showChatBadge",false)) {
+            JavaUtils.showBadge(this@HomeActivity,navigation,R.id.navigation_chat,"0")
+        }else {
+            JavaUtils.removeBadge(navigation,R.id.navigation_chat)
+        }
+
+
     }
 
     fun socketListener(){
@@ -155,6 +170,10 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
                     messageListResponse = gson!!.fromJson(jsonObject.toString(), MessageListResponse::class.java)
                     ObservableObject.getInstance().updateValue(messageListResponse)
                     Log.d("MessageResponse",""+messageListResponse)
+
+
+                    JavaUtils.showBadge(this@HomeActivity,navigation,R.id.navigation_chat,"2")
+                    Prefs.putBoolean("showChatBadge",true)
                     /*messageListResponse!!.id = jsonObject.getInt("id")
                     messageListResponse!!.messageId = jsonObject.getInt("message_id")
                     messageListResponse!!.message = jsonObject.getString("message")

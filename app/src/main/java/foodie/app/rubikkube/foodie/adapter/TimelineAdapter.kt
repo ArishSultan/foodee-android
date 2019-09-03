@@ -107,6 +107,7 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
             holder.like_icon.setImageResource(R.drawable.like)
         }
 
+
         /*if(listFeedData!!.get(position).commentsCount>1){
             holder.txt_view_more_comments.visibility = View.VISIBLE
         }
@@ -255,11 +256,16 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
             mContext.startActivity(intent)
         }
 
+
+
+
         holder.txt_content.setOnClickListener {
             //Hawk.put("DetailPost",listFeedData!!.get(position))
             val intent = Intent(mContext, TimelinePostDetailActivity::class.java)
             intent.putExtra("PostID", listFeedData!![position].id.toString())
             mContext.startActivity(intent)
+
+
         }
 
         /*holder.txt_view_more_comments.setOnClickListener {
@@ -356,6 +362,7 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         val txt_tagged_user:TextView = view.findViewById(R.id.txt_tagged_user)
         val txt_is_with: TextView = view.findViewById(R.id.txt_is_with)
         val txtViewOptions: TextView = view.findViewById(R.id.txtViewOptions)
+        val slider_layout: RelativeLayout = view.findViewById(R.id.slider_layout)
     }
 
     fun update(list : ArrayList<FeedData>?){

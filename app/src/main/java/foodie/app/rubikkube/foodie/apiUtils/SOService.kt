@@ -14,6 +14,8 @@ interface SOService {
     @POST("/api/auth/signup")
     fun signup(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
 
+
+
     @POST("/api/auth/login")
     fun login(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
 

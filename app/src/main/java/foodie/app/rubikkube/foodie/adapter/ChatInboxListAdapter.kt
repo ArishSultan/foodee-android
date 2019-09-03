@@ -43,14 +43,23 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  :
             Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(holder.userImg)
         }
 
-        if(inboxUserList!![position].newMessage) {
-            holder.new_message.visibility = View.VISIBLE
-        }else {
-            holder.new_message.visibility = View.GONE
-        }
+//        if(inboxUserList!![position].newMessage) {
+//            holder.new_message.visibility = View.VISIBLE
+//        }else {
+//            holder.new_message.visibility = View.GONE
+//        }
         holder.txtUsername.text = inboxUserList!![position].username
         holder.txtStatus.text = inboxUserList!![position].message
-        holder.mins_ago.text = Utils.timeAgo(inboxUserList!![position].created_at)
+        holder.mins_ago.text = inboxUserList!![position].created_at
+
+        if(inboxUserList!![position].message_count != 0) {
+            holder.numOfMsgs.visibility = View.VISIBLE
+            holder.numOfMsgs.text = inboxUserList!![position].message_count.toString()
+        }else {
+            holder.numOfMsgs.visibility = View.INVISIBLE
+
+        }
+       // holder.mins_ago.text = Utils.timeAgo(inboxUserList!![position].created_at)
         holder.view.setOnClickListener {
             Prefs.putString("toUserId", inboxUserList!![position].userId.toString())
             Prefs.putString("avatarUser", inboxUserList!![position].userId.toString())
@@ -61,6 +70,8 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  :
             mContext.startActivity(intent)
         }
     }
+
+
 
     inner class ChatInboxHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val userImg: ImageView = view.findViewById(R.id.user_img)
@@ -81,6 +92,8 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  :
         for (i in inboxUserList!!.indices) {
 
             if(inboxUserList!![i].userId == messageListResponse.messageSender.id) {
+
+                inboxUserList!![i].message_count++
                 inboxUserList!![i].newMessage = true
                 inboxUserList!![i].message = messageListResponse.message
                 inboxUserList!![i].created_at = messageListResponse.createdAt

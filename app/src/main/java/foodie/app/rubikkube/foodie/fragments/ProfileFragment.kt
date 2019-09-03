@@ -1,43 +1,52 @@
 package foodie.app.rubikkube.foodie.fragments
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.Toast
+import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
+import foodie.app.rubikkube.foodie.JavaUtils
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.EditProfileActivity
-import foodie.app.rubikkube.foodie.activities.HomeActivity
 import foodie.app.rubikkube.foodie.activities.PostActivity
-import foodie.app.rubikkube.foodie.activities.Signup
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
-import kotlinx.android.synthetic.main.fragment_timeline.view.*
-import okhttp3.MediaType
-import okhttp3.RequestBody
+import kotlinx.android.synthetic.main.fragment_profile.view.age
+import kotlinx.android.synthetic.main.fragment_profile.view.age_title
+import kotlinx.android.synthetic.main.fragment_profile.view.city
+import kotlinx.android.synthetic.main.fragment_profile.view.contribution
+import kotlinx.android.synthetic.main.fragment_profile.view.contribution_txt
+import kotlinx.android.synthetic.main.fragment_profile.view.default_cover
+import kotlinx.android.synthetic.main.fragment_profile.view.divider_contribution
+import kotlinx.android.synthetic.main.fragment_profile.view.divider_food_like
+import kotlinx.android.synthetic.main.fragment_profile.view.food_like
+import kotlinx.android.synthetic.main.fragment_profile.view.friend_like_food
+import kotlinx.android.synthetic.main.fragment_profile.view.profile_cover
+import kotlinx.android.synthetic.main.fragment_profile.view.profile_desc
+import kotlinx.android.synthetic.main.fragment_profile.view.profile_name
+import kotlinx.android.synthetic.main.fragment_profile.view.profile_pic
+import kotlinx.android.synthetic.main.fragment_profile.view.rv_my_posts
+import kotlinx.android.synthetic.main.fragment_profile.view.twenty_precent_crd
+import kotlinx.android.synthetic.main.fragment_profile.view.view_shadow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,6 +65,7 @@ class ProfileFragment : Fragment() {
     private var pd1: KProgressHUD? = null
     private  lateinit var intent: Intent
     private var contribution: String? = null
+    private var dialog: android.support.v7.app.AlertDialog? = null
 
     private lateinit var timeLineAdapter: TimelineAdapter
     private var feedData:ArrayList<FeedData>?= ArrayList()
@@ -94,12 +104,22 @@ class ProfileFragment : Fragment() {
             view.context.startActivity(Intent(activity, PostActivity::class.java))
         }
 
+        view.profile_desc.setOnClickListener {
+
+            JavaUtils.showDetailDialog(context,"About",view.profile_desc.text.toString())
+        }
+
         /*if(Prefs.getBoolean("comingFromTimelineAdapter",false)) {
             val navigation = activity!!.findViewById(R.id.navigation) as BottomNavigationView
             navigation.selectedItemId = R.id.navigation_profile
         }*/
 //        getMe(view)
 //        getListOfFood()
+
+        view.profile_desc.setOnClickListener {
+
+            addAboutBuilder(view)
+        }
         return view
     }
 
@@ -294,4 +314,31 @@ class ProfileFragment : Fragment() {
                 }
             })
     }
+
+
+    fun addAboutBuilder(view: View) {
+
+
+        val builder = android.support.v7.app.AlertDialog.Builder(context!!)
+        val inflater = LayoutInflater.from(context)
+
+        val dialog_layout = inflater.inflate(R.layout.show_bio_dialog_layout, null)
+        builder.setView(dialog_layout)
+
+        var edit_text = dialog_layout.findViewById<View>(R.id.bio_et) as EditText
+        edit_text.setText(view.profile_desc.text.toString())
+        edit_text.isEnabled = false
+        var done_btn = dialog_layout.findViewById<View>(R.id.btn_done) as TextView
+
+        done_btn.setOnClickListener {
+
+            dialog?.dismiss()
+        }
+
+        dialog = builder.create()
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+        dialog!!.show()
+    }
+
+
 }// Required empty public constructor

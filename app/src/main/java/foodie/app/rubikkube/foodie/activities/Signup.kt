@@ -59,7 +59,6 @@ class Signup : AppCompatActivity() {
             if (fieldValidation(userName, email, password, cpasword)) {
 
                 val jsonObject = JSONObject()
-
                 jsonObject.put("username", userName)
                 jsonObject.put("email", email)
                 jsonObject.put("phone", "")

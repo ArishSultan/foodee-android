@@ -56,9 +56,10 @@
         android:layout_alignRight="@+id/mins_ago"
         android:layout_below="@+id/txt_username"
         android:gravity="center"
+        android:background="@drawable/rectangular_orange"
         android:text="15"
         android:layout_marginTop="4dp"
-        android:textColor="#fff"
+        android:textColor="#000"
         android:textSize="10sp" />
 
     <TextView

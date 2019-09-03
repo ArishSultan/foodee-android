@@ -19,7 +19,7 @@
     <RelativeLayout
         android:id="@+id/profile_side"
         android:layout_width="match_parent"
-        android:layout_height="280dp">
+        android:layout_height="300dp">
 
         <ImageView
             android:id="@+id/profile_cover"
@@ -123,10 +123,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
+            android:scrollbars="vertical"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
-            android:text=""
-            android:textSize="16sp"
+            android:textSize="14sp"
+            android:lines="2"
+            android:ellipsize="end"
             android:textColor="@android:color/white"
             />
         <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
@@ -135,11 +137,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
+            android:gravity="center|left"
             android:includeFontPadding="false"
             android:drawableStart="@drawable/ic_place_marker"
             android:textSize="16sp"
-            android:scaleX="0.8"
-            android:scaleY="0.8"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:lines="2"
             android:layout_centerHorizontal="true"
             android:textColor="@android:color/white"
             />

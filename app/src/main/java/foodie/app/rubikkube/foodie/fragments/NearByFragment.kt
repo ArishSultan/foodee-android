@@ -143,7 +143,7 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
         }
         v.tv_search_treat_me.setOnClickListener {
             food = filterRestaurant.text.toString()
-            contribute = "treat me"
+            contribute = "Treat Me"
             if (food.equals("")) {
                 food = ""
             }

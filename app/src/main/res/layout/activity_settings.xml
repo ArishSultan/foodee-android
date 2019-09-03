@@ -78,14 +78,15 @@
 
                     />
 
-                <com.suke.widget.SwitchButton
+                <TextView
+                    android:id="@+id/notif"
                     android:layout_width="70dp"
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
+                    android:textSize="18sp"
                     android:layout_centerVertical="true"
-                    app:sb_checked_color="@color/lightBrown"
-                    app:sb_shadow_color="@color/lightBrown"
-
+                    android:text="Edit"
+                    android:gravity="center"
                     />
 
             </RelativeLayout>

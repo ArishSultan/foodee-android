@@ -18,6 +18,7 @@ import android.widget.Toast
 import android.R.attr.country
 import android.content.DialogInterface
 import android.app.AlertDialog
+import android.content.ContextWrapper
 
 
 class SettingsFragment : Fragment() {
@@ -34,6 +35,23 @@ class SettingsFragment : Fragment() {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
             activity?.finish()
+        }
+
+        view.notif.setOnClickListener {
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                val intent = Intent()
+                intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+
+//for Android 5-7
+                intent.putExtra("app_package",activity?.packageName)
+                intent.putExtra("app_uid", activity?.applicationInfo?.uid)
+
+// for Android O
+                intent.putExtra("android.provider.extra.APP_PACKAGE", activity?.packageName)
+
+                startActivity(intent)
+            }
         }
 
         return view

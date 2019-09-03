@@ -26,6 +26,9 @@ private String lng;
 @SerializedName("email_confirm")
 @Expose
 private int email_confirm;
+@SerializedName("profile_link")
+@Expose
+private String link;
 @SerializedName("created_at")
 @Expose
 private String createdAt;
@@ -110,5 +113,13 @@ public void setProfile(Profile profile) { this.profile = profile; }
 
     public void setDevice_token(String device_token) {
         this.device_token = device_token;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }

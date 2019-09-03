@@ -34,6 +34,10 @@ public class MeResponse implements Serializable {
     @Expose
     private Profile profile;
 
+    @SerializedName("profile_link")
+    @Expose
+    private String link;
+
     @SerializedName("device_token")
     @Expose
     private String device_token;
@@ -116,5 +120,13 @@ public class MeResponse implements Serializable {
 
     public void setDevice_token(String device_token) {
         this.device_token = device_token;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }

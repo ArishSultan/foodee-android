@@ -1,13 +1,16 @@
 package foodie.app.rubikkube.foodie.activities
 
+import android.content.ClipData
+import android.content.ClipboardManager;
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -15,6 +18,7 @@ import com.google.gson.Gson
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
+import foodie.app.rubikkube.foodie.JavaUtils
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
@@ -34,6 +38,7 @@ import kotlin.math.log
 
 class OtherUserProfileDetailActivity : AppCompatActivity() {
 
+    private var dialog: android.support.v7.app.AlertDialog? = null
     private lateinit var profileAdapter: ProfileFoodAdapter
     var foodList: ArrayList<Food> = ArrayList()
     var meResponse:MeResponse? = null
@@ -45,6 +50,9 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     private var avatar:String?= null
     private var toUserId:String?= null
     private var toUserFcmToken:String?= null
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,15 +87,42 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
             finish()
         }
 
-        chat_icon.setOnClickListener {
-            Prefs.putString("toUserId", toUserId)
-            Prefs.putString("fromUserId",Prefs.getString(Constant.USERID,""))
-            Prefs.putString("avatarUser",toUserId)
-            Prefs.putString("userName",userName)
-            Prefs.putString("avatar",avatar)
-            Prefs.putString("toUserFcmToken",toUserFcmToken)
+        menu_icon.setOnClickListener { it ->
+            val popup =  PopupMenu(this@OtherUserProfileDetailActivity, it)
+                popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener {
 
-            startActivity(Intent(this,ChatActivity::class.java))
+
+                    if(it.itemId == R.id.send_message) {
+
+                        Prefs.putString("toUserId", toUserId)
+                        Prefs.putString("fromUserId",Prefs.getString(Constant.USERID,""))
+                        Prefs.putString("avatarUser",toUserId)
+                        Prefs.putString("userName",userName)
+                        Prefs.putString("avatar",avatar)
+                        Prefs.putString("toUserFcmToken",toUserFcmToken)
+
+                        startActivity(Intent(this,ChatActivity::class.java))
+                    }else if(it.itemId == R.id.copy_link) {
+
+                        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("userLink", meResponse?.link)
+                        clipboard.setPrimaryClip(clip)
+
+                    }
+
+                    return@OnMenuItemClickListener false
+                })
+                popup.inflate(R.menu.popup_menu);
+                popup.show();
+        }
+
+
+        profile_desc.setOnClickListener {
+
+
+            addAboutBuilder()
+                //JavaUtils.showDetailDialog(this@OtherUserProfileDetailActivity,"About",profile_desc.text.toString())
+
         }
     }
 
@@ -211,7 +246,6 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
             }
         })
     }
-
     private fun getMyPost(id:String){
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
@@ -236,4 +270,32 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
             }
         })
     }
+
+    fun addAboutBuilder() {
+
+
+        val builder = android.support.v7.app.AlertDialog.Builder(this@OtherUserProfileDetailActivity)
+        val inflater = LayoutInflater.from(this@OtherUserProfileDetailActivity)
+
+        val dialog_layout = inflater.inflate(R.layout.show_bio_dialog_layout, null)
+        builder.setView(dialog_layout)
+
+        var edit_text = dialog_layout.findViewById<View>(R.id.bio_et) as EditText
+        edit_text.setText(profile_desc.text.toString())
+        edit_text.isEnabled = false
+        var done_btn = dialog_layout.findViewById<View>(R.id.btn_done) as TextView
+
+        done_btn.setOnClickListener {
+
+            dialog?.dismiss()
+        }
+
+        dialog = builder.create()
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+        dialog!!.show()
+    }
+
+
+
+
 }
