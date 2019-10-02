@@ -7,7 +7,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="1dp"
@@ -113,20 +113,46 @@
                 android:layout_marginEnd="10dp"
                 android:textSize="14sp"
                 app:trimLength="250"
+                android:text="asdfa"
                 app:trimMode="trimModeLength"
                 app:colorClickableText="@color/lightBrown"/>
 
             <RelativeLayout
                 android:id="@+id/slider_layout"
                 android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/txt_content">
+
+
+
+                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                    android:id="@+id/txt_user_link"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@android:color/holo_blue_dark"
+                    />
+
+
 
                 <com.smarteist.autoimageslider.SliderLayout
                     android:layout_width="match_parent"
                     android:layout_height="225dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:id="@+id/imageSlider" />
+
+                <ImageView
+                    android:id="@+id/show_img_slide"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_alignParentRight="true"
+                    android:tint="@color/white"
+                    android:src="@drawable/img_slide_show"
+                    />
 
             </RelativeLayout>
 
@@ -192,6 +218,7 @@
                 android:layout_below="@+id/slider_layout"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
+                android:visibility="invisible"
                 android:layout_marginBottom="5dp"
                 android:layout_toRightOf="@+id/like_txt"
                 android:src="@drawable/share"/>
@@ -301,5 +328,5 @@
         </RelativeLayout>
 
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 </RelativeLayout>

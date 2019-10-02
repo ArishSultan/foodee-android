@@ -115,7 +115,7 @@
                 android:orientation="horizontal">
 
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     app:cardCornerRadius="6dp"
                     android:layout_weight="1"
@@ -129,11 +129,11 @@
                         android:src="@drawable/twitter_logo"
                         android:padding="10dp"
                         />
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     app:cardCornerRadius="6dp"
 
@@ -149,11 +149,11 @@
                         android:tint="#2c2015"
                         android:padding="10dp"
                         />
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     app:cardCornerRadius="6dp"
@@ -169,7 +169,7 @@
                         android:padding="10dp"
                         />
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 

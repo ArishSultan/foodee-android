@@ -1,11 +1,12 @@
 package foodie.app.rubikkube.foodie.activities;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import foodie.app.rubikkube.foodie.JavaUtils;
 import foodie.app.rubikkube.foodie.R;
 
 public class TestActivity extends AppCompatActivity implements View.OnClickListener {
@@ -28,11 +29,17 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 //            }
 //        });
 
+
     }
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(TestActivity.this, "I am click Listenere", Toast.LENGTH_SHORT).show();
+
+
+        JavaUtils.checkUserId("here is the url copy function test\n" +
+                "\n" +
+                "http://34.220.151.44/user/3");
+
 
     }
 }

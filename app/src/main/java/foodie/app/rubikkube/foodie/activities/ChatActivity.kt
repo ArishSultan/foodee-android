@@ -1,9 +1,9 @@
 package foodie.app.rubikkube.foodie.activities
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
@@ -49,7 +49,7 @@ class ChatActivity : AppCompatActivity() {
             .priority(Priority.HIGH)
 
     internal var chatAdapter: ChatListAdapter? =null
-    private var manager: LinearLayoutManager? = null
+    private var manager: androidx.recyclerview.widget.LinearLayoutManager? = null
     internal var messageListResponse:MessageListResponse?= null
     private var fromUserId:String?= null
     internal var toUserId:String?= null
@@ -132,7 +132,7 @@ class ChatActivity : AppCompatActivity() {
     private fun intializeAdapter() {
         chatAdapter = ChatListAdapter(this@ChatActivity)
         rv_chat?.adapter = chatAdapter
-        manager = LinearLayoutManager(this@ChatActivity, LinearLayoutManager.VERTICAL, false)
+        manager = androidx.recyclerview.widget.LinearLayoutManager(this@ChatActivity, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
         rv_chat?.layoutManager = manager
     }
 

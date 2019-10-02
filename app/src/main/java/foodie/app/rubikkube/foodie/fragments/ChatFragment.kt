@@ -2,8 +2,8 @@ package foodie.app.rubikkube.foodie.fragments
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -44,7 +44,7 @@ import kotlin.collections.ArrayList
 /**
  * A simple [Fragment] subclass.
  */
-class ChatFragment : Fragment(), Observer {
+class ChatFragment : androidx.fragment.app.Fragment(), Observer {
 
     override fun update(o: Observable?, arg: Any?) {
 
@@ -69,6 +69,8 @@ class ChatFragment : Fragment(), Observer {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+
+        Prefs.putBoolean("showChatBadge",false)
         ObservableObject.getInstance().addObserver(this)
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
         setUpRecyclerView(view)
@@ -89,7 +91,7 @@ class ChatFragment : Fragment(), Observer {
         chatInboxListAdapter = ChatInboxListAdapter(context!!,inboxUserListResponse!!)
         view.rv_chat_list.setHasFixedSize(false)
 
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         layoutManager.orientation = LinearLayout.VERTICAL
 
         view.rv_chat_list.layoutManager = layoutManager

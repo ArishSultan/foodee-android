@@ -1,7 +1,7 @@
 package foodie.app.rubikkube.foodie.adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.User
 
-class SearchUserAdapter(context: Context, list : List<User>)  : RecyclerView.Adapter<SearchUserAdapter.SearchUserHolder>() {
+class SearchUserAdapter(context: Context, list : List<User>)  : androidx.recyclerview.widget.RecyclerView.Adapter<SearchUserAdapter.SearchUserHolder>() {
 
     val mContext = context
     var searchUser = list
@@ -41,7 +41,7 @@ class SearchUserAdapter(context: Context, list : List<User>)  : RecyclerView.Ada
     }
 
 
-    inner class SearchUserHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class SearchUserHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         val searchUserImage: ImageView = view.findViewById(R.id.search_profile_image)
         val textSearchUser: TextView = view.findViewById(R.id.search_user_name)
     }

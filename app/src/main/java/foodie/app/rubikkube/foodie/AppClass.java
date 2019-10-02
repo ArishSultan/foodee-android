@@ -2,11 +2,9 @@ package foodie.app.rubikkube.foodie;
 
 import android.app.Application;
 import android.content.ContextWrapper;
-import android.support.multidex.MultiDex;
-import android.widget.Toast;
+import androidx.multidex.MultiDex;
 
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.kaopiz.kprogresshud.KProgressHUD;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.net.URISyntaxException;

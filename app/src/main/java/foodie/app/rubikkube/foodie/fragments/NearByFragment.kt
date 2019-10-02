@@ -7,8 +7,8 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.annotation.DrawableRes
-import android.support.v4.app.Fragment
+import androidx.annotation.DrawableRes
+import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -49,7 +49,7 @@ import retrofit2.Response
 /**
  * A simple [Fragment] subclass.
  */
-class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
+class NearByFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, View.OnClickListener {
 
     var mapFragment: SupportMapFragment? = null
     var mGoogleMap: GoogleMap? = null
@@ -58,7 +58,7 @@ class NearByFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
     var meResponse: ArrayList<MeResponse> = ArrayList()
     var contribute: String = "all"
     var food: String = ""
-    var fragment: Fragment? = null
+    var fragment: androidx.fragment.app.Fragment? = null
 
 
     private fun initializeListeners(view: View) {

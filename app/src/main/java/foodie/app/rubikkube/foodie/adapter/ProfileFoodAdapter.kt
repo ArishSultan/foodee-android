@@ -3,7 +3,7 @@ package foodie.app.rubikkube.foodie.adapter
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Environment
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.Food
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.esafirm.imagepicker.model.Image
@@ -36,7 +36,7 @@ import java.io.IOException
 import java.util.HashMap
 
 
-class ProfileFoodAdapter(context: Context, list : ArrayList<Food>,comingFrom:String)  : RecyclerView.Adapter<ProfileFoodAdapter.ProfileFoodHolder>() {
+class ProfileFoodAdapter(context: Context, list : ArrayList<Food>,comingFrom:String)  : androidx.recyclerview.widget.RecyclerView.Adapter<ProfileFoodAdapter.ProfileFoodHolder>() {
 
     val mContext = context
     var foodList = list
@@ -103,7 +103,7 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>,comingFrom:Str
     }
 
 
-    inner class ProfileFoodHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class ProfileFoodHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         val foodImage: ImageView = view.findViewById(R.id.food_image)
         val foodText: TextView = view.findViewById(R.id.food_text)
         val foodDeleteImage: ImageView = view.findViewById(R.id.delete_food_icon)

@@ -3,11 +3,13 @@ package foodie.app.rubikkube.foodie.adapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.media.Image
 import android.opengl.Visibility
-import android.support.v4.content.ContextCompat.getSystemService
-import android.support.v4.content.ContextCompat.startActivity
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
+import android.provider.MediaStore
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import android.text.SpannableString
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
@@ -22,12 +24,16 @@ import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 import com.smarteist.autoimageslider.DefaultSliderView
 import com.smarteist.autoimageslider.SliderLayout
+import com.squareup.picasso.Picasso
+import com.stfalcon.frescoimageviewer.ImageViewer
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
+import foodie.app.rubikkube.foodie.JavaUtils
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.EditPostActivity
 import foodie.app.rubikkube.foodie.activities.HomeActivity
@@ -46,7 +52,7 @@ import retrofit2.Response
 import java.util.HashMap
 
 
-class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProfile:Boolean) : RecyclerView.Adapter<TimelineAdapter.TimelineHolder>(){
+class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProfile:Boolean) : androidx.recyclerview.widget.RecyclerView.Adapter<TimelineAdapter.TimelineHolder>() {
 
     val mContext = context
     var listFeedData = feedDate
@@ -82,13 +88,18 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
             Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(holder.profile_image)
         }
         holder.imageSlider.clearSliderViews()
+
         if(listFeedData?.get(position)!!.photos!=null ){
             if(!(listFeedData?.get(position)!!.photos.contains(""))) {
                 for (i in listFeedData?.get(position)!!.photos.indices) {
                     holder.imageSlider.visibility = View.VISIBLE
                     val sliderView = DefaultSliderView(mContext)
                     sliderView.imageUrl = ApiUtils.BASE_URL + "/storage/media/post/" + listFeedData?.get(position)!!.photos.get(i)
+
+
+
                     holder.imageSlider.addSliderView(sliderView)
+
                     //sliderView.setImageScaleType(ImageView.ScaleType.FIT_XY)
                     Log.d("ImageURL", ApiUtils.BASE_URL + "/storage/media/post/" + listFeedData?.get(position)!!.photos.get(i) + " Size " + listFeedData?.get(position)!!.photos.size)
                 }
@@ -108,13 +119,11 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         }
 
 
-        /*if(listFeedData!!.get(position).commentsCount>1){
-            holder.txt_view_more_comments.visibility = View.VISIBLE
-        }
-        else{
-            holder.txt_view_more_comments.visibility = View.GONE
-        }*/
 
+        holder.share_icon.setOnClickListener {
+
+                sharePost(listFeedData!![position].content)
+        }
         if(listFeedData!!.get(position).tags.size > 0){
             holder.txt_tagged_user.visibility = View.VISIBLE
             //holder.txt_is_with.visibility = View.VISIBLE
@@ -162,8 +171,47 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         holder.like_txt.text = listFeedData!!.get(position).likescount.toString()
 
         var content = listFeedData!!.get(position).content
-        holder.txt_content.text = content
 
+
+        val url = JavaUtils.checkUserId(content)
+        if(!url.equals("")) {
+
+            holder.txt_user_link.visibility = View.VISIBLE
+            holder.txt_user_link.setText(url)
+            holder.txt_content.text = content.replace(url!!,"")
+
+        }else{
+            holder.txt_user_link.visibility = View.GONE
+            holder.txt_content.text = content
+
+        }
+
+        holder.txt_user_link.setOnClickListener {
+
+
+            if (!isMyProfile) {
+
+
+                val mURl = JavaUtils.checkUserId(content)
+                val uID = mURl?.split("/")
+                val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+                intent.putExtra("id", uID!![4])
+                mContext.startActivity(intent)
+//                if (listFeedData!!.get(position).userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+//                    //val activity: HomeActivity = mContext as HomeActivity
+//                    //val myFragment = ProfileFragment()
+//                    //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+//                    val intent = Intent(mContext, HomeActivity::class.java)
+//                    mContext.startActivity(intent)
+//                    Prefs.putBoolean("comingFromTimelineAdapter",true)
+//                } else {
+//                    val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+//                    intent.putExtra("id", listFeedData!!.get(position).userId.toString())
+//                    mContext.startActivity(intent)
+//                }
+            }
+
+        }
 
         holder.btn_send_msg.setOnClickListener {
             val imm = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -172,7 +220,9 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
                 //holder.edt_msg.onEditorAction(EditorInfo.IME_ACTION_DONE)
                 imm.hideSoftInputFromWindow(holder.view.windowToken, 0)
             }
+
             else {
+
                 addComment(holder.edt_msg.text.toString(), listFeedData!!.get(position).id.toString(), mContext, position)
                 listFeedData!!.get(position).commentsCount += 1
                 holder.comment_txt.text = listFeedData!!.get(position).commentsCount.toString()
@@ -249,18 +299,26 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
             mContext.startActivity(intent)
         }
 
-        holder.imageSlider.setOnClickListener {
+        holder.show_img_slide.setOnClickListener {
             //Hawk.put("DetailPost",listFeedData!!.get(position))
-            val intent = Intent(mContext, TimelinePostDetailActivity::class.java)
-            intent.putExtra("PostID", listFeedData!![position].id.toString())
-            mContext.startActivity(intent)
+
+
+            val imgs : MutableList<String>? = arrayListOf()
+
+
+            for(i in listFeedData!![position]?.photos?.indices!!) {
+                imgs?.add(  ApiUtils.BASE_URL + "/storage/media/post/" +listFeedData!![position]?.photos!![i].toString())
+            }
+            Fresco.initialize(mContext)
+            ImageViewer.Builder(mContext, imgs)
+                    .show()
         }
 
 
-
-
+        /*YasirAmeen ImagePreview*/
         holder.txt_content.setOnClickListener {
-            //Hawk.put("DetailPost",listFeedData!!.get(position))
+
+
             val intent = Intent(mContext, TimelinePostDetailActivity::class.java)
             intent.putExtra("PostID", listFeedData!![position].id.toString())
             mContext.startActivity(intent)
@@ -339,7 +397,7 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         }
     }
 
-    inner class TimelineHolder(val view: View): RecyclerView.ViewHolder(view) {
+    inner class TimelineHolder(val view: View): androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
         val profile_image:CircleImageView = view.findViewById(R.id.profile_image)
         val chat_bubble_icon:ImageView = view.findViewById(R.id.chat_bubble_icon)
@@ -363,6 +421,9 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         val txt_is_with: TextView = view.findViewById(R.id.txt_is_with)
         val txtViewOptions: TextView = view.findViewById(R.id.txtViewOptions)
         val slider_layout: RelativeLayout = view.findViewById(R.id.slider_layout)
+        val share_icon: ImageView = view.findViewById(R.id.share_icon)
+        val show_img_slide: ImageView = view.findViewById(R.id.show_img_slide)
+        val txt_user_link: TextView = view.findViewById(R.id.txt_user_link)
     }
 
     fun update(list : ArrayList<FeedData>?){
@@ -456,5 +517,16 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
                 }
             }
         })
+    }
+
+
+    private fun sharePost(text : String) {
+
+         val shareIntent = Intent()
+         shareIntent.setAction(Intent.ACTION_SEND)
+         shareIntent.putExtra(Intent.EXTRA_TEXT, text)
+         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/store/apps/details?id=foodie.app.rubikkube.foodie&hl=en")
+         shareIntent.setType("text/plain");
+         mContext.startActivity(Intent.createChooser(shareIntent, "send"))
     }
 }

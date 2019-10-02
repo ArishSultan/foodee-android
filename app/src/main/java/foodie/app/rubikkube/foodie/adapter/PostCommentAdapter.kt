@@ -2,7 +2,7 @@ package foodie.app.rubikkube.foodie.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +26,7 @@ import android.app.Activity
 
 
 
-class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)  : RecyclerView.Adapter<PostCommentAdapter.PostCommentHolder>() {
+class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)  : androidx.recyclerview.widget.RecyclerView.Adapter<PostCommentAdapter.PostCommentHolder>() {
 
     val mContext = context
     var listCommentData = listCommentData!!
@@ -90,7 +90,7 @@ class PostCommentAdapter(context: Context, listCommentData : List<CommentData>?)
         }
     }
 
-    inner class PostCommentHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class PostCommentHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         val profile_image: ImageView = view.findViewById(R.id.profile_image)
         val user_name: TextView = view.findViewById(R.id.user_name)
         val time_ago: TextView = view.findViewById(R.id.time_ago)

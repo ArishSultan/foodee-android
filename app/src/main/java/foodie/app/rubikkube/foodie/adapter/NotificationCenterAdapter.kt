@@ -3,7 +3,7 @@ package foodie.app.rubikkube.foodie.adapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -22,7 +22,7 @@ import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.NotificationCenter
 import foodie.app.rubikkube.foodie.utilities.Utils
 
-class NotificationCenterAdapter(context: Context, list : List<NotificationCenter>?)  : RecyclerView.Adapter<NotificationCenterAdapter.NotificationCenterHolder>() {
+class NotificationCenterAdapter(context: Context, list : List<NotificationCenter>?)  : androidx.recyclerview.widget.RecyclerView.Adapter<NotificationCenterAdapter.NotificationCenterHolder>() {
     private val mContext = context
     private var notificationList = list
 
@@ -59,7 +59,7 @@ class NotificationCenterAdapter(context: Context, list : List<NotificationCenter
         }
     }
 
-    inner class NotificationCenterHolder(val view: View) : RecyclerView.ViewHolder(view){
+    inner class NotificationCenterHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view){
         val userImg: ImageView = view.findViewById(R.id.user_img)
         val txtNotificationMessage: TextView = view.findViewById(R.id.txt_notification_message)
         val txtMinsAgo: TextView = view.findViewById(R.id.txt_mins_ago)

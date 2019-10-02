@@ -1,7 +1,7 @@
     package app.yasirameen.life.adapter
 
     import android.content.Context
-    import android.support.v7.widget.RecyclerView
+    import androidx.recyclerview.widget.RecyclerView
     import android.view.LayoutInflater
     import android.view.View
     import android.view.ViewGroup
@@ -20,7 +20,7 @@
     import java.util.*
 
 
-    class ChatAdapter(internal var context: Context,private var user_dp: Int?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    class ChatAdapter(internal var context: Context,private var user_dp: Int?) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
 
         internal var inflater: LayoutInflater = LayoutInflater.from(context)
@@ -33,10 +33,10 @@
                 .priority(Priority.HIGH)
 
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
 
             var item_view: View?
-            var holder: RecyclerView.ViewHolder? = null
+            var holder: androidx.recyclerview.widget.RecyclerView.ViewHolder? = null
             if (viewType == 0) {
                 item_view = inflater.inflate(R.layout.chat_list_item_sender, parent, false)
                 holder = SenderViewHolder(item_view)
@@ -54,7 +54,7 @@
         }
 
 
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
 
             val chats = this.chatList!![position]
 
@@ -77,7 +77,7 @@
             }
         }
 
-        inner class ReceiverViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        inner class ReceiverViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
 
             internal  var _tv_reciever_msg: TextView? = null
@@ -93,7 +93,7 @@
             }
         }
 
-        inner class SenderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        inner class SenderViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
             internal var _tv_sender_msg: TextView? = null
             internal var _tv_message_time: TextView? = null
             internal var _img_waiting_clock: ImageView? = null

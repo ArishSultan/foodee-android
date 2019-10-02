@@ -2,9 +2,9 @@ package foodie.app.rubikkube.foodie.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
@@ -39,10 +39,10 @@ import retrofit2.Response
 import java.util.ArrayList
 import java.util.HashMap
 
-class TimelineFragment : Fragment() {
+class TimelineFragment : androidx.fragment.app.Fragment() {
 
     private var pd: KProgressHUD? = null
-    private var rv_grid: RecyclerView? = null
+    private var rv_grid: androidx.recyclerview.widget.RecyclerView? = null
     private var feedData:ArrayList<FeedData>?= ArrayList()
     private var mSocket:Socket? = null
     private var onNotificationReceived: Emitter.Listener? = null
@@ -139,7 +139,7 @@ class TimelineFragment : Fragment() {
         timeLineAdapter = TimelineAdapter(context!!,feedData,false)
         view.timeline_recyclerview.setHasFixedSize(false)
 
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         layoutManager.orientation = LinearLayout.VERTICAL
 
         view.timeline_recyclerview.layoutManager = layoutManager

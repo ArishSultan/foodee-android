@@ -35,7 +35,7 @@
             android:textSize="18sp"
             />
     </RelativeLayout>
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/lyt_toolbar"
@@ -44,7 +44,7 @@
         android:focusableInTouchMode="true"
         android:layout_marginBottom="55dp">
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cardCornerRadius="1dp"
@@ -158,11 +158,34 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txt_content">
 
+
+
+                    <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                        android:id="@+id/txt_user_link"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@android:color/holo_blue_dark"
+                        />
+
                     <com.smarteist.autoimageslider.SliderLayout
                         android:layout_width="match_parent"
                         android:layout_height="225dp"
+                        android:clickable="true"
                         android:layout_marginTop="10dp"
                         android:id="@+id/imageSlider" />
+                    <ImageView
+                        android:id="@+id/show_img_slide"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_alignParentRight="true"
+                        android:tint="@color/white"
+                        android:src="@drawable/img_slide_show"
+                        />
+
                 </RelativeLayout>
 
                 <ImageView
@@ -237,7 +260,7 @@
                     android:alpha="0.5"
                     android:layout_below="@id/txt_view_more_comments"/>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_post_comments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -246,9 +269,9 @@
 
 
             </RelativeLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"

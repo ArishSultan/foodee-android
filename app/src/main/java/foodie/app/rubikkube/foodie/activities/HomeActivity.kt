@@ -10,10 +10,10 @@ import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -55,7 +55,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
 
 
     private val mTextMessage: TextView? = null
-    var fragment: Fragment? = null
+    var fragment: androidx.fragment.app.Fragment? = null
 
     private var REQUEST_CHECK_SETTINGS = 1000
     private var googleApiClient: GoogleApiClient? = null
@@ -247,7 +247,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
     }
 
 
-    private fun loadFragment(fragment: Fragment?): Boolean {
+    private fun loadFragment(fragment: androidx.fragment.app.Fragment?): Boolean {
         if (fragment != null) {
 
             supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, fragment).commit()

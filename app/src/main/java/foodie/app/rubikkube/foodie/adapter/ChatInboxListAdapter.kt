@@ -2,7 +2,7 @@ package foodie.app.rubikkube.foodie.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,7 @@ import foodie.app.rubikkube.foodie.model.InboxListResponse
 import foodie.app.rubikkube.foodie.model.MessageListResponse
 import foodie.app.rubikkube.foodie.utilities.Utils
 
-class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  : RecyclerView.Adapter<ChatInboxListAdapter.ChatInboxHolder>() {
+class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  : androidx.recyclerview.widget.RecyclerView.Adapter<ChatInboxListAdapter.ChatInboxHolder>() {
     val mContext = context
     var inboxUserList = list
 
@@ -73,7 +73,7 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  :
 
 
 
-    inner class ChatInboxHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class ChatInboxHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         val userImg: ImageView = view.findViewById(R.id.user_img)
         val txtUsername: TextView = view.findViewById(R.id.txt_username)
         val txtStatus: TextView = view.findViewById(R.id.txt_status)

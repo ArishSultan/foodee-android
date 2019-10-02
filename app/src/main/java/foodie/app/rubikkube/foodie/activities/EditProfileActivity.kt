@@ -6,10 +6,10 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.AsyncTask
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -68,7 +68,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
     var KProgressHUD: KProgressHUD? = null
     internal var cv: MultipartBody.Part? = null
-    private var dialog: android.support.v7.app.AlertDialog? = null
+    private var dialog: androidx.appcompat.app.AlertDialog? = null
 
     private var food_pic : ImageView? = null
 
@@ -304,6 +304,12 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             user_age.setText(if(me.profile.age == null) "" else me.profile.age.toString())
             user_location.setText(if(me.profile.location == null) "" else me.profile.location.toString())
 
+            if(me.profile.isAgePrivate) {
+                isPublic = 1
+            }else {
+                isPublic = 0
+            }
+
 
 //            if (me.profile.gender.equals("Male")) {
 ////                me.profile.gender = "Male"
@@ -516,7 +522,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         imageFile = null
         imageType = ""
 
-        val builder = android.support.v7.app.AlertDialog.Builder(this)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         val inflater = LayoutInflater.from(this)
 
         val dialog_layout = inflater.inflate(R.layout.add_food_builder, null)
@@ -557,7 +563,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     }
     fun addAboutBuilder(){
 
-        val builder = android.support.v7.app.AlertDialog.Builder(this)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         val inflater = LayoutInflater.from(this)
 
         val dialog_layout = inflater.inflate(R.layout.show_bio_dialog_layout, null)
@@ -634,7 +640,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     fun setUpRecyclerView() {
         profileAdapter = ProfileFoodAdapter(this!!,foodList,"")
         friend_like_food.setHasFixedSize(false)
-        val layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
         friend_like_food.layoutManager = layoutManager
         friend_like_food.adapter = profileAdapter
     }

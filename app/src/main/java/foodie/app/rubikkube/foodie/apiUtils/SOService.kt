@@ -19,11 +19,14 @@ interface SOService {
     @POST("/api/auth/login")
     fun login(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
 
-    @GET("/api/v1/profile/{userId}")
+
+    @GET("/api/v1/profile/{userId}") //no = sign needed
     fun getProfile(@Path("userId") userId:String,@HeaderMap header: Map<String, String>): Call<MeResponse>
+
 
     @POST("/api/v1/fcm/token")
     fun updateFcmToken(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<UpdateFcmTokenResponse>
+
 
     @Multipart
     @POST("/api/v1/update/photo")

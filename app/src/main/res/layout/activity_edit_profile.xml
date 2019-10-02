@@ -255,7 +255,7 @@
 
                     />
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/friend_like_food"
                     android:layout_below="@+id/food_like"
                     android:layout_marginTop="10dp"
@@ -264,7 +264,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
                 <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                     android:id="@+id/like"
@@ -279,7 +279,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:visibility="gone"
                     android:id="@+id/female_card"
                     android:layout_below="@+id/like"
@@ -308,8 +308,8 @@
 
                             />
                     </RelativeLayout>
-                </android.support.v7.widget.CardView>
-                <android.support.v7.widget.CardView
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
                     android:visibility="gone"
                     android:id="@+id/male_card"
                     android:layout_toRightOf="@+id/female_card"
@@ -338,7 +338,7 @@
 
                             />
                     </RelativeLayout>
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
                 <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                     android:id="@+id/age_you"
@@ -415,7 +415,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/twenty_five_precent_crd"
                     android:layout_below="@+id/contribution"
                     android:layout_width="50dp"
@@ -444,7 +444,7 @@
                             />
                     </RelativeLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
                 <!--<android.support.v7.widget.CardView
                     android:id="@+id/thirty_percent_card"
                     android:layout_toRightOf="@+id/twenty_precent_crd"
@@ -474,7 +474,7 @@
                     </RelativeLayout>
 
                 </android.support.v7.widget.CardView>-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/fifty_percent_card"
                     android:layout_toRightOf="@+id/twenty_five_precent_crd"
                     android:layout_below="@+id/contribution"
@@ -502,8 +502,8 @@
                             />
                     </RelativeLayout>
 
-                </android.support.v7.widget.CardView>
-                <android.support.v7.widget.CardView
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
                     android:id="@+id/treat_me_card"
                     android:layout_toRightOf="@+id/fifty_percent_card"
                     android:layout_below="@+id/contribution"
@@ -532,7 +532,7 @@
                             />
                     </RelativeLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
             </RelativeLayout>

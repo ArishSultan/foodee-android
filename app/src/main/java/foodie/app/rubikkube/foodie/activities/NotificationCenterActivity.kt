@@ -1,9 +1,9 @@
 package foodie.app.rubikkube.foodie.activities
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -28,7 +28,7 @@ import java.util.HashMap
 class NotificationCenterActivity : AppCompatActivity() {
 
     private var notificationCenterAdapter: NotificationCenterAdapter? = null
-    private var manager: LinearLayoutManager? = null
+    private var manager: androidx.recyclerview.widget.LinearLayoutManager? = null
     var notificationCenterList:ArrayList<NotificationCenter> = ArrayList()
     var img_bell:ImageView? = null
     var title_toolbar:TextView? = null
@@ -49,7 +49,7 @@ class NotificationCenterActivity : AppCompatActivity() {
     private fun intializeAdapter() {
         notificationCenterAdapter = NotificationCenterAdapter(this@NotificationCenterActivity,notificationCenterList)
         rv_notification?.adapter = notificationCenterAdapter
-        manager = LinearLayoutManager(this@NotificationCenterActivity, LinearLayoutManager.VERTICAL, false)
+        manager = androidx.recyclerview.widget.LinearLayoutManager(this@NotificationCenterActivity, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
         rv_notification?.layoutManager = manager
     }
 

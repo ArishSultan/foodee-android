@@ -7,17 +7,15 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.app.NotificationCompat;
+
 import android.text.Html;
 import android.util.Log;
-import android.widget.Toast;
 
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -25,18 +23,12 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.orhanobut.hawk.Hawk;
 import com.pixplicity.easyprefs.library.Prefs;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
-import java.util.Observable;
-import java.util.Random;
 
 import foodie.app.rubikkube.foodie.R;
 import foodie.app.rubikkube.foodie.activities.HomeActivity;

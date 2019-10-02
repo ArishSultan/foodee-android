@@ -3,9 +3,10 @@ package foodie.app.rubikkube.foodie.activities
 import android.content.ClipData
 import android.content.ClipboardManager;
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import android.text.method.ScrollingMovementMethod
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -38,7 +39,7 @@ import kotlin.math.log
 
 class OtherUserProfileDetailActivity : AppCompatActivity() {
 
-    private var dialog: android.support.v7.app.AlertDialog? = null
+    private var dialog: androidx.appcompat.app.AlertDialog? = null
     private lateinit var profileAdapter: ProfileFoodAdapter
     var foodList: ArrayList<Food> = ArrayList()
     var meResponse:MeResponse? = null
@@ -210,14 +211,14 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
 
         profileAdapter = ProfileFoodAdapter(this, foodList,"")
         friend_like_food.setHasFixedSize(false)
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         layoutManager.orientation =  LinearLayout.HORIZONTAL
         friend_like_food.layoutManager = layoutManager
         friend_like_food.adapter = profileAdapter
 
         timeLineAdapter = TimelineAdapter(this,feedData,true)
         rv_my_posts.setHasFixedSize(false)
-        val layoutManager1 = LinearLayoutManager(this)
+        val layoutManager1 = androidx.recyclerview.widget.LinearLayoutManager(this)
         layoutManager1.orientation = LinearLayout.VERTICAL
         rv_my_posts.layoutManager = layoutManager1
         rv_my_posts.adapter = timeLineAdapter
@@ -274,15 +275,15 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     fun addAboutBuilder() {
 
 
-        val builder = android.support.v7.app.AlertDialog.Builder(this@OtherUserProfileDetailActivity)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this@OtherUserProfileDetailActivity)
         val inflater = LayoutInflater.from(this@OtherUserProfileDetailActivity)
 
-        val dialog_layout = inflater.inflate(R.layout.show_bio_dialog_layout, null)
+        val dialog_layout = inflater.inflate(R.layout.show_bio_dialog_layout_new, null)
         builder.setView(dialog_layout)
 
-        var edit_text = dialog_layout.findViewById<View>(R.id.bio_et) as EditText
+        var edit_text = dialog_layout.findViewById<View>(R.id.bio_et) as TextView
         edit_text.setText(profile_desc.text.toString())
-        edit_text.isEnabled = false
+        edit_text.movementMethod = ScrollingMovementMethod()
         var done_btn = dialog_layout.findViewById<View>(R.id.btn_done) as TextView
 
         done_btn.setOnClickListener {

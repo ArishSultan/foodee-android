@@ -107,14 +107,14 @@
         android:text="Faizan"/>
 
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_grid"
         android:layout_below="@id/tag_user_heading"
         android:visibility="visible"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
         android:id="@+id/search_view"
@@ -154,14 +154,14 @@
             android:src="@drawable/search_icon_nd" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tag_user"
         android:layout_below="@id/search_view"
         android:visibility="visible"
         android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 
 </RelativeLayout>

@@ -1,7 +1,7 @@
 package foodie.app.rubikkube.foodie.adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +21,7 @@ import foodie.app.rubikkube.foodie.utilities.Utils
 
 private const val VIEW_TYPE_MY_MESSAGE = 1
 private const val VIEW_TYPE_OTHER_MESSAGE = 2
-class ChatListAdapter (val context: Context) : RecyclerView.Adapter<MessageViewHolder>() {
+class ChatListAdapter (val context: Context) : androidx.recyclerview.widget.RecyclerView.Adapter<MessageViewHolder>() {
     private var messages: ArrayList<MessageListResponse> = ArrayList()
 
     fun addMessageList(update_messages: ArrayList<MessageListResponse>){
@@ -97,6 +97,6 @@ class ChatListAdapter (val context: Context) : RecyclerView.Adapter<MessageViewH
     }
 }
 
-open class MessageViewHolder (view: View) : RecyclerView.ViewHolder(view) {
+open class MessageViewHolder (view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     open fun bind(message:MessageListResponse) {}
 }

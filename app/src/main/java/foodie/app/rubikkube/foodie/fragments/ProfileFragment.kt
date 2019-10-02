@@ -3,8 +3,9 @@ package foodie.app.rubikkube.foodie.fragments
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import android.text.method.ScrollingMovementMethod
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -58,14 +59,14 @@ import kotlin.jvm.java
 /**
  * A simple [Fragment] subclass.
  */
-class ProfileFragment : Fragment() {
+class ProfileFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var profileAdapter: ProfileFoodAdapter
     private var pd: KProgressHUD? = null
     private var pd1: KProgressHUD? = null
     private  lateinit var intent: Intent
     private var contribution: String? = null
-    private var dialog: android.support.v7.app.AlertDialog? = null
+    private var dialog: androidx.appcompat.app.AlertDialog? = null
 
     private lateinit var timeLineAdapter: TimelineAdapter
     private var feedData:ArrayList<FeedData>?= ArrayList()
@@ -104,10 +105,10 @@ class ProfileFragment : Fragment() {
             view.context.startActivity(Intent(activity, PostActivity::class.java))
         }
 
-        view.profile_desc.setOnClickListener {
-
-            JavaUtils.showDetailDialog(context,"About",view.profile_desc.text.toString())
-        }
+//        view.profile_desc.setOnClickListener {
+//
+//            JavaUtils.showDetailDialog(context,"About",view.profile_desc.text.toString())
+//        }
 
         /*if(Prefs.getBoolean("comingFromTimelineAdapter",false)) {
             val navigation = activity!!.findViewById(R.id.navigation) as BottomNavigationView
@@ -127,13 +128,13 @@ class ProfileFragment : Fragment() {
 
         profileAdapter = ProfileFoodAdapter(context!!,foodList,"ComingFromProfileFragment")
         view.friend_like_food.setHasFixedSize(false)
-        val layoutManager = LinearLayoutManager(activity, LinearLayout.HORIZONTAL, false)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity, LinearLayout.HORIZONTAL, false)
         view.friend_like_food.layoutManager = layoutManager
         view.friend_like_food.adapter = profileAdapter
 
         timeLineAdapter = TimelineAdapter(context!!,feedData,true)
         view.rv_my_posts.setHasFixedSize(false)
-        val layoutManager1 = LinearLayoutManager(activity)
+        val layoutManager1 = androidx.recyclerview.widget.LinearLayoutManager(activity)
         layoutManager1.orientation = LinearLayout.VERTICAL
         view.rv_my_posts.layoutManager = layoutManager1
         view.rv_my_posts.adapter = timeLineAdapter
@@ -319,15 +320,15 @@ class ProfileFragment : Fragment() {
     fun addAboutBuilder(view: View) {
 
 
-        val builder = android.support.v7.app.AlertDialog.Builder(context!!)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context!!)
         val inflater = LayoutInflater.from(context)
 
-        val dialog_layout = inflater.inflate(R.layout.show_bio_dialog_layout, null)
+        val dialog_layout = inflater.inflate(R.layout.show_bio_dialog_layout_new, null)
         builder.setView(dialog_layout)
 
-        var edit_text = dialog_layout.findViewById<View>(R.id.bio_et) as EditText
+        var edit_text = dialog_layout.findViewById<View>(R.id.bio_et) as TextView
         edit_text.setText(view.profile_desc.text.toString())
-        edit_text.isEnabled = false
+        edit_text.movementMethod = ScrollingMovementMethod()
         var done_btn = dialog_layout.findViewById<View>(R.id.btn_done) as TextView
 
         done_btn.setOnClickListener {

@@ -27,6 +27,8 @@
         <activity android:name=".activities.PostActivity" />
         <activity android:name=".activities.OtherUserProfileDetailActivity" />
         <activity android:name=".activities.SplashScreen">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,7 +40,9 @@
         <activity android:name=".activities.Signup" />
         <activity android:name=".activities.Login" />
         <activity android:name=".activities.EditProfileActivity" />
-        <activity android:name=".activities.TestActivity" />
+        <activity android:name=".activities.TestActivity" >
+
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

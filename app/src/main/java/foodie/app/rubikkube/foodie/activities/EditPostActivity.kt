@@ -3,11 +3,11 @@ package foodie.app.rubikkube.foodie.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -56,8 +56,8 @@ class EditPostActivity : AppCompatActivity() {
     private var imageUrlList: ArrayList<String>? = null
     private var imagePath:ArrayList<String>? = null
     private var multimediaGridAdapter: MultimediaAdapter? = null
-    private var rv_grid: RecyclerView? = null
-    private var rv_tag_user: RecyclerView?= null
+    private var rv_grid: androidx.recyclerview.widget.RecyclerView? = null
+    private var rv_tag_user: androidx.recyclerview.widget.RecyclerView?= null
     private var edit_post_btn:TextView? = null
     private var pd: KProgressHUD? = null
     private var file: File? = null
@@ -122,9 +122,9 @@ class EditPostActivity : AppCompatActivity() {
     private fun setupRecyclerView(){
         searchUserList = ArrayList()
         searchUserAdapter = SearchUserAdapter(this, searchUserList)
-        rv_tag_user!!.itemAnimator = DefaultItemAnimator()
+        rv_tag_user!!.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         rv_tag_user!!.adapter = searchUserAdapter
-        rv_tag_user!!.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+        rv_tag_user!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         rv_tag_user!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_tag_user!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 userModel = User()
@@ -145,9 +145,9 @@ class EditPostActivity : AppCompatActivity() {
         imageNameList!!.add("start")
         imageUrlList!!.add("start")
         multimediaGridAdapter = MultimediaAdapter(this, imageNameList,imageUrlList,"updatePost")
-        rv_grid!!.itemAnimator = DefaultItemAnimator()
+        rv_grid!!.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         rv_grid!!.adapter = multimediaGridAdapter
-        rv_grid!!.layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        rv_grid!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
         rv_grid!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_grid!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 val lastPos = imageNameList?.size?.minus(1)
@@ -303,7 +303,7 @@ class EditPostActivity : AppCompatActivity() {
 
 
 
-    class RecyclerTouchListener(context: Context, recyclerView: RecyclerView, private val clickListener: ClickListener?) : RecyclerView.OnItemTouchListener {
+    class RecyclerTouchListener(context: Context, recyclerView: androidx.recyclerview.widget.RecyclerView, private val clickListener: ClickListener?) : androidx.recyclerview.widget.RecyclerView.OnItemTouchListener {
 
         private val gestureDetector: GestureDetector
 
@@ -329,7 +329,7 @@ class EditPostActivity : AppCompatActivity() {
         }
 
 
-        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+        override fun onInterceptTouchEvent(rv: androidx.recyclerview.widget.RecyclerView, e: MotionEvent): Boolean {
 
             val child = rv.findChildViewUnder(e.x, e.y)
 
@@ -341,7 +341,7 @@ class EditPostActivity : AppCompatActivity() {
             return false
         }
 
-        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+        override fun onTouchEvent(rv: androidx.recyclerview.widget.RecyclerView, e: MotionEvent) {}
 
         override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
 

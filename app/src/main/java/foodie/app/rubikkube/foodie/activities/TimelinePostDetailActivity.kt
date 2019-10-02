@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -16,12 +16,15 @@ import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 import com.smarteist.autoimageslider.DefaultSliderView
 import com.smarteist.autoimageslider.SliderLayout
+import com.stfalcon.frescoimageviewer.ImageViewer
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
+import foodie.app.rubikkube.foodie.JavaUtils
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.PostCommentAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
@@ -80,6 +83,23 @@ class TimelinePostDetailActivity : Activity() {
             finish()
         }
 
+
+        show_img_slide.setOnClickListener {
+
+            val imgs : MutableList<String>? = arrayListOf()
+
+
+            for(i in timeLinePost?.photos?.indices!!) {
+                imgs?.add(  ApiUtils.BASE_URL + "/storage/media/post/" + timeLinePost?.photos!![i].toString())
+
+            }
+
+            Fresco.initialize(this@TimelinePostDetailActivity)
+            ImageViewer.Builder(this@TimelinePostDetailActivity, imgs)
+            .show()
+
+
+        }
         like_icon!!.setOnClickListener {
             var imageFlat = timeLinePost?.isLiked
             if (imageFlat!!) {
@@ -167,7 +187,7 @@ class TimelinePostDetailActivity : Activity() {
         postCommentAdapter = PostCommentAdapter(this, listCommentData!!.reversed())
         rv_post_comments.setHasFixedSize(false)
 
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         layoutManager.orientation = LinearLayout.VERTICAL
 
         rv_post_comments.layoutManager = layoutManager
@@ -212,9 +232,38 @@ class TimelinePostDetailActivity : Activity() {
             imageSlider!!.visibility = View.GONE
         }
 
-            user_name.text = timeLinePost.user.username
+
+
+
+        user_name.text = timeLinePost.user.username
             time_ago.text = timeLinePost.createdAt
+
+
+        val url = JavaUtils.checkUserId(timeLinePost.content)
+        if(!url.equals("")) {
+
+            txt_content.text = timeLinePost.content.replace(url!!,"")
+
+            txt_user_link.visibility = View.VISIBLE
+            txt_user_link.setText(url)
+
+        }else{
+            txt_user_link.visibility = View.GONE
             txt_content.text = timeLinePost.content
+
+        }
+
+
+
+        txt_user_link.setOnClickListener {
+
+            val mURl = JavaUtils.checkUserId(timeLinePost.content)
+            val uID = mURl?.split("/")
+            val intent = Intent(this@TimelinePostDetailActivity, OtherUserProfileDetailActivity::class.java)
+            intent.putExtra("id", uID!![4])
+            startActivity(intent)
+        }
+
             comment_txt.text = timeLinePost.commentsCount.toString()
             like_txt.text = timeLinePost.likescount.toString()
 
@@ -223,6 +272,8 @@ class TimelinePostDetailActivity : Activity() {
             } else {
                 like_icon?.setImageResource(R.drawable.like)
             }
+
+
 
             if (timeLinePost.tags.size > 0) {
                 txt_tagged_user.visibility = View.VISIBLE
@@ -274,6 +325,7 @@ class TimelinePostDetailActivity : Activity() {
     }
 
     fun addComment(content: String, post_id: String, context: Context) {
+
         val mService = ApiUtils.getSOService() as SOService
         val hm = java.util.HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
@@ -403,7 +455,6 @@ class TimelinePostDetailActivity : Activity() {
                             getAllComments(timeLinePost!!.id, this@TimelinePostDetailActivity)
                             //finish()
                         }
-                    }
-                })
+                    } })
     }
 }

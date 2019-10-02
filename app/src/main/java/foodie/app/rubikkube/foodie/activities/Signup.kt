@@ -1,9 +1,9 @@
 package foodie.app.rubikkube.foodie.activities
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import app.wi.lakhanipilgrimage.api.SOService
