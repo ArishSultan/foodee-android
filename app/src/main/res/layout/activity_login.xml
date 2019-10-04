@@ -104,6 +104,7 @@
 
 
             <LinearLayout
+                android:visibility="invisible"
                 android:id="@+id/llSocial"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
@@ -177,8 +178,8 @@
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/llSocial"
-                android:layout_marginTop="30dp"
+                android:layout_below="@+id/tvOr"
+                android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 

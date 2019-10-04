@@ -14,13 +14,15 @@ import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.ChatActivity
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
+import foodie.app.rubikkube.foodie.classes.ObservableObject
 import foodie.app.rubikkube.foodie.model.InboxListResponse
 import foodie.app.rubikkube.foodie.model.MessageListResponse
 import foodie.app.rubikkube.foodie.utilities.Utils
 
-class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  : androidx.recyclerview.widget.RecyclerView.Adapter<ChatInboxListAdapter.ChatInboxHolder>() {
+class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?, unreadmsg : Int)  : androidx.recyclerview.widget.RecyclerView.Adapter<ChatInboxListAdapter.ChatInboxHolder>() {
     val mContext = context
     var inboxUserList = list
+    var msgCount = unreadmsg
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatInboxHolder {
 
@@ -33,6 +35,8 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  :
     }
 
     override fun onBindViewHolder(holder: ChatInboxHolder, position: Int) {
+
+
 
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
@@ -59,8 +63,32 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  :
             holder.numOfMsgs.visibility = View.INVISIBLE
 
         }
+
+        if(msgCount == 0 || msgCount < 0) {
+            Prefs.putBoolean("showChatBadge",false)
+
+        }else {
+            Prefs.putBoolean("showChatBadge",true)
+            ObservableObject.getInstance().updateValue("showChatBadge")
+
+
+        }
        // holder.mins_ago.text = Utils.timeAgo(inboxUserList!![position].created_at)
         holder.view.setOnClickListener {
+
+
+            msgCount = msgCount.minus(inboxUserList!![position].message_count)
+
+            if(msgCount == 0 || msgCount < 0) {
+                Prefs.putBoolean("showChatBadge",false)
+
+            }else {
+                Prefs.putBoolean("showChatBadge",true)
+                ObservableObject.getInstance().updateValue("showChatBadge")
+
+
+            }
+
             Prefs.putString("toUserId", inboxUserList!![position].userId.toString())
             Prefs.putString("avatarUser", inboxUserList!![position].userId.toString())
             Prefs.putString("threadId", inboxUserList!![position].id.toString())
@@ -82,8 +110,9 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?)  :
         val new_message: TextView = view.findViewById(R.id.new_message)
     }
 
-    fun update(updateInboxList: List<InboxListResponse>) {
+    fun update(updateInboxList: List<InboxListResponse>, unreadMsg : Int) {
         inboxUserList = updateInboxList
+        msgCount = unreadMsg
         notifyDataSetChanged()
     }
 

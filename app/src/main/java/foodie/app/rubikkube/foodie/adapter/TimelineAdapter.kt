@@ -6,12 +6,11 @@ import android.content.Intent
 import android.media.Image
 import android.opengl.Visibility
 import android.provider.MediaStore
+import android.text.*
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.startActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import android.text.SpannableString
-import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
@@ -171,47 +170,61 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         holder.like_txt.text = listFeedData!!.get(position).likescount.toString()
 
         var content = listFeedData!!.get(position).content
-
-
+        holder.txt_user_link.visibility = View.GONE
         val url = JavaUtils.checkUserId(content)
+
         if(!url.equals("")) {
 
-            holder.txt_user_link.visibility = View.VISIBLE
-            holder.txt_user_link.setText(url)
-            holder.txt_content.text = content.replace(url!!,"")
+            val uID = url?.split("/")
+            val contentwihtURl = content.replace(url,"https://foodee/friend/"+ uID!![4])
+            val linkUrl = "https://foodee/friend/"+ uID!![4]
 
-        }else{
-            holder.txt_user_link.visibility = View.GONE
-            holder.txt_content.text = content
+            holder.txt_content.text = contentwihtURl
 
-        }
-
-        holder.txt_user_link.setOnClickListener {
+            holder.txt_content.makeLinks(Pair(linkUrl,View.OnClickListener {
 
 
-            if (!isMyProfile) {
-
-
-                val mURl = JavaUtils.checkUserId(content)
-                val uID = mURl?.split("/")
+                if (!isMyProfile) {
                 val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
                 intent.putExtra("id", uID!![4])
                 mContext.startActivity(intent)
-//                if (listFeedData!!.get(position).userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
-//                    //val activity: HomeActivity = mContext as HomeActivity
-//                    //val myFragment = ProfileFragment()
-//                    //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
-//                    val intent = Intent(mContext, HomeActivity::class.java)
-//                    mContext.startActivity(intent)
-//                    Prefs.putBoolean("comingFromTimelineAdapter",true)
-//                } else {
-//                    val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
-//                    intent.putExtra("id", listFeedData!!.get(position).userId.toString())
-//                    mContext.startActivity(intent)
-//                }
-            }
+
+                    }
+
+            }))
+
+
+        }else{
+            holder.txt_content.text = content
 
         }
+//
+//        holder.txt_user_link.setOnClickListener {
+//
+//
+//            if (!isMyProfile) {
+//
+//
+//                val mURl = JavaUtils.checkUserId(content)
+//                val uID = mURl?.split("/")
+//                val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+//                intent.putExtra("id", uID!![4])
+//                mContext.startActivity(intent)
+////                if (listFeedData!!.get(position).userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
+////                    //val activity: HomeActivity = mContext as HomeActivity
+////                    //val myFragment = ProfileFragment()
+////                    //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+////                    val intent = Intent(mContext, HomeActivity::class.java)
+////                    mContext.startActivity(intent)
+////                    Prefs.putBoolean("comingFromTimelineAdapter",true)
+////                } else {
+////                    val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+////                    intent.putExtra("id", listFeedData!!.get(position).userId.toString())
+////                    mContext.startActivity(intent)
+////                }
+//            }
+//
+//        }
 
         holder.btn_send_msg.setOnClickListener {
             val imm = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -528,5 +541,23 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
          shareIntent.putExtra(Intent.EXTRA_SUBJECT, "https://play.google.com/store/apps/details?id=foodie.app.rubikkube.foodie&hl=en")
          shareIntent.setType("text/plain");
          mContext.startActivity(Intent.createChooser(shareIntent, "send"))
+    }
+
+    fun TextView.makeLinks(vararg links: Pair<String, View.OnClickListener>) {
+        val spannableString = SpannableString(this.text)
+        for (link in links) {
+            val clickableSpan = object : ClickableSpan() {
+                override fun onClick(view: View) {
+                    Selection.setSelection((view as TextView).text as Spannable, 0)
+                    view.invalidate()
+                    link.second.onClick(view)
+                }
+            }
+            val startIndexOfLink = this.text.toString().indexOf(link.first)
+            spannableString.setSpan(clickableSpan, startIndexOfLink, startIndexOfLink + link.first.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        this.movementMethod = LinkMovementMethod.getInstance() // without LinkMovementMethod, link can not click
+        this.setText(spannableString, TextView.BufferType.SPANNABLE)
     }
 }

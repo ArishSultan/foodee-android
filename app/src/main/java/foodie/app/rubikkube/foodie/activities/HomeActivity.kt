@@ -66,6 +66,8 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
 
     private var mSocket: Socket?= null
     private var onMessageReceived: Emitter.Listener? = null
+    private var onNotificationReceived: Emitter.Listener? = null
+
     private var gson: Gson?= null
     private var messageListResponse: MessageListResponse?= null
     private var fromUserId:String?= null
@@ -74,6 +76,8 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+
+        ObservableObject.getInstance().addObserver(this)
         fromUserId = Prefs.getString(Constant.USERID, "")
         val navigation = findViewById<View>(R.id.navigation) as BottomNavigationView
         Log.d("Bool",""+Prefs.getBoolean("comingPostCommentAdapter",false))
@@ -84,9 +88,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
 
         mSocket!!.connect()
 
-
         socketListener()
-
         setupLocationManager()
         if(Prefs.getBoolean("comingPostCommentAdapter",false) || Prefs.getBoolean("comingFromTimelineAdapter",false)||Prefs.getBoolean("comingFromPostDetail",false)){
             navigation.selectedItemId = R.id.navigation_profile
@@ -102,9 +104,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
             fragment = TimelineFragment()
             loadFragment(fragment)
         }
-//        Hawk.init(this).build();
 
-        //ObservableObject.getInstance().addObserver(this)
 
         navigation.setOnNavigationItemSelectedListener { menuItem ->
 
@@ -113,8 +113,8 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
                 R.id.navigation_timeline -> {
                     fragment = TimelineFragment()
                     loadFragment(fragment)
-//                    toast("Timeline")
                 }
+
                 R.id.navigation_nearby -> {
                     fragment = NearByFragment()
                     loadFragment(fragment)
@@ -129,8 +129,6 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
                     fragment = ChatFragment()
                     loadFragment(fragment)
                     JavaUtils.removeBadge(navigation,R.id.navigation_chat)
-                    Prefs.putBoolean("showChatBadge",false)
-
 
 //                    toast("Chat")
                 }
@@ -157,6 +155,21 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
 
     fun socketListener(){
 
+
+
+        onNotificationReceived = Emitter.Listener { args ->
+            runOnUiThread {
+                try {
+                    val jsonObject = JSONObject(args[0].toString())
+                    Log.d("SocketResponse",""+jsonObject)
+                    Prefs.putBoolean("showRingBell",true)
+                    ObservableObject.getInstance().updateValue("showRingBell")
+                }catch (ex : Exception) {
+                    ex.printStackTrace()
+                }
+            }
+        }
+
         onMessageReceived = Emitter.Listener { args ->
 
             runOnUiThread {
@@ -174,37 +187,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
 
                     JavaUtils.showBadge(this@HomeActivity,navigation,R.id.navigation_chat,"2")
                     Prefs.putBoolean("showChatBadge",true)
-                    /*messageListResponse!!.id = jsonObject.getInt("id")
-                    messageListResponse!!.messageId = jsonObject.getInt("message_id")
-                    messageListResponse!!.message = jsonObject.getString("message")
-                    messageListResponse!!.type = jsonObject.getString("type")
-                    messageListResponse!!.recipientId = jsonObject.getInt("recipient_id")
-                    messageListResponse!!.sender_id = jsonObject.getInt("sender_id")
-                    messageListResponse!!.updatedAt = jsonObject.getString("updated_at")
-                    messageListResponse!!.createdAt = jsonObject.getString("created_at")
-                    val receiverJsonObject = jsonObject.getJSONObject("receiver")
-                    messageReceiver = MessageReceiver()
-                    messageReceiver!!.id = receiverJsonObject.getInt("id")
-                    messageReceiver!!.username = receiverJsonObject.getString("username")
-                    val receiverProfileJsonObject = receiverJsonObject.getJSONObject("profile")
-                    profile = Profile()
-                    profile!!.userId = receiverProfileJsonObject.getInt("user_id")
-                    profile!!.avatar = receiverProfileJsonObject.getString("avatar")
-                    messageReceiver!!.profile = profile
-                    messageListResponse!!.receiver = messageReceiver
 
-                    val senderJsonObject = jsonObject.getJSONObject("sender")
-                    messageSender = MessageReceiver()
-                    messageSender!!.id = senderJsonObject.getInt("id")
-                    messageSender!!.username = senderJsonObject.getString("username")
-                    val senderProfileJsonObject = senderJsonObject.getJSONObject("profile")
-                    profile = Profile()
-                    profile!!.userId = senderProfileJsonObject.getInt("user_id")
-                    profile!!.avatar = senderProfileJsonObject.getString("avatar")
-                    messageSender!!.profile = profile
-                    messageListResponse!!.messageSender = messageSender*/
-                    //chatAdapter?.addSingleMessage(messageListResponse!!)
-                    //rv_chat?.scrollToPosition(chatAdapter!!.itemCount - 1)
 
                 }catch (ex : Exception) {
                     ex.printStackTrace()
@@ -221,6 +204,8 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         if(mSocket != null) {
 
             mSocket?.on("user-global-$fromUserId:new_message",onMessageReceived)
+            mSocket?.on("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
+
         }
     }
 
@@ -230,6 +215,8 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         if(mSocket != null) {
 
             mSocket?.off("user-global-$fromUserId:new_message",onMessageReceived)
+            mSocket?.off("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
+
         }
     }
 
@@ -243,6 +230,8 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         if(mSocket != null) {
 
             mSocket?.off("user-global-$fromUserId:send_msg",onMessageReceived)
+            mSocket?.off("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
+
         }
     }
 
@@ -406,6 +395,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
     override fun update(p0: Observable?, p1: Any?) {
         if(p1 is Boolean){
             if(p1){
+
           //      fragment = ProfileFragment()
 //                loadFragment(fragment)
 
@@ -413,6 +403,18 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
                 navigation.performClick()
 
             }
+        }else if(p1 is String) {
+
+
+            if(p1.equals("showChatBadge")) {
+                JavaUtils.showBadge(this@HomeActivity,navigation,R.id.navigation_chat,"2")
+                Prefs.putBoolean("showChatBadge",true)
+            }else  {
+                JavaUtils.removeBadge(navigation,R.id.navigation_chat)
+                Prefs.putBoolean("showChatBadge",false)
+            }
+
+
         }
     }
 }

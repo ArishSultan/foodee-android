@@ -70,7 +70,6 @@ class ChatFragment : androidx.fragment.app.Fragment(), Observer {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        Prefs.putBoolean("showChatBadge",false)
         ObservableObject.getInstance().addObserver(this)
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
         setUpRecyclerView(view)
@@ -88,7 +87,7 @@ class ChatFragment : androidx.fragment.app.Fragment(), Observer {
 
     private fun setUpRecyclerView(view: View) {
 
-        chatInboxListAdapter = ChatInboxListAdapter(context!!,inboxUserListResponse!!)
+        chatInboxListAdapter = ChatInboxListAdapter(context!!,inboxUserListResponse!!,0)
         view.rv_chat_list.setHasFixedSize(false)
 
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
@@ -112,7 +111,17 @@ class ChatFragment : androidx.fragment.app.Fragment(), Observer {
                         if(response!!.isSuccessful){
                             if(response.body().size!=0){
                                 inboxUserListResponse = response.body()
-                                chatInboxListAdapter!!.update(inboxUserListResponse!!)
+
+                                var unreadMsg = 0
+                                for(i in inboxUserListResponse?.indices!!) {
+
+                                    if(inboxUserListResponse!![i].message_count > 0) {
+                                        unreadMsg = unreadMsg + inboxUserListResponse!![i].message_count
+                                    }
+
+                                }
+
+                                chatInboxListAdapter!!.update(inboxUserListResponse!!,unreadMsg)
                             }
                             else
                             {

@@ -25,6 +25,7 @@ import foodie.app.rubikkube.foodie.activities.NotificationCenterActivity
 import foodie.app.rubikkube.foodie.activities.PostActivity
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
+import foodie.app.rubikkube.foodie.classes.ObservableObject
 import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
@@ -36,16 +37,29 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
-class TimelineFragment : androidx.fragment.app.Fragment() {
+class TimelineFragment : androidx.fragment.app.Fragment(), Observer {
+
+    override fun update(o: Observable?, arg: Any?) {
+
+
+
+        if(arg is String) {
+
+            if(arg.equals("showRingBell")) {
+                img_notification_dot?.visibility = View.VISIBLE
+
+            }else if(arg.equals("")) {
+
+            }
+        }
+    }
 
     private var pd: KProgressHUD? = null
     private var rv_grid: androidx.recyclerview.widget.RecyclerView? = null
     private var feedData:ArrayList<FeedData>?= ArrayList()
-    private var mSocket:Socket? = null
-    private var onNotificationReceived: Emitter.Listener? = null
+
     private var img_bell:ImageView? = null
     private var img_notification_dot:ImageView? = null
     private var title_toolbar:TextView? = null
@@ -54,12 +68,8 @@ class TimelineFragment : androidx.fragment.app.Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val app = activity!!.application as AppClass
-        mSocket = app.socket
+        ObservableObject.getInstance().addObserver(this)
 
-        mSocket!!.connect()
-
-        socketListener()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -75,9 +85,18 @@ class TimelineFragment : androidx.fragment.app.Fragment() {
         title_toolbar = view.toolbar_id!!.findViewById(R.id.toolbar_title)
         title_toolbar!!.text = "Timeline"
 
+        if(Prefs.getBoolean("showRingBell",false)) {
+
+            img_notification_dot?.visibility = View.VISIBLE
+        }else {
+            img_notification_dot?.visibility = View.INVISIBLE
+
+        }
+
         img_bell!!.visibility = View.VISIBLE
         img_bell!!.setOnClickListener {
             img_notification_dot!!.visibility = View.GONE
+            Prefs.putBoolean("showRingBell",false)
             val intent = Intent(context, NotificationCenterActivity::class.java)
             startActivity(intent)
         }
@@ -98,41 +117,35 @@ class TimelineFragment : androidx.fragment.app.Fragment() {
         updateFcmToken()
         getMe(this!!.view!!)
 
-        if(mSocket != null) {
 
-            mSocket?.on("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
-        }
     }
 
     override fun onPause() {
         super.onPause()
-        if(mSocket != null) {
 
-            mSocket?.off("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
-        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if(mSocket != null) {
 
-            mSocket?.off("user-global-${Prefs.getString(Constant.USERID,"")}:new_notification",onNotificationReceived)
-        }
     }
 
-    fun socketListener(){
-        onNotificationReceived = Emitter.Listener { args ->
-            activity!!.runOnUiThread {
-                try {
-                    val jsonObject = JSONObject(args[0].toString())
-                    Log.d("SocketResponse",""+jsonObject)
-                    img_notification_dot!!.visibility = View.VISIBLE
-                }catch (ex : Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }
-    }
+//    fun socketListener(){
+//        onNotificationReceived = Emitter.Listener { args ->
+//            activity!!.runOnUiThread {
+//                try {
+//                    val jsonObject = JSONObject(args[0].toString())
+//                    Log.d("SocketResponse",""+jsonObject)
+//                    img_notification_dot!!.visibility = View.VISIBLE
+//                    Prefs.putBoolean("showRingBell",true)
+//                }catch (ex : Exception) {
+//                    ex.printStackTrace()
+//                }
+//            }
+//        }
+//    }
+
+
 
     private fun setUpRecyclerView(view: View) {
 
@@ -148,7 +161,7 @@ class TimelineFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun getTimelinePost(){
-        pd = Utils.progressDialog(context!!, "", "Getting Timeline post").show()
+//        pd = Utils.progressDialog(context!!, "", "Getting Timeline post").show()
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
