@@ -14,9 +14,11 @@ import android.widget.*
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.google.gson.Gson
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
+import com.stfalcon.frescoimageviewer.ImageViewer
 import foodie.app.rubikkube.foodie.JavaUtils
 
 import foodie.app.rubikkube.foodie.R
@@ -261,6 +263,23 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
 //            } else if (me.profile.interest.equals("Female")) {
 //                view.male_card.visibility = View.VISIBLE
 //            }
+        }
+
+
+        profile_pic.setOnClickListener {
+
+            val imgs : MutableList<String>? = arrayListOf()
+
+            if (me.profile.avatar != null) {
+                imgs?.add(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar.toString())
+
+            } else {
+                imgs?.add("https://s3.amazonaws.com/37assets/svn/765-default-avatar.png")
+
+            }
+            Fresco.initialize(context)
+            ImageViewer.Builder(context, imgs)
+                    .show()
         }
     }
 

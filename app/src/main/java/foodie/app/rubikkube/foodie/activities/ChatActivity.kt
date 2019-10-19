@@ -35,9 +35,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
-
 class ChatActivity : AppCompatActivity() {
-
 
     private var myProfilePicture: String? = ""
     private var toUserFcmToken: String? = ""
@@ -78,12 +76,11 @@ class ChatActivity : AppCompatActivity() {
 
         mSocket!!.connect()
 
-
-
         socketListener()
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
+
 
         fromUserId = Prefs.getString(Constant.USERID, "")
         toUserId = Prefs.getString("toUserId", "")
@@ -312,6 +309,14 @@ class ChatActivity : AppCompatActivity() {
 
             mSocket?.off("user-global-$fromUserId:send_msg",onMessageReceived)
         }
+
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        startActivity(Intent(this@ChatActivity,HomeActivity::class.java))
+        finish()
     }
 
 

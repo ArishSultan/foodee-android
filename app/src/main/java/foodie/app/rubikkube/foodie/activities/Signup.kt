@@ -60,7 +60,7 @@ class Signup : AppCompatActivity() {
 
                 val jsonObject = JSONObject()
                 jsonObject.put("username", userName)
-                jsonObject.put("email", email)
+                jsonObject.put("email", email.trim())
                 jsonObject.put("phone", "")
                 jsonObject.put("password", password)
                 jsonObject.put("password_confirmation", cpasword)

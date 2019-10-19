@@ -114,4 +114,9 @@ interface SOService {
     @GET("/api/v1/notifications")
     fun getNotificationList(@HeaderMap header: Map<String, String>): Call<ArrayList<NotificationCenter>>
 
+
+    @POST("/api/v1/comments/{commentId}")
+    fun deleteComment(@Path("commentId") userId:Int,@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<SimpleResponse>
+
+
 }

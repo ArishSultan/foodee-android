@@ -49,7 +49,7 @@ class TimelinePostDetailActivity : Activity() {
     var edt_msg: EditText? = null
     var btn_send_msg: Button? = null
     var timeLinePost: FeedData? = null
-    var listCommentData: List<CommentData>? = ArrayList()
+    var listCommentData: MutableList<CommentData>? = ArrayList()
     var deletePostResponse: DeleteFoodAndPostResponse = DeleteFoodAndPostResponse()
     var commentData: CommentData? = null
     var me: MeResponse? = null
@@ -184,7 +184,7 @@ class TimelinePostDetailActivity : Activity() {
 
     private fun setUpRecyclerView() {
 
-        postCommentAdapter = PostCommentAdapter(this, listCommentData!!.reversed())
+        postCommentAdapter = PostCommentAdapter(this, listCommentData)
         rv_post_comments.setHasFixedSize(false)
 
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
@@ -360,7 +360,7 @@ class TimelinePostDetailActivity : Activity() {
                 user!!.profile = profile
                 commentData!!.user = user
                 (listCommentData as java.util.ArrayList<CommentData>).add(commentData!!)
-                postCommentAdapter.update(listCommentData!!.reversed())
+                postCommentAdapter.update(listCommentData!!)
 
                 if (Prefs.getString(Constant.USERID, "").toInt() != timeLinePost!!.user.id) {
                     val myName = Prefs.getString(Constant.NAME, "")
@@ -407,7 +407,8 @@ class TimelinePostDetailActivity : Activity() {
                 if (response!!.isSuccessful) {
                     listCommentData = ArrayList()
                     listCommentData = response!!.body().data
-                    postCommentAdapter.update(listCommentData!!.reversed())
+                    postCommentAdapter.update(listCommentData!!)
+                    postCommentAdapter.updateFeed(timeLinePost!!)
                 } else {
                     Log.d("Response", "Response Failed")
                 }

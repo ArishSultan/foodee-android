@@ -18,6 +18,9 @@ import foodie.app.rubikkube.foodie.classes.ObservableObject
 import foodie.app.rubikkube.foodie.model.InboxListResponse
 import foodie.app.rubikkube.foodie.model.MessageListResponse
 import foodie.app.rubikkube.foodie.utilities.Utils
+import android.app.Activity
+
+
 
 class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?, unreadmsg : Int)  : androidx.recyclerview.widget.RecyclerView.Adapter<ChatInboxListAdapter.ChatInboxHolder>() {
     val mContext = context
@@ -95,7 +98,9 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?, un
             Prefs.putString("userName", inboxUserList!![position].username)
             Prefs.putString("avatar", inboxUserList!![position].avatar)
             val intent = Intent(mContext, ChatActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             mContext.startActivity(intent)
+            (mContext as Activity).finish()
         }
     }
 
