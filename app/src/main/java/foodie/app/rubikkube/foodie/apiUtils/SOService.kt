@@ -118,5 +118,8 @@ interface SOService {
     @POST("/api/v1/comments/{commentId}")
     fun deleteComment(@Path("commentId") userId:Int,@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<SimpleResponse>
 
+    @GET("/api/v1/who/liked/post/{postID}")
+    fun getWhoLikeMyPost(@Path("postID") userId:Int,@HeaderMap header: Map<String, String>): Call<List<Like>>
+
 
 }

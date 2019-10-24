@@ -64,7 +64,7 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
     var isMyProfile: Boolean = isMyProfile
 
 
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineHolder {
         val inflater = LayoutInflater.from(parent?.context)
         Hawk.init(mContext).build()
         return TimelineHolder(inflater.inflate(R.layout.holder_timelinefragment, parent, false))
@@ -183,14 +183,13 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
 
             holder.txt_content.makeLinks(Pair(linkUrl,View.OnClickListener {
 
-
                 if (!isMyProfile) {
                 val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
                 intent.putExtra("id", uID!![4])
                 mContext.startActivity(intent)
 
-                    }
 
+                    }
             }))
 
 
