@@ -15,6 +15,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -24,6 +26,7 @@ import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.adapter.FoodChipAdapter
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.*
@@ -32,8 +35,6 @@ import foodie.app.rubikkube.foodie.utilities.Utils
 import foodie.app.rubikkube.foodie.utilities.Utils.Companion.progressDialog
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.activity_edit_profile.*
-import kotlinx.android.synthetic.main.activity_edit_profile.view.*
-import kotlinx.android.synthetic.main.fragment_profile.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -55,6 +56,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var image: ArrayList<Image>? = null
     private var imageFile: File? = null
 
+    private var selectedFood = ""
     private var imageType: String = ""
     private var photoPath: String = ""
     private var isFoodPicAdded: Boolean = false
@@ -173,6 +175,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
         if (v?.id == R.id.food_add_btn) {
             addFoodBuilder()
+//            addSelectChipBuilder()
         }
         if (v?.id == R.id.user_status) {
             addAboutBuilder()
@@ -517,7 +520,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
 
 
-    fun addFoodBuilder(){
+    fun addFoodBuilder() {
 
         imageFile = null
         imageType = ""
@@ -531,7 +534,14 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         food_pic = food_image
         var change_text = dialog_layout.findViewById<View>(R.id.add_food) as TextView
         var food_name= dialog_layout.findViewById<View>(R.id.et_food_name) as EditText
+        food_name.setText(selectedFood)
         var add_food_btn = dialog_layout.findViewById<View>(R.id.btn_add_food) as LinearLayout
+
+        var chipsRecyler = dialog_layout.findViewById<View>(R.id.foodRv) as RecyclerView
+
+        val staggeredGridLayoutManager =  StaggeredGridLayoutManager(3, LinearLayoutManager.HORIZONTAL);
+        chipsRecyler.layoutManager = staggeredGridLayoutManager
+        chipsRecyler.adapter = FoodChipAdapter(this@EditProfileActivity!!,food_name)
 
         change_text!!.setOnClickListener {
             isFoodPicAdded = true
@@ -644,5 +654,26 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         friend_like_food.layoutManager = layoutManager
         friend_like_food.adapter = profileAdapter
     }
+
+//    fun addSelectChipBuilder() {
+//
+//
+//
+//        val builder = androidx.appcompat.app.AlertDialog.Builder(this@EditProfileActivity)
+//        val inflater = LayoutInflater.from(this@EditProfileActivity)
+//        val dialog_layout = inflater.inflate(R.layout.foodtype_suggested_dialog, null)
+//        builder.setView(dialog_layout)
+//
+//        var chipsRecyler = dialog_layout.findViewById<View>(R.id.foodRv) as RecyclerView
+//
+//        val staggeredGridLayoutManager =  StaggeredGridLayoutManager(3, LinearLayoutManager.HORIZONTAL);
+//        chipsRecyler.layoutManager = staggeredGridLayoutManager
+//        chipsRecyler.adapter = FoodChipAdapter(this@EditProfileActivity!!,dialog,selectedFood)
+//
+//        dialog = builder.create()
+//        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+//        dialog!!.show()
+//    }
+//
 
 }

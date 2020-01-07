@@ -126,12 +126,14 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+
     private fun intializeAdapter() {
         chatAdapter = ChatListAdapter(this@ChatActivity)
         rv_chat?.adapter = chatAdapter
         manager = androidx.recyclerview.widget.LinearLayoutManager(this@ChatActivity, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
         rv_chat?.layoutManager = manager
     }
+
 
     fun sendMessage() {
         val hm = HashMap<String, String>()
@@ -168,13 +170,16 @@ class ChatActivity : AppCompatActivity() {
 
 
                     if(toUserFcmToken != null) {
+
                         Utils.sentMessageNotification(this@ChatActivity,"Foodee",
                                 message!!,
                                 toUserId!!,
-                                fromUserId!!,
-                                myProfilePicture!!,
-                                toUserFcmToken!!,"nothing")
-                    }
+                                Prefs.getString(Constant.USERID, "")!!,
+                                ApiUtils.BASE_URL + "/storage/media/avatar/" + userID+ "/" + avatar!!,
+                                toUserFcmToken!!,
+                                "nothing",
+                                Prefs.getString(Constant.NAME,"Unknown"),userName!!)
+                     }
                     }
 
 
@@ -312,12 +317,7 @@ class ChatActivity : AppCompatActivity() {
 
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
 
-        startActivity(Intent(this@ChatActivity,HomeActivity::class.java))
-        finish()
-    }
 
 
 

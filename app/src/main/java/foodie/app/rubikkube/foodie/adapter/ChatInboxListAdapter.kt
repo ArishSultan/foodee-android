@@ -19,13 +19,22 @@ import foodie.app.rubikkube.foodie.model.InboxListResponse
 import foodie.app.rubikkube.foodie.model.MessageListResponse
 import foodie.app.rubikkube.foodie.utilities.Utils
 import android.app.Activity
+import android.widget.RelativeLayout
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import app.wi.lakhanipilgrimage.api.SOService
+import es.dmoral.toasty.Toasty
+import foodie.app.rubikkube.foodie.model.SimpleResponse
+import foodie.app.rubikkube.foodie.utilities.Constant
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.util.HashMap
 
 
-
-class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?, unreadmsg : Int)  : androidx.recyclerview.widget.RecyclerView.Adapter<ChatInboxListAdapter.ChatInboxHolder>() {
+class ChatInboxListAdapter(context: Context, list : MutableList<InboxListResponse>?)  : androidx.recyclerview.widget.RecyclerView.Adapter<ChatInboxListAdapter.ChatInboxHolder>() {
     val mContext = context
     var inboxUserList = list
-    var msgCount = unreadmsg
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatInboxHolder {
 
@@ -38,7 +47,6 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?, un
     }
 
     override fun onBindViewHolder(holder: ChatInboxHolder, position: Int) {
-
 
 
         val requestOptionsAvatar = RequestOptions()
@@ -59,51 +67,94 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?, un
         holder.txtStatus.text = inboxUserList!![position].message
         holder.mins_ago.text = inboxUserList!![position].created_at
 
-        if(inboxUserList!![position].message_count != 0) {
+
+        if(inboxUserList!![position].newMessage) {
             holder.numOfMsgs.visibility = View.VISIBLE
-            holder.numOfMsgs.text = inboxUserList!![position].message_count.toString()
-        }else {
+
+        }else{
             holder.numOfMsgs.visibility = View.INVISIBLE
-
         }
 
-        if(msgCount == 0 || msgCount < 0) {
-            Prefs.putBoolean("showChatBadge",false)
 
-        }else {
-            Prefs.putBoolean("showChatBadge",true)
-            ObservableObject.getInstance().updateValue("showChatBadge")
+//        if(inboxUserList!![position].message_count != 0) {
+//            holder.numOfMsgs.visibility = View.VISIBLE
+//            holder.numOfMsgs.text = inboxUserList!![position].message_count.toString()
+//        }else {
+//            holder.numOfMsgs.visibility = View.INVISIBLE
+//
+//        }
 
-
-        }
+//        if(msgCount == 0 || msgCount < 0) {
+//            Prefs.putBoolean("showChatBadge",false)
+//
+//        }else {
+//            Prefs.putBoolean("showChatBadge",true)
+//            ObservableObject.getInstance().updateValue("showChatBadge")
+//
+//        }
        // holder.mins_ago.text = Utils.timeAgo(inboxUserList!![position].created_at)
         holder.view.setOnClickListener {
 
 
-            msgCount = msgCount.minus(inboxUserList!![position].message_count)
-
-            if(msgCount == 0 || msgCount < 0) {
-                Prefs.putBoolean("showChatBadge",false)
-
-            }else {
-                Prefs.putBoolean("showChatBadge",true)
-                ObservableObject.getInstance().updateValue("showChatBadge")
-
-
-            }
+//
+//            if(msgCount == 0 || msgCount < 0) {
+//                Prefs.putBoolean("showChatBadge",false)
+//
+//            }else {
+//                Prefs.putBoolean("showChatBadge",true)
+//                ObservableObject.getInstance().updateValue("showChatBadge")
+//
+//
+//            }
 
             Prefs.putString("toUserId", inboxUserList!![position].userId.toString())
             Prefs.putString("avatarUser", inboxUserList!![position].userId.toString())
             Prefs.putString("threadId", inboxUserList!![position].id.toString())
             Prefs.putString("userName", inboxUserList!![position].username)
             Prefs.putString("avatar", inboxUserList!![position].avatar)
+
+            Prefs.putBoolean("new-msg-${inboxUserList!![position].userId}",false)
+
             val intent = Intent(mContext, ChatActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             mContext.startActivity(intent)
-            (mContext as Activity).finish()
         }
-    }
 
+        holder.rel.setOnLongClickListener {
+
+
+            // Initialize a new instance of
+            val builder = AlertDialog.Builder(mContext)
+
+            // Set the alert dialog title
+            builder.setTitle("Delete Thread")
+
+            // Display a message on alert dialog
+            builder.setMessage("Deleting thread will also delete the messages from receiver inbox.")
+
+            // Set a positive button and its click listener on alert dialog
+            builder.setPositiveButton("DELETE"){dialog, which ->
+                // Do something when user press the positive button
+                DeleteChat(inboxUserList!![position].id,inboxUserList!![position],position)
+            }
+
+            // Display a negative button on alert dialog
+            builder.setNegativeButton("CANCEL"){dialog,which ->
+                Toast.makeText(mContext,"You are not agree.",Toast.LENGTH_SHORT).show()
+            }
+
+
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+
+            // Display the alert dialog on app interface
+            dialog.show()
+
+
+            return@setOnLongClickListener  false
+        }
+
+    }
 
 
     inner class ChatInboxHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
@@ -113,27 +164,57 @@ class ChatInboxListAdapter(context: Context, list : List<InboxListResponse>?, un
         val numOfMsgs: TextView = view.findViewById(R.id.num_of_msgs)
         val mins_ago: TextView = view.findViewById(R.id.mins_ago)
         val new_message: TextView = view.findViewById(R.id.new_message)
+        val rel: RelativeLayout = view.findViewById(R.id.rel)
     }
 
-    fun update(updateInboxList: List<InboxListResponse>, unreadMsg : Int) {
+    fun update(updateInboxList: MutableList<InboxListResponse>) {
         inboxUserList = updateInboxList
-        msgCount = unreadMsg
         notifyDataSetChanged()
     }
 
     fun iterateForNewMessageIndication(messageListResponse: MessageListResponse) {
 
-        for (i in inboxUserList!!.indices) {
-
-            if(inboxUserList!![i].userId == messageListResponse.messageSender.id) {
-
-                inboxUserList!![i].message_count++
-                inboxUserList!![i].newMessage = true
-                inboxUserList!![i].message = messageListResponse.message
-                inboxUserList!![i].created_at = messageListResponse.createdAt
-                notifyDataSetChanged()
-                break
-            }
-        }
+//        for (i in inboxUserList!!.indices) {
+//
+//            if(inboxUserList!![i].userId == messageListResponse.messageSender.id) {
+//
+//                inboxUserList!![i].message_count++
+//                inboxUserList!![i].newMessage = true
+//                inboxUserList!![i].message = messageListResponse.message
+//                inboxUserList!![i].created_at = messageListResponse.createdAt
+//                notifyDataSetChanged()
+//                break
+//            }
+//        }
     }
+
+
+    private fun DeleteChat(threadId : Int, inbox : InboxListResponse, position: Int) {
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        val mService = ApiUtils.getSOService() as SOService
+        mService.DeletThread(threadId,hm)
+                .enqueue(object : Callback<SimpleResponse> {
+                    override fun onFailure(call: Call<SimpleResponse>?, t: Throwable?) {
+                        Toasty.error(mContext!!,"Something went wrong", Toast.LENGTH_LONG).show()
+                    }
+
+                    override fun onResponse(call: Call<SimpleResponse>?, response: Response<SimpleResponse>?) {
+
+                        if(response?.isSuccessful!!) {
+
+                            inboxUserList?.remove(inbox)
+                            notifyDataSetChanged()
+
+                        }else{
+                            Toasty.error(mContext!!,response.message(), Toast.LENGTH_LONG).show()
+
+                        }
+                    }
+
+                })
+
+
+    }
+
 }

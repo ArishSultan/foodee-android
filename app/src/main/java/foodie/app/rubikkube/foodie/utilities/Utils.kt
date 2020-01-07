@@ -20,6 +20,7 @@ import foodie.app.rubikkube.foodie.model.NotificationRequestModel
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import java.nio.charset.Charset
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,6 +28,21 @@ class Utils {
 
     companion object {
 
+
+        fun getTimeinLong(created : String) : Long {
+            val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+            try {
+                val mDate = sdf.parse(created)
+                val timeInMilliseconds = mDate.time
+                return timeInMilliseconds
+                // println("Date in milli :: $timeInMilliseconds")
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
+
+            return 0
+
+        }
 
 
         fun getfcmToken() : String {
@@ -95,20 +111,30 @@ class Utils {
 
 
 
-        fun sentMessageNotification(context: Context,title: String, message : String, toUserId : String,fromUserId : String,myProfilePicture : String, toFcmToken : String, clickAction : String) {
+        fun sentMessageNotification(context: Context,title: String,
+                                    message : String,
+                                    toUserId : String,
+                                    fromUserId : String,
+                                    myProfilePicture : String,
+                                    toFcmToken : String,
+                                    clickAction : String,
+                                    fromName : String,
+                                    toName : String) {
 
             val notificationRequestModel =  NotificationRequestModel()
             val  notificationData =  NotificationData()
 
-            notificationData.setmBody(message)
             notificationData.setmBadge(1)
             notificationData.setmContent(1)
             notificationData.setmSound("default")
             notificationData.setmTitle(title)
+            notificationData.setmBody(message)
             notificationData.setmFor("singleChat")
+            notificationData.setmFromUserID(fromUserId)
             notificationData.setmToUserId(toUserId)
-            notificationData.setmToUserId(fromUserId)
-            notificationData.setmToUserId(myProfilePicture)
+            notificationData.setmMyProfilePicture(myProfilePicture)
+            notificationData.setmToUserName(toName)
+            notificationData.setmFromUserName(fromName)
             if(!clickAction.equals("nothing")) {
                 notificationData.setmClickAction(clickAction)
             }

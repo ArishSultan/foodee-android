@@ -52,7 +52,7 @@ class Login : AppCompatActivity() {
             if (etEmail.text.isEmpty() || etPassword.text.isEmpty()) {
                 Toast.makeText(this@Login, "Please enter Email and Password First", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            } else if (!isValidEmail(etEmail.text.toString())) {
+            } else if (!isValidEmail(etEmail.text.toString().trim())) {
                 Toast.makeText(this@Login, "Please enter correct email address", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else if (etPassword.text.toString().length<8) {

@@ -15,10 +15,13 @@ import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.Food
 import androidx.appcompat.app.AlertDialog
 import android.widget.*
+import androidx.cardview.widget.CardView
 import app.wi.lakhanipilgrimage.api.SOService
 import com.esafirm.imagepicker.model.Image
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
+import com.stfalcon.frescoimageviewer.ImageViewer
 import foodie.app.rubikkube.foodie.model.AddFoodResp
 import foodie.app.rubikkube.foodie.model.DeleteFoodAndPostResponse
 import foodie.app.rubikkube.foodie.utilities.Constant
@@ -38,6 +41,7 @@ import java.util.HashMap
 
 class ProfileFoodAdapter(context: Context, list : ArrayList<Food>,comingFrom:String)  : androidx.recyclerview.widget.RecyclerView.Adapter<ProfileFoodAdapter.ProfileFoodHolder>() {
 
+    private var imgs: MutableList<String>? = null
     val mContext = context
     var foodList = list
     var deleteFoodResponse = DeleteFoodAndPostResponse()
@@ -51,10 +55,21 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>,comingFrom:Str
     private var food_pic : ImageView? = null
     private var photoPath: String = ""
 
+
+    init {
+        imgs = arrayListOf()
+
+
+        for(i in foodList.indices) {
+            imgs?.add(ApiUtils.BASE_URL + "/storage/foods/"+foodList[i].photo)
+        }
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileFoodHolder {
 
         val inflater = LayoutInflater.from(parent?.context)
         return ProfileFoodHolder(inflater.inflate(R.layout.holder_profile_food, parent, false))
+
+
 
     }
 
@@ -100,6 +115,18 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>,comingFrom:Str
             }
             alert.show()
         }
+
+
+        holder.foodImage.setOnClickListener {
+
+            Fresco.initialize(mContext)
+            ImageViewer.Builder(mContext, imgs)
+                    .show()
+
+        }
+
+
+
     }
 
 
@@ -108,6 +135,7 @@ class ProfileFoodAdapter(context: Context, list : ArrayList<Food>,comingFrom:Str
         val foodText: TextView = view.findViewById(R.id.food_text)
         val foodDeleteImage: ImageView = view.findViewById(R.id.delete_food_icon)
         val foodEditImage: ImageView = view.findViewById(R.id.edit_food_icon)
+        val cardView: CardView = view.findViewById(R.id.img)
     }
 
     fun update(list : ArrayList<Food>){

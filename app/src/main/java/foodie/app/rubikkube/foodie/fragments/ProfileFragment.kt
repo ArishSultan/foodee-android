@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -24,14 +26,17 @@ import foodie.app.rubikkube.foodie.JavaUtils
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.EditProfileActivity
 import foodie.app.rubikkube.foodie.activities.PostActivity
+import foodie.app.rubikkube.foodie.adapter.FoodChipAdapter
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
+import foodie.app.rubikkube.foodie.adapter.ReviewAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
-import kotlinx.android.synthetic.main.activity_other_user_profile_detail.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.profile_pic
+import kotlinx.android.synthetic.main.fragment_profile.rating_title
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.fragment_profile.view.age
 import kotlinx.android.synthetic.main.fragment_profile.view.age_title
@@ -57,14 +62,12 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.jvm.java
 
-
-/**
- * A simple [Fragment] subclass.
- */
 class ProfileFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var profileAdapter: ProfileFoodAdapter
     private var pd: KProgressHUD? = null
+    private var reviews : Reviews? = null
+
     private var pd1: KProgressHUD? = null
     private  lateinit var intent: Intent
     private var contribution: String? = null
@@ -86,12 +89,14 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
         getMe(this!!.view!!)
         getListOfFood(this!!.view!!)
         getMyPost()
+        getUserReviews(Prefs.getString(Constant.USERID,"").toInt())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("da","test")
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -122,6 +127,11 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
         view.profile_desc.setOnClickListener {
 
             addAboutBuilder(view)
+        }
+
+        view.ratingLayout.setOnClickListener {
+
+            addShowReviewDialog()
         }
         return view
     }
@@ -335,7 +345,6 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
             })
     }
 
-
     fun addAboutBuilder(view: View) {
 
 
@@ -360,5 +369,96 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
         dialog!!.show()
     }
 
+    fun addShowReviewDialog() {
 
-}// Required empty public constructor
+
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context!!)
+
+        val inflater = LayoutInflater.from(context)
+
+        val dialog_layout = inflater.inflate(R.layout.show_review_list, null)
+        builder.setView(dialog_layout)
+
+        var listView = dialog_layout.findViewById<View>(R.id.reviewList) as ListView
+
+        listView.adapter = ReviewAdapter(context!!,reviews?.data!!)
+
+
+//
+        dialog = builder.create()
+
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+        dialog!!.show()
+    }
+
+    private fun getUserReviews(userID : Int) {
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        val mService = ApiUtils.getSOService() as SOService
+        mService.getMyReviews(userID,hm)
+                .enqueue(object : Callback<Reviews> {
+                    override fun onFailure(call: Call<Reviews>?, t: Throwable?) {
+
+                        Toast.makeText(context,t?.message,Toast.LENGTH_SHORT).show()
+
+                    }
+
+                    override fun onResponse(call: Call<Reviews>?, response: Response<Reviews>?) {
+
+                        if(response?.isSuccessful!!) {
+                            reviews = response.body()
+
+                            if(reviews?.data?.isEmpty()!!) {
+                                ratingLayout.visibility = View.GONE
+                            }else {
+
+                                var totalRatings = 0.0f
+                                var fiveStar = 0.0f
+                                var fourStar = 0.0f
+                                var threeStar = 0.0f
+                                var twotar = 0.0f
+                                var oneStar = 0.0f
+                                for(i in reviews?.data?.indices!!) {
+
+
+                                    if(reviews?.data!![i].rate.toInt() == 5) {
+                                        fiveStar++
+                                    }else if(reviews?.data!![i].rate.toInt() == 4) {
+                                        fourStar++
+                                    }else if(reviews?.data!![i].rate.toInt() == 3) {
+                                        threeStar++
+                                    }else if(reviews?.data!![i].rate.toInt() == 2) {
+                                        twotar++
+                                    }else if(reviews?.data!![i].rate.toInt() == 1) {
+                                        oneStar++
+                                    }
+//                                    totalRatings += reviews?.data!![i].rate.toInt()
+
+
+                                }
+
+
+                                var sum = 5*fiveStar + 4*fourStar + 3*threeStar + 2*twotar + oneStar
+                                var totalNoOfRatings = fiveStar+fourStar+threeStar+twotar+oneStar
+                                var userRatings =sum.div(totalNoOfRatings)
+
+                                rating_title.setText(userRatings.toString())
+                                //ratings.numStars = currentRatings
+                                ratingLayout.visibility = View.VISIBLE
+
+                            }
+
+                        }else {
+
+                            Toast.makeText(context,response?.message(),Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+
+                })
+
+
+    }
+
+
+}

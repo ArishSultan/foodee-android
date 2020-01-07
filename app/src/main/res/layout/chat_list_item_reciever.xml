@@ -14,9 +14,10 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_reciever_dp"
-            android:layout_width="30dp"
+            android:layout_width="20dp"
             android:layout_height="30dp"
 
+            android:visibility="invisible"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:src="@drawable/one"
@@ -37,6 +38,8 @@
                 android:id="@+id/tv_reciever_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="12dp"
+
                 android:background="@drawable/giver_chatlist_drawable"
 
                 android:text="This is gonna be great chat module"

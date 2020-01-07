@@ -19,10 +19,12 @@
             android:id="@+id/tv_sender_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="12dp"
+
             android:background="@drawable/donor_chatlist_drawable"
 
             android:text="H i think now its fine and shide like a sky and the moon and the sri lana"
-            android:textColor="#000"
+            android:textColor="#fff"
             android:textSize="14sp"
             />
 

@@ -109,6 +109,8 @@
                             />
                     </RelativeLayout>
 
+
+
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_pic"
                         android:layout_width="110dp"
@@ -161,6 +163,49 @@
                         android:textColor="@android:color/white"
                         />
 
+                    <LinearLayout
+                        android:id="@+id/ratingLayout"
+                        android:orientation="horizontal"
+                        android:layout_toLeftOf="@+id/profile_pic"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="50dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/rating_star"
+                            />
+
+                        <RatingBar
+                            android:id="@+id/ratings"
+                            android:layout_below="@+id/age_title"
+                            android:layout_marginTop="5dp"
+                            android:visibility="gone"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="5"
+
+                            android:layout_gravity="left"
+                            android:theme="@style/RatingBar"
+                            android:stepSize="1.0"
+                            />
+                        <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                            android:id="@+id/rating_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textSize="14sp"
+                            android:gravity="left"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginLeft="6dp"
+                            android:visibility="visible"
+                            android:textColor="@android:color/white"
+                            />
+                    </LinearLayout>
 
                 </RelativeLayout>
 

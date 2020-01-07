@@ -17,7 +17,7 @@ import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.Like
 import foodie.app.rubikkube.foodie.model.NotificationCenter
 import foodie.app.rubikkube.foodie.utilities.Constant
-import kotlinx.android.synthetic.main.activity_notification_center.*
+import kotlinx.android.synthetic.main.activity_who_likes.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,22 +35,21 @@ class WhoLikesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_who_likes)
 
 
-
         title_toolbar = toolbar_id!!.findViewById(R.id.toolbar_title)
         title_toolbar!!.text = "Who Like My Post"
-        getNotificationList(Prefs.getInt("post_id",0))
-        intializeAdapter()
+        getWhoLikeMyPost(intent.getIntExtra("postId",0))
+
     }
 
-    private fun intializeAdapter() {
+    private fun intializeAdapter(likeList : List<Like>) {
         likeAdapter = WhoLikesMyPostAdapter(this@WhoLikesActivity,likeList)
-        rv_notification?.adapter = likeAdapter
+        mRv?.adapter = likeAdapter
         manager = androidx.recyclerview.widget.LinearLayoutManager(this@WhoLikesActivity, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
-        rv_notification?.layoutManager = manager
+        mRv?.layoutManager = manager
     }
 
 
-    private fun getNotificationList(postId : Int){
+    private fun getWhoLikeMyPost(postId : Int){
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
@@ -65,14 +64,14 @@ class WhoLikesActivity : AppCompatActivity() {
 
 
                         if(response!!.isSuccessful){
-                            if(response.body().size!=0){
+                            if(response.body().size != 0){
                                 likeList = response.body()
-                                likeAdapter!!.update(likeList!!)
+                                intializeAdapter(likeList)
                                 Log.d("NotificationResponse",response.body().toString())
                             }
                             else
                             {
-                                Toasty.error(this@WhoLikesActivity,"There is no Notification", Toast.LENGTH_LONG).show()
+                                Toasty.error(this@WhoLikesActivity,"There is no Likes", Toast.LENGTH_LONG).show()
                             }
                         }
 

@@ -184,5 +184,17 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/purchase"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Purchased Foodee 1.99$"
+        android:layout_alignParentBottom="true"
+        android:background="@color/lightBrown"
+        android:textColor="#fff"
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        />
 
 </RelativeLayout>

@@ -10,6 +10,20 @@ public class NotificationData {
     @SerializedName("avatar")
     String mMyProfilePicture;
 
+   @SerializedName("toUserName")
+    String mToUserName;
+
+    public String getmFromUserName() {
+        return mFromUserName;
+    }
+
+    public void setmFromUserName(String mFromUserName) {
+        this.mFromUserName = mFromUserName;
+    }
+
+    @SerializedName("fromUserName")
+    String mFromUserName;
+
 
     @SerializedName("fromUserId")
     String mFromUserID;
@@ -118,6 +132,14 @@ public class NotificationData {
 
     public void setmFromUserID(String mFromUserID) {
         this.mFromUserID = mFromUserID;
+    }
+
+    public String getmToUserName() {
+        return mToUserName;
+    }
+
+    public void setmToUserName(String mToUserName) {
+        this.mToUserName = mToUserName;
     }
 }
 

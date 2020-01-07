@@ -14,8 +14,6 @@ interface SOService {
     @POST("/api/auth/signup")
     fun signup(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
 
-
-
     @POST("/api/auth/login")
     fun login(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
 
@@ -93,6 +91,16 @@ interface SOService {
     @POST("/api/v1/post/like/{postId}")
     fun likeAndUnlike(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<LikeResponse>
 
+    @POST("/api/v1/delete/thread/{threadId}")
+    fun DeletThread(@Path("threadId") threadID:Int,@HeaderMap header: Map<String, String>): Call<SimpleResponse>
+
+    @POST("/api/v1/notification/clearall")
+    fun DeletAllNotifications(@HeaderMap header: Map<String, String>): Call<SimpleResponse>
+
+
+    @POST("/api/v1/notification/delete/{notifId}")
+    fun DeletSingleNotification(@Path("notifId") notifId:Int,@HeaderMap header: Map<String, String>): Call<SimpleResponse>
+
     @GET("/api/v1/comments/{postId}")
     fun getComments(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<GetCommentResponse>
 
@@ -108,18 +116,23 @@ interface SOService {
     @POST("/api/v1/send/message")
     fun sendMessage(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody):Call<MessageListResponse>
 
+    @POST("/api/v1/add/review")
+    fun AddReview(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody):Call<SimpleResponse>
+
     @GET("/api/v1/messages/{from_id}/{to_id}")
     fun getMessageList(@HeaderMap header: Map<String, String>,@Path("from_id")from_id:String,@Path("to_id")to_id:String):Call<ArrayList<MessageListResponse>>
 
     @GET("/api/v1/notifications")
     fun getNotificationList(@HeaderMap header: Map<String, String>): Call<ArrayList<NotificationCenter>>
 
-
     @POST("/api/v1/comments/{commentId}")
     fun deleteComment(@Path("commentId") userId:Int,@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<SimpleResponse>
 
     @GET("/api/v1/who/liked/post/{postID}")
     fun getWhoLikeMyPost(@Path("postID") userId:Int,@HeaderMap header: Map<String, String>): Call<List<Like>>
+
+    @GET("/api/v1/reviews/{userID}")
+    fun getMyReviews(@Path("userID") userId:Int,@HeaderMap header: Map<String, String>): Call<Reviews>
 
 
 }

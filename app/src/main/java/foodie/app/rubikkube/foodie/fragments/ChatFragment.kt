@@ -54,14 +54,14 @@ class ChatFragment : androidx.fragment.app.Fragment(), Observer {
             messageListResponse = arg
             chatInboxListAdapter!!.iterateForNewMessageIndication(messageListResponse!!)
 
-
         }
 
     }
 
 
     var chatInboxListAdapter:ChatInboxListAdapter?= null
-    var inboxUserListResponse:List<InboxListResponse>?= ArrayList()
+    var inboxUserListResponse:MutableList<InboxListResponse>?= ArrayList()
+    var filterInboxUserListResponse:MutableList<InboxListResponse>?= ArrayList()
     var inboxListResponse:InboxListResponse?= null
     private var messageListResponse:MessageListResponse?= null
     private var fromUserId:String?= null
@@ -87,7 +87,7 @@ class ChatFragment : androidx.fragment.app.Fragment(), Observer {
 
     private fun setUpRecyclerView(view: View) {
 
-        chatInboxListAdapter = ChatInboxListAdapter(context!!,inboxUserListResponse!!,0)
+        chatInboxListAdapter = ChatInboxListAdapter(context!!,inboxUserListResponse!!)
         view.rv_chat_list.setHasFixedSize(false)
 
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
@@ -109,19 +109,32 @@ class ChatFragment : androidx.fragment.app.Fragment(), Observer {
                     }
                     override fun onResponse(call: Call<ArrayList<InboxListResponse>>?, response: Response<ArrayList<InboxListResponse>>?) {
                         if(response!!.isSuccessful){
+
                             if(response.body().size!=0){
                                 inboxUserListResponse = response.body()
+                                filterInboxUserListResponse = arrayListOf()
 
-                                var unreadMsg = 0
                                 for(i in inboxUserListResponse?.indices!!) {
 
-                                    if(inboxUserListResponse!![i].message_count > 0) {
-                                        unreadMsg = unreadMsg + inboxUserListResponse!![i].message_count
-                                    }
+                                   val newMessageTag = Prefs.getBoolean("new-msg-${inboxUserListResponse!![i].userId}",false)
 
+
+                                    if(newMessageTag) {
+
+                                        val user = inboxUserListResponse!![i]
+                                        user.newMessage = true
+                                        filterInboxUserListResponse?.add(user)
+
+                                    }else {
+
+                                        val user = inboxUserListResponse!![i]
+                                        user.newMessage = false
+                                        filterInboxUserListResponse?.add(user)
+
+                                    }
                                 }
 
-                                chatInboxListAdapter!!.update(inboxUserListResponse!!,unreadMsg)
+                                chatInboxListAdapter!!.update(filterInboxUserListResponse!!)
                             }
                             else
                             {
@@ -132,8 +145,14 @@ class ChatFragment : androidx.fragment.app.Fragment(), Observer {
                 })
     }
 
+
+
     override fun onResume() {
         super.onResume()
+
+        if(inboxUserListResponse != null) {
+            inboxUserListResponse?.clear()
+        }
         getInboxList(this.view!!)
     }
 

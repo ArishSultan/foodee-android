@@ -31,16 +31,36 @@
                 android:textSize="18sp"
                 />
 
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+
+                android:id="@+id/foodRv"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"/>
+
             <ImageView
                 android:id="@+id/food_image_picker"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:scaleType="centerCrop"
+                android:visibility="visible"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
                 android:src="@drawable/food_bg"
                 />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"/>
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                 android:id="@+id/add_food"
@@ -59,22 +79,22 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:paddingLeft="10dp"
+                android:visibility="visible"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:hint="Enter Food name"
+                android:hint=""
                 android:layout_marginTop="16dp"
                 android:background="@drawable/rectangular_line"
                 android:textSize="14sp"
                 android:layout_height="40dp" />
 
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
+
             <LinearLayout
                 android:id="@+id/btn_add_food"
                 android:orientation="horizontal"
                 android:gravity="center"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/rounded_button"
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="20dp"

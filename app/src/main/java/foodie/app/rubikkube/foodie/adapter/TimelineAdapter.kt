@@ -34,10 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.JavaUtils
 import foodie.app.rubikkube.foodie.R
-import foodie.app.rubikkube.foodie.activities.EditPostActivity
-import foodie.app.rubikkube.foodie.activities.HomeActivity
-import foodie.app.rubikkube.foodie.activities.OtherUserProfileDetailActivity
-import foodie.app.rubikkube.foodie.activities.TimelinePostDetailActivity
+import foodie.app.rubikkube.foodie.activities.*
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.fragments.ProfileFragment
 import foodie.app.rubikkube.foodie.model.*
@@ -168,6 +165,14 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         holder.time_ago.text = listFeedData!!.get(position).createdAt
         holder.comment_txt.text = listFeedData!!.get(position).commentsCount.toString()
         holder.like_txt.text = listFeedData!!.get(position).likescount.toString()
+
+        holder.like_txt.setOnClickListener {
+
+
+            val intent = Intent(mContext,WhoLikesActivity::class.java)
+            intent.putExtra("postId",listFeedData!![position].id)
+            mContext.startActivity(intent)
+        }
 
         var content = listFeedData!!.get(position).content
         holder.txt_user_link.visibility = View.GONE

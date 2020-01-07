@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -22,7 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.WhoLikesActivity"></activity>
+        <activity android:name=".activities.ReviewsActivity"></activity>
+        <activity android:name=".activities.WhoLikesActivity" />
         <activity android:name=".activities.EditPostActivity" />
         <activity android:name=".activities.NotificationCenterActivity" />
         <activity android:name=".activities.PostActivity" />
@@ -39,7 +41,7 @@
         <activity android:name=".activities.Signup" />
         <activity android:name=".activities.Login" />
         <activity android:name=".activities.EditProfileActivity" />
-        <activity android:name=".activities.TestActivity"></activity>
+        <activity android:name=".activities.TestActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -48,7 +50,7 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
 
-        <service android:name=".services.MyFirebaseMessagingService">
+        <service android:name=".services.MyFirebaseMessagingServiceKT">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

@@ -12,24 +12,50 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
 import app.wi.lakhanipilgrimage.api.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.google.gson.Gson
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
+import com.stfalcon.frescoimageviewer.ImageViewer
+import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.JavaUtils
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
+import foodie.app.rubikkube.foodie.adapter.ReviewAdapter
 import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.*
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.age
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.age_title
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.city
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.contribution
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.contribution_txt
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.default_cover
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.food_like
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.friend_like_food
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.profile_cover
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.profile_desc
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.profile_name
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.profile_pic
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.ratingLayout
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.rating_title
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.rv_my_posts
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.twenty_precent_crd
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.view_shadow
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.fragment_timeline.view.*
+import kotlinx.android.synthetic.main.show_add_review_dialog.*
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,10 +76,10 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     private var userName:String?= null
     private var avatar:String?= null
     private var toUserId:String?= null
+    private var reviews : Reviews? = null
     private var toUserFcmToken:String?= null
 
-
-
+    val requestOptionsAvatar = RequestOptions()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +93,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
             //Log.d("id", id)
             getMe(id!!)
             getMyPost(id!!)
+            id?.toInt()?.let { getUserReviews(it) }
             /*if (Hawk.contains(id)) {
                 if(Hawk.contains("SendingFromNearBy")) {
                     if (Hawk.contains("resp")) {
@@ -84,6 +111,8 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
 
         }
 
+        requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
+        requestOptionsAvatar.error(R.drawable.profile_avatar)
         close_icon.setOnClickListener {
             finish()
         }
@@ -91,8 +120,6 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         menu_icon.setOnClickListener { it ->
             val popup =  PopupMenu(this@OtherUserProfileDetailActivity, it)
                 popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener {
-
-
                     if(it.itemId == R.id.send_message) {
 
                         Prefs.putString("toUserId", toUserId)
@@ -101,29 +128,52 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
                         Prefs.putString("userName",userName)
                         Prefs.putString("avatar",avatar)
                         Prefs.putString("toUserFcmToken",toUserFcmToken)
-
                         startActivity(Intent(this,ChatActivity::class.java))
+
                     }else if(it.itemId == R.id.copy_link) {
 
                         val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                         val clip = ClipData.newPlainText("userLink", meResponse?.link)
                         clipboard.setPrimaryClip(clip)
 
+                    }else if(it.itemId == R.id.add_feedback) {
+
+                        addFeedBackDialog()
                     }
 
                     return@OnMenuItemClickListener false
                 })
                 popup.inflate(R.menu.popup_menu);
-                popup.show();
+                popup.show()
         }
 
 
         profile_desc.setOnClickListener {
 
-
             addAboutBuilder()
                 //JavaUtils.showDetailDialog(this@OtherUserProfileDetailActivity,"About",profile_desc.text.toString())
+        }
 
+
+        ratingLayout.setOnClickListener {
+
+            addShowReviewDialog()
+        }
+
+        profile_pic.setOnClickListener {
+
+            val imgs : MutableList<String>? = arrayListOf()
+
+            if (meResponse?.profile?.avatar != null) {
+                imgs?.add(ApiUtils.BASE_URL + "/storage/media/avatar/" + meResponse?.id + "/" + meResponse?.profile?.avatar.toString())
+
+            } else {
+                imgs?.add("https://s3.amazonaws.com/37assets/svn/765-default-avatar.png")
+
+            }
+            Fresco.initialize(this@OtherUserProfileDetailActivity)
+            ImageViewer.Builder(this@OtherUserProfileDetailActivity, imgs)
+                    .show()
         }
     }
 
@@ -292,6 +342,202 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         }
 
         dialog = builder.create()
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+        dialog!!.show()
+    }
+
+
+    fun addFeedBackDialog() {
+
+         var nunumberOfStars : Int? = 0
+        var messageTest = ""
+        val builder = AlertDialog.Builder(this@OtherUserProfileDetailActivity)
+
+        val inflater = LayoutInflater.from(this@OtherUserProfileDetailActivity)
+
+        val dialog_layout = inflater.inflate(R.layout.show_add_review_dialog, null)
+        builder.setView(dialog_layout)
+
+        var imageView = dialog_layout.findViewById<View>(R.id.img_toUser) as ImageView
+        var ratingBar = dialog_layout.findViewById<View>(R.id.ratingBar) as RatingBar
+        var review_message = dialog_layout.findViewById<View>(R.id.test_message) as TextView
+        var subtmitBtn = dialog_layout.findViewById<View>(R.id.btn_post_review) as CardView
+
+
+
+        if(meResponse?.profile?.avatar!=null) {
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + meResponse?.id + "/" + meResponse?.profile?.avatar).into(imageView)
+        }
+        else
+        {
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(profile_pic)
+
+        }
+
+        subtmitBtn.setOnClickListener {
+
+
+
+
+                nunumberOfStars = ratingBar.rating.toInt()
+                messageTest = review_message.text.toString().trim()
+
+                if(nunumberOfStars!! <= 0) {
+                    Toast.makeText(this@OtherUserProfileDetailActivity,"Please rate your foodee friend",Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }else if(messageTest.isNullOrEmpty()) {
+                    Toast.makeText(this@OtherUserProfileDetailActivity,"Please type your message",Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }else {
+                    Toast.makeText(this@OtherUserProfileDetailActivity,"daz",Toast.LENGTH_SHORT).show()
+                    postReview(id!!,messageTest,nunumberOfStars.toString(),dialog!!)
+                }
+
+
+        }
+//
+        dialog = builder.create()
+
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+        dialog!!.show()
+    }
+
+    fun postReview(toId : String,feeback : String, rateNumber : String, dialog : AlertDialog) {
+
+
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        val mService = ApiUtils.getSOService() as SOService
+        val jsonObject = JSONObject()
+        jsonObject.put("to_id",toId)
+        jsonObject.put("feedback",feeback)
+        jsonObject.put("rate",rateNumber)
+
+        mService.AddReview(hm,Utils.getRequestBody(jsonObject.toString()))
+                .enqueue(object : Callback<SimpleResponse> {
+                    override fun onFailure(call: Call<SimpleResponse>?, t: Throwable?) {
+                        Toast.makeText(this@OtherUserProfileDetailActivity,"Something went wrong",Toast.LENGTH_SHORT).show()
+
+                    }
+
+                    override fun onResponse(call: Call<SimpleResponse>?, response: Response<SimpleResponse>?) {
+
+                        dialog.dismiss()
+                        if(response?.isSuccessful!!) {
+
+                            if(response.body().success) {
+                                Toast.makeText(this@OtherUserProfileDetailActivity,"Done",Toast.LENGTH_SHORT).show()
+                            }else{
+                                Toast.makeText(this@OtherUserProfileDetailActivity,response.message(),Toast.LENGTH_SHORT).show()
+                            }
+
+                        }else {
+                            Toast.makeText(this@OtherUserProfileDetailActivity,response.message(),Toast.LENGTH_SHORT).show()
+
+                        }
+
+                    }
+
+                })
+    }
+
+
+    private fun getUserReviews(userID : Int) {
+        val hm = HashMap<String, String>()
+        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        val mService = ApiUtils.getSOService() as SOService
+        mService.getMyReviews(userID,hm)
+                .enqueue(object : Callback<Reviews> {
+                    override fun onFailure(call: Call<Reviews>?, t: Throwable?) {
+
+                        Toast.makeText(this@OtherUserProfileDetailActivity,t?.message,Toast.LENGTH_SHORT).show()
+
+                    }
+
+                    override fun onResponse(call: Call<Reviews>?, response: Response<Reviews>?) {
+
+                        if(response?.isSuccessful!!) {
+                            reviews = response.body()
+
+                            if(reviews?.data?.isEmpty()!!) {
+                                ratingLayout.visibility = View.INVISIBLE
+                            }else {
+
+                                var totalRatings = 0
+                                var fiveStar = 0
+                                var fourStar = 0
+                                var threeStar = 0
+                                var twotar = 0
+                                var oneStar = 0
+                                for(i in reviews?.data?.indices!!) {
+
+
+                                    if(reviews?.data!![i].rate.toInt() == 5) {
+                                        fiveStar++
+                                    }else if(reviews?.data!![i].rate.toInt() == 4) {
+                                        fourStar++
+                                    }else if(reviews?.data!![i].rate.toInt() == 3) {
+                                        threeStar++
+                                    }else if(reviews?.data!![i].rate.toInt() == 2) {
+                                        twotar++
+                                    }else if(reviews?.data!![i].rate.toInt() == 1) {
+                                        oneStar++
+                                    }
+//                                    totalRatings += reviews?.data!![i].rate.toInt()
+
+
+                                }
+
+
+                                var sum = 5*fiveStar + 4*fourStar + 3*threeStar + 2*twotar + oneStar
+                                var totalNoOfRatings = fiveStar+fourStar+threeStar+twotar+oneStar
+                                var userRatings =sum.div(totalNoOfRatings).toFloat()
+
+                                rating_title.setText(userRatings.toString())
+                                //ratings.numStars = currentRatings
+                                ratingLayout.visibility = View.VISIBLE
+
+
+                            }
+
+                        }else {
+
+                            Toast.makeText(this@OtherUserProfileDetailActivity,response?.message(),Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+
+                })
+
+
+    }
+
+
+
+    fun addShowReviewDialog() {
+
+
+        val builder = AlertDialog.Builder(this@OtherUserProfileDetailActivity)
+
+        val inflater = LayoutInflater.from(this@OtherUserProfileDetailActivity)
+
+        val dialog_layout = inflater.inflate(R.layout.show_review_list, null)
+        builder.setView(dialog_layout)
+
+        var listView = dialog_layout.findViewById<View>(R.id.reviewList) as ListView
+        var click_to_feedback = dialog_layout.findViewById<View>(R.id.click_to_feedback) as TextView
+
+        listView.adapter = ReviewAdapter(this@OtherUserProfileDetailActivity,reviews?.data!!)
+
+
+        click_to_feedback.setOnClickListener {
+            dialog?.dismiss()
+
+            addFeedBackDialog()
+        }
+//
+        dialog = builder.create()
+
         dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
         dialog!!.show()
     }

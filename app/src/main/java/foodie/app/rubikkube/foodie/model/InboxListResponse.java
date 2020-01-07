@@ -38,7 +38,6 @@ private Integer userId;
 private Integer message_count;
 
 
-
 private Boolean isNewMessage = Boolean.FALSE;
 
 public Integer getId() {

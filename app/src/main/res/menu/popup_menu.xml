@@ -5,4 +5,7 @@
     <item android:id="@+id/copy_link"
         android:title="Copy Profile Link" />
 
+    <item android:id="@+id/add_feedback"
+        android:title="Add Your Feeback" />
+
 </menu>

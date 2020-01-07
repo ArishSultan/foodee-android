@@ -45,7 +45,6 @@
                 holder = ReceiverViewHolder(item_view)
             }
 
-
             return holder!!
         }
 
@@ -67,7 +66,6 @@
             }
         }
 
-
         override fun getItemViewType(position: Int): Int {
             val chatmessage = this.chatList!![position]
             return  if(chatmessage.getSender()!! % 2 == 0) {
@@ -77,8 +75,8 @@
             }
         }
 
+        
         inner class ReceiverViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
-
 
             internal  var _tv_reciever_msg: TextView? = null
             internal  var _img_reciever_dp: CircleImageView? = null
