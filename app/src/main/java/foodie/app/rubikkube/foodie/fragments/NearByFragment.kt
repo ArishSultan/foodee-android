@@ -15,8 +15,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import app.wi.lakhanipilgrimage.api.SOService
+import com.anjlab.android.iab.v3.BillingProcessor
+import com.anjlab.android.iab.v3.TransactionDetails
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -32,10 +36,13 @@ import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 
 import foodie.app.rubikkube.foodie.R
+import foodie.app.rubikkube.foodie.activities.ActivityMatchMe
 import foodie.app.rubikkube.foodie.activities.OtherUserProfileDetailActivity
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
+import foodie.app.rubikkube.foodie.model.CheckSubscription
 import foodie.app.rubikkube.foodie.model.LatLngResponse
 import foodie.app.rubikkube.foodie.model.MeResponse
+import foodie.app.rubikkube.foodie.model.SuccessResponse
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.fragment_nearby.*
@@ -49,7 +56,77 @@ import retrofit2.Response
 /**
  * A simple [Fragment] subclass.
  */
-class NearByFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, View.OnClickListener {
+class NearByFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, View.OnClickListener , BillingProcessor.IBillingHandler {
+
+
+
+
+    fun addPaymentDialog(context: Context) {
+
+
+
+        var dialog: AlertDialog? = null
+        val builder = AlertDialog.Builder(context)
+        val inflater = LayoutInflater.from(context)
+
+        val dialog_layout = inflater.inflate(R.layout.not_active_dialog_layout, null)
+        builder.setView(dialog_layout)
+        dialog = builder.create()
+
+
+        var done_btn = dialog_layout.findViewById<View>(R.id.btn_done) as TextView
+        var btn_cancel = dialog_layout.findViewById<View>(R.id.btn_cancel) as TextView
+
+        done_btn.setOnClickListener {
+
+            dialog?.dismiss()
+            bp?.purchase(activity, "android.test.purchased")
+
+        }
+
+        btn_cancel.setOnClickListener {
+
+            dialog?.dismiss()
+
+        }
+
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
+        dialog!!.show()
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (bp?.handleActivityResult(requestCode, resultCode, data) != true) {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    var bp: BillingProcessor? = null
+
+    override fun onBillingInitialized() {
+        Log.d("af","")
+
+    }
+
+    override fun onPurchaseHistoryRestored() {
+
+    }
+
+    override fun onProductPurchased(productId: String, details: TransactionDetails?) {
+
+        purhcaseFoodeeSubscription(context!!,"1",view!!,bp!!)
+        bp?.consumePurchase("android.test.purchased")
+
+
+    }
+
+    override fun onBillingError(errorCode: Int, error: Throwable?) {
+        Log.d("af","")
+
+
+    }
+
+
 
     var mapFragment: SupportMapFragment? = null
     var mGoogleMap: GoogleMap? = null
@@ -67,6 +144,8 @@ class NearByFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Vie
         view.tv_search_25_contribution.setOnClickListener(this)
         view.tv_search_50_contribution.setOnClickListener(this)
         view.tv_search_treat_me.setOnClickListener(this)
+        view.tv_match_me.setOnClickListener(this)
+
     }
 
 
@@ -159,6 +238,17 @@ class NearByFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Vie
             v.tv_search_treat_me.setTextColor(resources.getColor(R.color.white))
 
         }
+        v.tv_match_me.setOnClickListener {
+
+
+            if(Prefs.getBoolean("subscriptionEnable",false)) {
+
+                startActivity(Intent(context,ActivityMatchMe::class.java))
+            }else {
+                addPaymentDialog(view!!.context)
+
+            }
+        }
 
     }
 
@@ -168,9 +258,15 @@ class NearByFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Vie
         val view = inflater.inflate(R.layout.fragment_nearby, container, false)
         pd = Utils.progressDialog(context!!, "", "Please wait")
 
+
         Hawk.init(context!!).build();
 
 
+        bp = BillingProcessor(context, "YOUR LICENSE KEY FROM GOOGLE PLAY CONSOLE HERE", this)
+        bp?.initialize()
+
+
+        checkFoodeeSubscription(context!!,view)
         clickListner(view)
         view.findViewById<EditText>(R.id.filterRestaurant).setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
@@ -355,11 +451,132 @@ private fun styleMap(context: Context, style: Int, mMap: GoogleMap) {
 
 }
 
+
+
+
+
+
+
+
 private fun setscaledBitmapMarker(height: Int, width: Int, @DrawableRes image: Int, context: Context): Bitmap {
 
     val bitmapdraw = context.resources.getDrawable(R.drawable.location_marker) as BitmapDrawable
     val b = bitmapdraw.bitmap
     return Bitmap.createScaledBitmap(b, width, height, false)
+
+}
+
+private fun purhcaseFoodeeSubscription(context: Context, type : String,view: View,billingProcessor: BillingProcessor) {
+
+    val xpd = Utils.progressDialog(context!!, "", "Processing...")
+    xpd.show()
+
+    val mService = ApiUtils.getSOService() as SOService
+
+    val hm = HashMap<String, String>()
+    hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+
+    val jsonObject = JSONObject()
+    jsonObject.put("id", Prefs.getString(Constant.USERID,"-1"))
+    jsonObject.put("type",1)
+
+    mService.purchaseSubscription(Utils.getRequestBody(jsonObject.toString()))
+            .enqueue(object : Callback<SuccessResponse>{
+                override fun onFailure(call: Call<SuccessResponse>?, t: Throwable?) {
+
+                    xpd.dismiss()
+
+                    Toast.makeText(context,t?.message,Toast.LENGTH_LONG).show()
+
+
+                }
+
+                override fun onResponse(call: Call<SuccessResponse>?, response: Response<SuccessResponse>?) {
+
+                    xpd.dismiss()
+
+                    if(response?.isSuccessful!!) {
+
+                        if(response?.body().success){
+
+                            Prefs.putBoolean("subscriptionEnable",true)
+                            view.tv_match_me.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0)
+                            Toast.makeText(context,"Thank your for purchase",Toast.LENGTH_LONG).show()
+
+
+                        }else {
+                            Toast.makeText(context,response.body().message,Toast.LENGTH_LONG).show()
+
+                        }
+
+                    }else {
+
+                        Toast.makeText(context,response.message(),Toast.LENGTH_LONG).show()
+                    }
+
+                }
+
+            })
+
+}
+
+
+private fun checkFoodeeSubscription(context: Context,view: View) {
+
+    val xpd = Utils.progressDialog(context!!, "", "Checking Subscription...")
+    xpd.show()
+
+    val mService = ApiUtils.getSOService() as SOService
+
+    val jsonObject = JSONObject()
+    jsonObject.put("id", Prefs.getString(Constant.USERID,"-1"))
+
+
+
+    mService.checkSubscription(Utils.getRequestBody(jsonObject.toString()))
+            .enqueue(object : Callback<CheckSubscription>{
+                override fun onFailure(call: Call<CheckSubscription>?, t: Throwable?) {
+
+                    xpd.dismiss()
+
+                    Toast.makeText(context,t?.message,Toast.LENGTH_LONG).show()
+
+
+                }
+
+                override fun onResponse(call: Call<CheckSubscription>?, response: Response<CheckSubscription>?) {
+
+                    xpd.dismiss()
+
+                    if(response?.isSuccessful!!) {
+
+                        if(response?.body().success){
+
+                            if(response?.body().subscription == "active") {
+                                Prefs.putBoolean("subscriptionEnable",true)
+                                view.tv_match_me.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0)
+
+                            }else if(response?.body().subscription == "inactive") {
+
+                                Prefs.putBoolean("subscriptionEnable",false)
+
+                            }
+
+
+
+                        }else {
+                            Toast.makeText(context,response.body().message,Toast.LENGTH_LONG).show()
+
+                        }
+
+                    }else {
+
+                        Toast.makeText(context,response.message(),Toast.LENGTH_LONG).show()
+                    }
+
+                }
+
+            })
 
 }
 
@@ -378,6 +595,7 @@ private fun setCircularImageAsMarkerWithGlide(context: Context, googleMap: Googl
 
 
 }
+
 
 
 // Required empty public constructor

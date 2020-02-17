@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_margin="5dp"
+        android:background="@color/white"
+        app:cardCornerRadius="10dp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:padding="6dp"
+            android:layout_height="match_parent">
+
+            <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_marginTop="28sp"
+                android:text="Foodee Prime Match-Me  "
+                android:layout_marginLeft="10dp"
+                android:drawableRight="@drawable/lock_paid"
+                android:textSize="20sp"
+                android:gravity="left"
+                />
+            <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                android:id="@+id/bio_et"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+
+                android:text="Match-Me helps you find Foodees with 3 or more same favorite food types that you listed in your profile"
+                android:gravity="top|left"
+                android:padding="6dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:background="@android:color/transparent"
+                />
+
+
+            <foodie.app.rubikkube.foodie.fonts.robotoLight
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:visibility="visible"
+
+                android:text="Buy Match-Me Premium to unlock features"
+                android:gravity="center"
+
+                android:padding="6dp"
+                android:textSize="16sp"
+                android:textColor="@color/colorPrimary"
+                android:background="@android:color/transparent"
+                />
+
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="12dp"
+                android:gravity="end"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Cancel"
+                    android:textSize="18sp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/colorAccent"
+                    />
+
+                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                    android:id="@+id/btn_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Purchase"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:textColor="@color/colorAccent"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

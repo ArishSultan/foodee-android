@@ -34,8 +34,11 @@ import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.model.*
 import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
+import kotlinx.android.synthetic.main.activity_other_user_profile_detail.*
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.profile_desc
 import kotlinx.android.synthetic.main.fragment_profile.profile_pic
+import kotlinx.android.synthetic.main.fragment_profile.ratingLayout
 import kotlinx.android.synthetic.main.fragment_profile.rating_title
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.fragment_profile.view.age
@@ -63,6 +66,9 @@ import kotlin.collections.ArrayList
 import kotlin.jvm.java
 
 class ProfileFragment : androidx.fragment.app.Fragment() {
+
+
+
 
     private lateinit var profileAdapter: ProfileFoodAdapter
     private var pd: KProgressHUD? = null
@@ -459,6 +465,7 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
 
 
     }
+
 
 
 }

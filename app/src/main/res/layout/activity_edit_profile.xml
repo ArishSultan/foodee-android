@@ -532,7 +532,42 @@
                             />
                     </RelativeLayout>
 
+
+
                 </androidx.cardview.widget.CardView>
+
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:id="@+id/match_me_card"-->
+<!--                    android:layout_toRightOf="@+id/treat_me_card"-->
+<!--                    android:layout_below="@+id/contribution"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="40dp"-->
+<!--                    android:layout_marginLeft="10dp"-->
+<!--                    app:cardCornerRadius="10dp"-->
+<!--                    app:cardElevation="4dp"-->
+<!--                    >-->
+
+<!--                    <RelativeLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:background="@drawable/rectangular_line"-->
+
+<!--                        >-->
+
+<!--                        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold-->
+<!--                            android:id="@+id/match_me"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:textSize="16sp"-->
+<!--                            android:textColor="@android:color/darker_gray"-->
+<!--                            android:gravity="center"-->
+<!--                            android:text="Match me"-->
+<!--                            />-->
+<!--                    </RelativeLayout>-->
+
+
+
+<!--                </androidx.cardview.widget.CardView>-->
 
 
             </RelativeLayout>

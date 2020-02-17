@@ -135,4 +135,14 @@ interface SOService {
     fun getMyReviews(@Path("userID") userId:Int,@HeaderMap header: Map<String, String>): Call<Reviews>
 
 
+    @POST("/api/v1/subscription/check")
+    fun checkSubscription(@Body requestBody: RequestBody): Call<CheckSubscription>
+
+    @POST("/api/v1/subscription/purchase")
+    fun purchaseSubscription(@Body requestBody: RequestBody): Call<SuccessResponse>
+
+
+
+
+
 }

@@ -23,7 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.ReviewsActivity"></activity>
+        <activity android:name=".activities.ActivityMatchMe"></activity>
+        <activity android:name=".activities.ReviewsActivity" />
         <activity android:name=".activities.WhoLikesActivity" />
         <activity android:name=".activities.EditPostActivity" />
         <activity android:name=".activities.NotificationCenterActivity" />
