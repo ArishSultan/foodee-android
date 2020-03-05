@@ -14,6 +14,7 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -47,6 +48,8 @@ import foodie.app.rubikkube.foodie.utilities.Constant
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.fragment_nearby.*
 import kotlinx.android.synthetic.main.fragment_nearby.view.*
+import kotlinx.android.synthetic.main.not_active_dialog_layout.*
+import kotlinx.android.synthetic.main.not_active_dialog_layout.view.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -61,6 +64,7 @@ class NearByFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Vie
 
 
 
+    var purchaseType = 1
     fun addPaymentDialog(context: Context) {
 
 
@@ -74,8 +78,38 @@ class NearByFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Vie
         dialog = builder.create()
 
 
+
+        dialog_layout.sub_one_month.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
+            override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
+
+
+
+                if(dialog_layout.sub_one_year.isChecked) {
+                    dialog_layout.sub_one_year.isChecked = false
+                    purchaseType = 1
+                }
+
+            }
+        })
+
+        dialog_layout.sub_one_year.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
+            override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
+
+
+                if(dialog_layout.sub_one_month.isChecked) {
+                    dialog_layout.sub_one_month.isChecked = false
+
+                    purchaseType = 2
+                }
+
+
+            }
+        })
+
         var done_btn = dialog_layout.findViewById<View>(R.id.btn_done) as TextView
         var btn_cancel = dialog_layout.findViewById<View>(R.id.btn_cancel) as TextView
+
+
 
         done_btn.setOnClickListener {
 
@@ -538,10 +572,7 @@ private fun checkFoodeeSubscription(context: Context,view: View) {
                 override fun onFailure(call: Call<CheckSubscription>?, t: Throwable?) {
 
                     xpd.dismiss()
-
                     Toast.makeText(context,t?.message,Toast.LENGTH_LONG).show()
-
-
                 }
 
                 override fun onResponse(call: Call<CheckSubscription>?, response: Response<CheckSubscription>?) {
@@ -559,10 +590,7 @@ private fun checkFoodeeSubscription(context: Context,view: View) {
                             }else if(response?.body().subscription == "inactive") {
 
                                 Prefs.putBoolean("subscriptionEnable",false)
-
                             }
-
-
 
                         }else {
                             Toast.makeText(context,response.body().message,Toast.LENGTH_LONG).show()

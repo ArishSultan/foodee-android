@@ -23,7 +23,9 @@ import foodie.app.rubikkube.foodie.model.CommentData
 import foodie.app.rubikkube.foodie.model.FeedData
 import foodie.app.rubikkube.foodie.utilities.Constant
 import android.app.Activity
+import android.content.DialogInterface
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import app.wi.lakhanipilgrimage.api.SOService
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.model.DeleteFoodAndPostResponse
@@ -88,7 +90,9 @@ class PostCommentAdapter(context: Context, listCommentData : MutableList<Comment
 
         holder.img_delete_comment.setOnClickListener {
 
-            deleteComment(listCommentData[position].id,position)
+
+
+            showDialog(listCommentData[position].id,position)
         }
 
         holder.profile_image.setOnClickListener {
@@ -180,6 +184,47 @@ class PostCommentAdapter(context: Context, listCommentData : MutableList<Comment
 //                    }
 //                })
 
+    }
+
+
+    // Method to show an alert dialog with yes, no and cancel button
+    private fun showDialog(commentID: Int,position: Int){
+        // Late initialize an alert dialog object
+        lateinit var dialog: AlertDialog
+
+
+        // Initialize a new instance of alert dialog builder object
+        val builder = AlertDialog.Builder(mContext)
+
+        // Set a title for alert dialog
+        builder.setTitle("Are you sure?")
+
+        // Set a message for alert dialog
+        builder.setMessage("Are you sure you really wanna delete the comment")
+
+
+        // On click listener for dialog buttons
+        val dialogClickListener = DialogInterface.OnClickListener{ _, which ->
+            when(which){
+                DialogInterface.BUTTON_POSITIVE -> deleteComment(commentID,position)
+                DialogInterface.BUTTON_NEGATIVE -> dialog.dismiss()
+            }
+        }
+
+
+        // Set the alert dialog positive/yes button
+        builder.setPositiveButton("DELETE",dialogClickListener)
+
+        // Set the alert dialog negative/no button
+        builder.setNegativeButton("CANCEL",dialogClickListener)
+
+
+
+        // Initialize the AlertDialog using builder object
+        dialog = builder.create()
+
+        // Finally, display the alert dialog
+        dialog.show()
     }
 
 }

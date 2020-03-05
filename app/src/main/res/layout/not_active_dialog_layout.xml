@@ -44,6 +44,23 @@
                 android:background="@android:color/transparent"
                 />
 
+            <CheckBox
+                android:id="@+id/sub_one_month"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_height="wrap_content"
+                android:text="Select 1 Month Subscription 1.99$"
+                />
+            <CheckBox
+                android:id="@+id/sub_one_year"
+                android:layout_marginTop="6dp"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_height="wrap_content"
+                android:text="Select 1 Year Subscription 7.99$"
+                />
+
 
             <foodie.app.rubikkube.foodie.fonts.robotoLight
                 android:layout_marginTop="20dp"
