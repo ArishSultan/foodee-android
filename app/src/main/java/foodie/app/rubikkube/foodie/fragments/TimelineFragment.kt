@@ -108,8 +108,17 @@ class TimelineFragment : androidx.fragment.app.Fragment(), Observer {
         view.post.setOnClickListener {
             view.context.startActivity(Intent(activity,PostActivity::class.java))
         }
+        view.swipe_refresh.setOnRefreshListener {
+            getTimelinePost(true)
+
+        }
 
         return view;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        getTimelinePost(false)
+
     }
 
     override fun onResume() {
@@ -160,8 +169,12 @@ class TimelineFragment : androidx.fragment.app.Fragment(), Observer {
 
     }
 
-    private fun getTimelinePost(){
+    private fun getTimelinePost(isRefresh : Boolean){
 //        pd = Utils.progressDialog(context!!, "", "Getting Timeline post").show()
+
+        if(feedData != null) {
+            feedData?.clear()
+        }
         val hm = HashMap<String, String>()
         hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
@@ -170,6 +183,9 @@ class TimelineFragment : androidx.fragment.app.Fragment(), Observer {
                 override fun onFailure(call: Call<FeedResponse>?, t: Throwable?) {
                     pd?.dismiss()
                     Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+                    if(isRefresh) {
+                        view?.swipe_refresh?.isRefreshing = false
+                    }
                 }
 
                 override fun onResponse(call: Call<FeedResponse>?, response: Response<FeedResponse>?) {
@@ -180,6 +196,9 @@ class TimelineFragment : androidx.fragment.app.Fragment(), Observer {
                         //intent.putExtra("foodList", response.body())
                         //foodList = response!!.body()
                         timeLineAdapter.update(feedData)
+                        if(isRefresh) {
+                            view?.swipe_refresh?.isRefreshing = false
+                        }
                     }
                 }
             })
@@ -239,7 +258,7 @@ class TimelineFragment : androidx.fragment.app.Fragment(), Observer {
 
                 override fun onResponse(call: Call<UpdateFcmTokenResponse>?, response: Response<UpdateFcmTokenResponse>?) {
                     if (response!!.isSuccessful) {
-                        getTimelinePost()
+                        //getTimelinePost(false)
                     }
                 }
             })

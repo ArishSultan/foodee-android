@@ -20,6 +20,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.FragmentTransaction
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.model.Image
 import com.google.android.gms.common.ConnectionResult
@@ -236,6 +237,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
     }
 
 
+
     private fun loadFragment(fragment: androidx.fragment.app.Fragment?): Boolean {
         if (fragment != null) {
 
@@ -245,6 +247,7 @@ class HomeActivity : AppCompatActivity() , GoogleApiClient.ConnectionCallbacks,
         }
         return false
     }
+
 
     private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

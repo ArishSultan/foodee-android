@@ -82,6 +82,8 @@ class PostCommentAdapter(context: Context, listCommentData : MutableList<Comment
 
             holder.img_delete_comment.visibility = View.VISIBLE
 
+        }else if(listCommentData[position].userId.equals(Prefs.getString(Constant.USERID, ""))){
+            holder.img_delete_comment.visibility = View.VISIBLE
 
         }else {
             holder.img_delete_comment.visibility = View.GONE
