@@ -3,38 +3,35 @@ package foodie.app.rubikkube.foodie.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import app.wi.lakhanipilgrimage.api.SOService
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
-import com.smarteist.autoimageslider.DefaultSliderView
-import com.smarteist.autoimageslider.SliderLayout
+import com.smarteist.autoimageslider.SliderView
 import com.stfalcon.frescoimageviewer.ImageViewer
-import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.JavaUtils
+import foodie.app.rubikkube.foodie.MainActivity
 import foodie.app.rubikkube.foodie.R
-import foodie.app.rubikkube.foodie.adapter.PostCommentAdapter
+import foodie.app.rubikkube.foodie.adapters.PostCommentAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.*
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.*
+import foodie.app.rubikkube.foodie.ui.chats.NotificationViewModel
+import foodie.app.rubikkube.foodie.ui.home.SliderAdapterExample
+import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.activity_timeline_post_detail.*
-import okhttp3.MultipartBody
 import org.json.JSONObject
-import org.w3c.dom.Comment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,7 +39,9 @@ import java.util.HashMap
 
 class TimelinePostDetailActivity : Activity() {
 
-    var imageSlider: SliderLayout? = null
+    var _profile: RelativeLayout? = null
+    var loading: ProgressBar? = null
+    var imageSlider: SliderView? = null
     var like_icon: ImageView? = null
     var txt_view_more_comments: TextView? = null
     var postID: String? = null
@@ -66,15 +65,18 @@ class TimelinePostDetailActivity : Activity() {
         txt_view_more_comments = findViewById(R.id.txt_view_more_comments)
         edt_msg = findViewById(R.id.edt_msg)
         btn_send_msg = findViewById(R.id.btn_send_msg)
+        loading = findViewById(R.id.loading)
+        _profile = findViewById(R.id.profile)
+
+        if (intent.getBooleanExtra("fromNotification", false)) {
+            val count2 = Prefs.getInt("notification", 0) - 1
+            NotificationViewModel.notifications.postValue(if (count2 >= 0) count2 else 0)
+            Prefs.putInt("notification", count2)
+        }
 
         Glide.with(this).load(R.drawable.ic_keyboard_backspace_black_24dp).into(back_icon)
         postID = intent.getStringExtra("PostID")
-/*        if (Hawk.contains("DetailPost")) {
-            timeLinePost = Hawk.get("DetailPost", "") as FeedData
-            postID = ""
-            postID = timeLinePost!!.id.toString()
-            timeLinePost = FeedData()
-        }*/
+        Log.d("OnTimelinePostDetail", postID.toString())
 
         getPostById(postID!!)
         setUpRecyclerView()
@@ -115,21 +117,19 @@ class TimelinePostDetailActivity : Activity() {
                 timeLinePost!!.likescount += 1
                 like_txt.text = (timeLinePost!!.likescount).toString()
 
-                if (Prefs.getString(Constant.USERID, "").toInt() != timeLinePost!!.user.id) {
-                    val myName = Prefs.getString(Constant.NAME, "")
+                if (Prefs.getString(Constants.USER_ID, "").toInt() != timeLinePost!!.user.id) {
+                    val myName = Prefs.getString(Constants.NAME, "")
 
-                    if (!timeLinePost!!.user.device_token.isNullOrEmpty()) {
-
-                        Utils.sentSimpleNotification(this@TimelinePostDetailActivity, "Foodee", "$myName likes your post", timeLinePost!!.user.device_token, "nothing")
+                    if (timeLinePost!!.user.deviceToken != null) {
+                        Utils.sendSimpleNotification(this@TimelinePostDetailActivity, "Foodee", "$myName likes your post", timeLinePost!!.user.deviceToken ?: "Data", "nothing", "like")
                     }
-
                 }
             }
         }
 
         btn_send_msg!!.setOnClickListener {
             val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            if (edt_msg!!.text.toString().equals("")) {
+            if (edt_msg!!.text.toString() == "") {
                 Toasty.error(this, "Enter Comment first.").show()
                 imm.hideSoftInputFromWindow(edt_msg!!.windowToken, 0)
             } else {
@@ -142,39 +142,45 @@ class TimelinePostDetailActivity : Activity() {
         }
 
         profile_image.setOnClickListener {
-            if (timeLinePost!!.userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
-                //val activity: HomeActivity = mContext as HomeActivity
-                //val myFragment = ProfileFragment()
-                //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                Prefs.putBoolean("comingFromPostDetail", true)
-            } else {
-                val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
-                intent.putExtra("id", timeLinePost!!.userId.toString())
-                startActivity(intent)
-            }
+            Utils.navigateToUserProfile(this@TimelinePostDetailActivity, timeLinePost!!.userId.toString())
+
+//            if (timeLinePost!!.userId.toString() == Prefs.getString(Constants.USER_ID, "")) {
+//                //val activity: HomeActivity = mContext as HomeActivity
+//                //val myFragment = ProfileFragment()
+//                //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+//                val intent = Intent(this, HomeActivity::class.java)
+//                startActivity(intent)
+//                Prefs.putBoolean("comingFromPostDetail", true)
+//            } else {
+//                val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
+//                intent.putExtra("id", timeLinePost!!.userId.toString())
+//                startActivity(intent)
+//            }
         }
 
         user_name.setOnClickListener {
-            if (timeLinePost!!.userId.toString().equals(Prefs.getString(Constant.USERID, ""))) {
-                //val activity: HomeActivity = mContext as HomeActivity
-                //val myFragment = ProfileFragment()
-                //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                Prefs.putBoolean("comingFromPostDetail", true)
-            } else {
-                val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
-                intent.putExtra("id", timeLinePost!!.userId.toString())
-                startActivity(intent)
-            }
+            Utils.navigateToUserProfile(this@TimelinePostDetailActivity, timeLinePost!!.userId.toString())
+
+//            if (timeLinePost!!.userId.toString() == Prefs.getString(Constants.USER_ID, "")) {
+//                //val activity: HomeActivity = mContext as HomeActivity
+//                //val myFragment = ProfileFragment()
+//                //activity.supportFragmentManager.beginTransaction().replace(R.id.flFragmentContainer, myFragment).addToBackStack(null).commit()
+//                val intent = Intent(this, HomeActivity::class.java)
+//                startActivity(intent)
+//                Prefs.putBoolean("comingFromPostDetail", true)
+//            } else {
+//                val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
+//                intent.putExtra("id", timeLinePost!!.userId.toString())
+//                startActivity(intent)
+//            }
         }
 
         txt_tagged_user.setOnClickListener {
-            val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
-            intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
-            startActivity(intent)
+            Utils.navigateToUserProfile(this@TimelinePostDetailActivity, timeLinePost!!.userId.toString())
+
+//            val intent = Intent(this, OtherUserProfileDetailActivity::class.java)
+//            intent.putExtra("id", timeLinePost!!.tags[0].pivot.userId.toString())
+//            startActivity(intent)
         }
     }
 
@@ -188,7 +194,7 @@ class TimelinePostDetailActivity : Activity() {
         rv_post_comments.setHasFixedSize(false)
 
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-        layoutManager.orientation = LinearLayout.VERTICAL
+        layoutManager.orientation = RecyclerView.VERTICAL
 
         rv_post_comments.layoutManager = layoutManager
         rv_post_comments.adapter = postCommentAdapter
@@ -203,34 +209,17 @@ class TimelinePostDetailActivity : Activity() {
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
 
-        if (timeLinePost!!.user.profile.avatar != null) {
-            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + timeLinePost!!.user.profile.userId + "/" + timeLinePost!!.user.profile.avatar).into(profile_image)
-            Log.d("userProfileImage", "" + timeLinePost!!.user.profile.userId + "/" + timeLinePost!!.user.profile.avatar)
+        if (timeLinePost.user.profile?.avatar != null) {
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + timeLinePost!!.user.profile!!.userId + "/" + timeLinePost!!.user.profile!!.avatar).into(profile_image)
+            Log.d("userProfileImage", "" + timeLinePost.user.profile!!.userId + "/" + timeLinePost.user!!.profile!!.avatar)
         } else {
             Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(profile_image)
         }
 
-        imageSlider!!.clearSliderViews()
-        if (timeLinePost!!.photos != null) {
-            if (!(timeLinePost!!.photos.contains(""))) {
-                Log.d("EMpty", "" + timeLinePost!!.photos.contains(""))
-                Log.d("content", timeLinePost!!.content)
-                for (i in timeLinePost!!.photos.indices) {
-                    imageSlider!!.visibility = View.VISIBLE
-                    val sliderView = DefaultSliderView(this)
-                    sliderView.imageUrl = ApiUtils.BASE_URL + "/storage/media/post/" + timeLinePost!!.photos.get(i)
-                    imageSlider!!.addSliderView(sliderView)
-                    //sliderView.setImageScaleType(ImageView.ScaleType.FIT_XY)
-                    Log.d("ImageURL", ApiUtils.BASE_URL + "/storage/media/post/" + timeLinePost!!.photos.get(i) + " Size " + timeLinePost!!.photos.size)
-                }
-            }
-            else {
-                imageSlider!!.visibility = View.GONE
-            }
-        }
-        else {
-            imageSlider!!.visibility = View.GONE
-        }
+        if (timeLinePost.photos?.isNotEmpty() ?: false) {
+            imageSlider?.isVisible = true
+            imageSlider?.setSliderAdapter(SliderAdapterExample(ArrayList(timeLinePost.photos!!)))
+        } else imageSlider?.isVisible = false
 
 
 
@@ -286,7 +275,7 @@ class TimelinePostDetailActivity : Activity() {
                 img_is_with.visibility = View.GONE
             }
 
-            if (timeLinePost.userId.toString() == Prefs.getString(Constant.USERID, "")) {
+            if (timeLinePost.userId.toString() == Prefs.getString(Constants.USER_ID, "")) {
                 txtViewOptions.visibility = View.VISIBLE
             } else {
                 txtViewOptions.visibility = View.GONE
@@ -301,7 +290,7 @@ class TimelinePostDetailActivity : Activity() {
                 popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.update_post -> {
-                            Hawk.put("EditPostObject", timeLinePost)
+//                            Hawk.put("EditPostObject", timeLinePost)
                             startActivity(Intent(this, EditPostActivity::class.java))
                         }
                         R.id.delete_post -> {
@@ -328,7 +317,7 @@ class TimelinePostDetailActivity : Activity() {
 
         val mService = ApiUtils.getSOService() as SOService
         val hm = java.util.HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
         val jsonObject = JSONObject()
         jsonObject.put("content", content)
@@ -354,7 +343,7 @@ class TimelinePostDetailActivity : Activity() {
                 user = User()
                 profile = Profile()
                 profile!!.userId = me!!.id
-                profile!!.avatar = me!!.profile.avatar
+                profile!!.avatar = me!!.profile?.avatar
                 user!!.username = me!!.username
                 user!!.id = me!!.id
                 user!!.profile = profile
@@ -362,11 +351,11 @@ class TimelinePostDetailActivity : Activity() {
                 (listCommentData as java.util.ArrayList<CommentData>).add(commentData!!)
                 postCommentAdapter.update(listCommentData!!)
 
-                if (Prefs.getString(Constant.USERID, "").toInt() != timeLinePost!!.user.id) {
-                    val myName = Prefs.getString(Constant.NAME, "")
+                if (Prefs.getString(Constants.USER_ID, "").toInt() != timeLinePost!!.user.id) {
+                    val myName = Prefs.getString(Constants.NAME, "")
 
-                    if (!timeLinePost!!.user.device_token.isNullOrEmpty()) {
-                        Utils.sentSimpleNotification(this@TimelinePostDetailActivity, "Foodee", "$myName commented your post", timeLinePost!!.user.device_token, "nothing")
+                    if (!timeLinePost!!.user.deviceToken.isNullOrEmpty()) {
+                        Utils.sendSimpleNotification(this@TimelinePostDetailActivity, "Foodee", "$myName commented your post", timeLinePost!!.user.deviceToken ?: "No token", "none", "post")
                     }
                 }
                 Toasty.success(context, "Comment Posted Successfully").show()
@@ -379,7 +368,7 @@ class TimelinePostDetailActivity : Activity() {
         val mService = ApiUtils.getSOService() as SOService
         val hm = java.util.HashMap<String, String>()
         var flag = false
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
         mService.likeAndUnlike(post_id, hm).enqueue(object : Callback<LikeResponse> {
             override fun onFailure(call: Call<LikeResponse>?, t: Throwable?) {
@@ -396,7 +385,7 @@ class TimelinePostDetailActivity : Activity() {
     fun getAllComments(post_id: Int, context: Context) {
         val mService = ApiUtils.getSOService() as SOService
         val hm = java.util.HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
         mService.getComments(post_id, hm).enqueue(object : Callback<GetCommentResponse> {
             override fun onFailure(call: Call<GetCommentResponse>?, t: Throwable?) {
@@ -418,7 +407,7 @@ class TimelinePostDetailActivity : Activity() {
 
     private fun deletePost(post_id: Int) {
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         val jsonObject = JSONObject()
         jsonObject.put("_method", "DELETE")
@@ -432,7 +421,7 @@ class TimelinePostDetailActivity : Activity() {
                         if (andPostResponse!!.isSuccessful) {
                             deletePostResponse = andPostResponse.body()
                             Toasty.success(this@TimelinePostDetailActivity, deletePostResponse.message, Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this@TimelinePostDetailActivity, HomeActivity::class.java))
+                            startActivity(Intent(this@TimelinePostDetailActivity, MainActivity::class.java))
                             finish()
                         }
                     }
@@ -441,17 +430,20 @@ class TimelinePostDetailActivity : Activity() {
 
     private fun getPostById(post_id: String) {
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         mService.getPostById(post_id, hm)
                 .enqueue(object : Callback<FeedData> {
                     override fun onFailure(call: Call<FeedData>?, t: Throwable?) {
                         Toasty.error(this@TimelinePostDetailActivity, "" + t!!.message, Toast.LENGTH_SHORT).show()
+
                     }
 
                     override fun onResponse(call: Call<FeedData>?, feedDataResponse: Response<FeedData>?) {
                         if (feedDataResponse!!.isSuccessful) {
                             timeLinePost = feedDataResponse.body()
+                            _profile?.isVisible = true
+                            loading?.isVisible = false
                             dataBindMe(timeLinePost!!)
                             getAllComments(timeLinePost!!.id, this@TimelinePostDetailActivity)
                             //finish()

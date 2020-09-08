@@ -9,12 +9,11 @@ import com.pixplicity.easyprefs.library.Prefs;
 
 import java.net.URISyntaxException;
 
-import foodie.app.rubikkube.foodie.utilities.Constant;
+import foodie.app.rubikkube.foodie.utilities.Constants;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class AppClass extends Application {
-
     private Socket mSocket;
 
     @Override
@@ -30,19 +29,14 @@ public class AppClass extends Application {
                 .setUseDefaultSharedPreference(true)
                 .build();
 
-        {
-            try {
-                mSocket = IO.socket(Constant.CHAT_SERVER_URL);
-                //mSocket = IO.socket(Prefs.getString("socketUrl",""));
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            mSocket = IO.socket(Constants.CHAT_SERVER_URL);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
-
     }
 
     public Socket getSocket() {
         return mSocket;
     }
-
 }

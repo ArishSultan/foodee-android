@@ -3,10 +3,9 @@ package foodie.app.rubikkube.foodie.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.widget.Toast
-import app.wi.lakhanipilgrimage.api.SOService
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -15,12 +14,13 @@ import com.google.gson.Gson
 import com.pixplicity.easyprefs.library.Prefs
 import foodie.app.rubikkube.foodie.AppClass
 import foodie.app.rubikkube.foodie.R
-import foodie.app.rubikkube.foodie.adapter.ChatListAdapter
+import foodie.app.rubikkube.foodie.adapters.ChatListAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.MessageListResponse
-import foodie.app.rubikkube.foodie.model.MessageReceiver
-import foodie.app.rubikkube.foodie.model.Profile
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.MessageListResponse
+import foodie.app.rubikkube.foodie.models.MessageReceiver
+import foodie.app.rubikkube.foodie.models.Profile
+import foodie.app.rubikkube.foodie.ui.chats.NotificationViewModel
+import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -69,6 +69,16 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        if (intent.getBooleanExtra("fromNotification", false)) {
+            val count = Prefs.getInt("chatCount", 0) - 1
+            NotificationViewModel.chats.postValue(if (count >= 0) count else 0)
+            Prefs.putInt("chatCount", NotificationViewModel.chats.value ?: 0)
+
+            val count2 = Prefs.getInt("notification", 0) - 1
+            NotificationViewModel.notifications.postValue(if (count2 >= 0) count2 else 0)
+            Prefs.putInt("notification", NotificationViewModel.notifications.value ?: 0)
+        }
+
         val app = application as AppClass
         mSocket = app.socket
 
@@ -82,14 +92,14 @@ class ChatActivity : AppCompatActivity() {
         requestOptionsAvatar.error(R.drawable.profile_avatar)
 
 
-        fromUserId = Prefs.getString(Constant.USERID, "")
+        fromUserId = Prefs.getString(Constants.USER_ID, "")
         toUserId = Prefs.getString("toUserId", "")
         thread_id = Prefs.getString("threadId","")
         userName = Prefs.getString("userName","")
         userID = Prefs.getString("avatarUser","")
         avatar = Prefs.getString("avatar","")
         //toUserFcmToken = Prefs.getString("toUserFcmToken","")
-        toUserFcmToken = Utils.getfcmToken()
+        toUserFcmToken = Utils.getFcmToken()
         sdfDate = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")//dd/MM/yyyy
         /* intent.putExtra("user_dp",item.userDP)
 //        intent.putExtra("fcmToken",item.deviceId)
@@ -137,7 +147,7 @@ class ChatActivity : AppCompatActivity() {
 
     fun sendMessage() {
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
 
         val jsonObject = JSONObject()
         jsonObject.put("from_id", fromUserId)
@@ -171,14 +181,14 @@ class ChatActivity : AppCompatActivity() {
 
                     if(toUserFcmToken != null) {
 
-                        Utils.sentMessageNotification(this@ChatActivity,"Foodee",
+                        Utils.sendMessageNotification(this@ChatActivity,"Foodee",
                                 message!!,
                                 toUserId!!,
-                                Prefs.getString(Constant.USERID, "")!!,
+                                Prefs.getString(Constants.USER_ID, "")!!,
                                 ApiUtils.BASE_URL + "/storage/media/avatar/" + userID+ "/" + avatar!!,
                                 toUserFcmToken!!,
                                 "nothing",
-                                Prefs.getString(Constant.NAME,"Unknown"),userName!!)
+                                Prefs.getString(Constants.NAME,"Unknown"),userName!!, "chat")
                      }
                     }
 
@@ -192,7 +202,7 @@ class ChatActivity : AppCompatActivity() {
 
     fun getMessageList() {
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
 
         val mService = ApiUtils.getSOService() as SOService
         mService.getMessageList(hm, fromUserId!!,toUserId!!)
@@ -203,15 +213,15 @@ class ChatActivity : AppCompatActivity() {
                             chatAdapter?.addMessageList(response!!.body())
                             rv_chat?.scrollToPosition(chatAdapter!!.itemCount - 1)
 
-                            if (response.body()[0].messageSender.id.toString() == Prefs.getString(Constant.USERID, "")) {
-                                myProfilePicture = ApiUtils.BASE_URL + "/storage/media/avatar/" + Prefs.getString(Constant.USERID, "") + "/" + response.body()[0].messageSender.profile.avatar
+                            if (response.body()[0].messageSender.id.toString() == Prefs.getString(Constants.USER_ID, "")) {
+                                myProfilePicture = ApiUtils.BASE_URL + "/storage/media/avatar/" + Prefs.getString(Constants.USER_ID, "") + "/" + response.body()[0].messageSender.profile.avatar
                             }
                             else{
-                                myProfilePicture = ApiUtils.BASE_URL + "/storage/media/avatar/" + Prefs.getString(Constant.USERID, "") + "/" + response.body()[0].messageReceiver.profile.avatar
+                                myProfilePicture = ApiUtils.BASE_URL + "/storage/media/avatar/" + Prefs.getString(Constants.USER_ID, "") + "/" + response.body()[0].messageReceiver.profile.avatar
                             }
 
 
-                            if (response.body()[0].messageSender.id.toString() != Prefs.getString(Constant.USERID, "")) {
+                            if (response.body()[0].messageSender.id.toString() != Prefs.getString(Constants.USER_ID, "")) {
                                 toUserFcmToken = response.body()[0].messageSender.device_token
                             }
                             else{

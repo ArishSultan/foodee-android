@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,194 +7,162 @@
     android:background="@color/grey_light">
 
     <RelativeLayout
-        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/darkBrown">
+        android:layout_height="match_parent">
 
-        <foodie.app.rubikkube.foodie.fonts.robotoRegular
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="30dp"
-            android:text="Settings"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-
-        <foodie.app.rubikkube.foodie.fonts.robotoRegular
-            android:id="@+id/logout_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"
-            android:text="Logout"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
-        android:orientation="vertical">
-
-        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/settings_app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Notifications"
-            android:textColor="@color/darkBrown"
-            android:textSize="20sp"
+            android:layout_height="wrap_content">
 
-            />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="@color/white"
-
-            >
-
-            <RelativeLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/settings_toolbar"
+                app:title="@string/title_settings"
+                app:titleTextColor="@color/white"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                app:menu="@menu/settings_toolbar_menu"/>
 
-                android:gravity="center"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp">
-
-                <foodie.app.rubikkube.foodie.fonts.robotoRegular
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|left"
-                    android:text="Enable notifications"
-                    android:textColor="@color/darkBrown"
-                    android:textSize="15sp"
-
-                    />
-
-                <TextView
-                    android:id="@+id/notif"
-                    android:layout_width="70dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:textSize="18sp"
-                    android:layout_centerVertical="true"
-                    android:text="Edit"
-                    android:gravity="center"
-                    />
-
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:text="Contact Us"
-            android:textColor="@color/darkBrown"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="55dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white">
-
-                <foodie.app.rubikkube.foodie.fonts.robotoRegular
-                    android:id="@+id/phone_num"
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:drawableLeft="@drawable/ic_local_phone_white"
-                    android:paddingLeft="10dp"
-                    android:text="458-570-9650"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/darkBrown"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-
-                <foodie.app.rubikkube.foodie.fonts.robotoRegular
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="60dp"
-                    android:layout_toRightOf="@+id/phone_num"
-                    android:drawableLeft="@drawable/ic_mail_outline_black_24dp"
-                    android:paddingLeft="10dp"
-                    android:text="458-570-9650"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/darkBrown"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:text="About Us"
-            android:textColor="@color/darkBrown"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        </com.google.android.material.appbar.AppBarLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/settings_app_bar_layout"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="vertical">
 
-            <foodie.app.rubikkube.foodie.fonts.robotoRegular
-
+            <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginTop="10dp"
-                android:text="Turkey Gravy Secrets Revealed"
+                android:layout_height="40dp"
+                android:text="Notifications"
                 android:textColor="@color/darkBrown"
-                android:textSize="14sp"
-                android:textStyle="normal" />
+                android:textSize="20sp" />
 
-            <foodie.app.rubikkube.foodie.fonts.robotoRegular
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@color/white">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp">
+
+                    <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center|left"
+                        android:text="Enable notifications"
+                        android:textColor="@color/darkBrown"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/notif"
+                        android:layout_width="70dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentRight="true"
+                        android:textSize="18sp"
+                        android:layout_centerVertical="true"
+                        android:text="Edit"
+                        android:gravity="center" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
 
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
-                android:text="To make the best tasting turkey gravy you need three things; well-seasoned fat, flour, and a good rich broth. For each cup of finished gravy you will need one tablespoon of fat, one tablespoon of flour, 1 cup of broth. Start by making up some rich turkey broth. you cn use the turkey neck, heart, gizzard or other parts usually found packed inside the turkey cavity. Add some minced"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="normal" />
+                android:text="Contact Us"
+                android:textColor="@color/darkBrown"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white">
+
+                    <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                        android:id="@+id/phone_num"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:drawableLeft="@drawable/ic_local_phone_white"
+                        android:paddingLeft="10dp"
+                        android:text="458-570-9650"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/darkBrown"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+
+                    <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="60dp"
+                        android:layout_toRightOf="@+id/phone_num"
+                        android:drawableLeft="@drawable/ic_mail_outline_black_24dp"
+                        android:paddingLeft="10dp"
+                        android:text="458-570-9650"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/darkBrown"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:text="About Us"
+                android:textColor="@color/darkBrown"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Turkey Gravy Secrets Revealed"
+                    android:textColor="@color/darkBrown"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+
+                <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginTop="10dp"
+                    android:text="To make the best tasting turkey gravy you need three things; well-seasoned fat, flour, and a good rich broth. For each cup of finished gravy you will need one tablespoon of fat, one tablespoon of flour, 1 cup of broth. Start by making up some rich turkey broth. you cn use the turkey neck, heart, gizzard or other parts usually found packed inside the turkey cavity. Add some minced"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+            </LinearLayout>
+
         </LinearLayout>
 
+    </RelativeLayout>
 
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/purchase"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Purchased Foodee 1.99$"
-        android:layout_alignParentBottom="true"
-        android:background="@color/lightBrown"
-        android:textColor="#fff"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        />
-
-</RelativeLayout>
+</ScrollView>

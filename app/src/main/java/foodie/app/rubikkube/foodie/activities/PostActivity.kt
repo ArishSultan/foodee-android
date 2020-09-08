@@ -5,16 +5,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
-import app.wi.lakhanipilgrimage.api.SOService
+import androidx.recyclerview.widget.RecyclerView
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.kaopiz.kprogresshud.KProgressHUD
@@ -23,13 +20,13 @@ import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
 import kotlinx.android.synthetic.main.activity_post.*
-import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
-import foodie.app.rubikkube.foodie.adapter.SearchUserAdapter
+import foodie.app.rubikkube.foodie.adapters.MultimediaAdapter
+import foodie.app.rubikkube.foodie.adapters.SearchUserAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.AddNewPostResponse
-import foodie.app.rubikkube.foodie.model.MeResponse
-import foodie.app.rubikkube.foodie.model.User
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.AddNewPostResponse
+import foodie.app.rubikkube.foodie.models.MeResponse
+import foodie.app.rubikkube.foodie.models.User
+import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
 import net.alhazmy13.mediapicker.Image.ImagePicker
 import okhttp3.MediaType
@@ -55,7 +52,8 @@ class PostActivity : AppCompatActivity() {
     private var searchUserList:ArrayList<User> = ArrayList()
     private var userModel: User? = null
     var user: String = ""
-    private var userid: ArrayList<Int>? = null
+    private var userid: ArrayList<Int>? = ArrayList()
+    private var userFcm: ArrayList<String>? = null
     private lateinit var searchUserAdapter: SearchUserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +86,7 @@ class PostActivity : AppCompatActivity() {
 
         img_search!!.setOnClickListener {
             user = edt_search_user.text.toString()
-            if(user.equals("") == false){
+            if(user != "") {
                 getSearchUserList(this, user)
             }
         }
@@ -99,14 +97,16 @@ class PostActivity : AppCompatActivity() {
         searchUserAdapter = SearchUserAdapter(this, searchUserList)
         rv_tag_user!!.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         rv_tag_user!!.adapter = searchUserAdapter
-        rv_tag_user!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+        rv_tag_user!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         rv_tag_user!!.addOnItemTouchListener(RecyclerTouchListener(this@PostActivity, rv_tag_user!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 userModel = User()
                 userid = ArrayList()
+                userFcm = ArrayList()
                 userModel = searchUserAdapter.getUser(position)
                 Log.d("User Model", userModel!!.username)
-                userid!!.add(userModel!!.id)
+                userid!!.add(userModel!!.id!!)
+                userFcm!!.add(userModel!!.deviceToken!!)
                 txt_tagged_user.visibility = View.VISIBLE
                 tag_user_heading.visibility = View.VISIBLE
                 txt_tagged_user.text = userModel!!.username
@@ -121,10 +121,10 @@ class PostActivity : AppCompatActivity() {
         imageUrlList = ArrayList()
         imageList!!.add("start")
         imageUrlList!!.add("start")
-        multimediaGridAdapter = MultimediaAdapter(this, imageList,imageUrlList,"addPost")
+        multimediaGridAdapter = MultimediaAdapter(this, imageList!!, imageUrlList!!,"addPost")
         rv_grid!!.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         rv_grid!!.adapter = multimediaGridAdapter
-        rv_grid!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        rv_grid!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         rv_grid!!.addOnItemTouchListener(RecyclerTouchListener(this@PostActivity, rv_grid!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 val lastPos = imageList?.size?.minus(1)
@@ -170,8 +170,8 @@ class PostActivity : AppCompatActivity() {
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
-        if(me.profile.avatar!=null) {
-            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.profile.userId + "/" + me.profile.avatar).into(user_avatar)
+        if(me.profile?.avatar!=null) {
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.profile?.userId + "/" + me.profile?.avatar).into(user_avatar)
         }
         else
         {
@@ -187,7 +187,7 @@ class PostActivity : AppCompatActivity() {
         val mService = ApiUtils.getSOService() as SOService
         postImagesParts = ArrayList()
         val hm = java.util.HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
 
         for (i in imageList?.indices!!) {
@@ -219,8 +219,22 @@ class PostActivity : AppCompatActivity() {
                     Log.d("CreatedAt",response!!.body().createdAt)
                     Log.d("UpdatedAt",response!!.body().updatedAt)
                     Log.d("post_id",""+response.body().id)
-                    //Log.d("photo 1",response!!.body().photos.get(0))
-                    //Log.d("photo 2",""+response.body().photos.get(1))
+
+                    val name = Prefs.getString(Constants.NAME, "")
+                    val total = tag_id!!.size
+
+                    for (i in 0 until tag_id.size)
+                        userFcm?.get(i)?.let {
+                            Utils.sendSimpleNotification(
+                                    this@PostActivity,
+                                    "New Post",
+                                    "$name tagged you and $total others in new post",
+                                    it,
+                                    "nothing",
+                                    "post"
+                            )
+                        }
+
 
                     Toasty.success(context,"Post Updated Successfully").show()
                     finish()
@@ -235,7 +249,7 @@ class PostActivity : AppCompatActivity() {
         val mService = ApiUtils.getSOService() as SOService
 
         val hm = java.util.HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
 
         mService.searchUser(hm, username)

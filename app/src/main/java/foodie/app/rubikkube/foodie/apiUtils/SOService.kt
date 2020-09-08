@@ -1,25 +1,31 @@
-package app.wi.lakhanipilgrimage.api
+package foodie.app.rubikkube.foodie.apiUtils
 
-
-import foodie.app.rubikkube.foodie.model.*
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 import retrofit2.http.POST
+import okhttp3.RequestBody
+import okhttp3.MultipartBody
+import foodie.app.rubikkube.foodie.models.*
 
 
 interface SOService {
+    /// Finalized Requests
+    @GET("/api/v1/posts")
+    fun getFeeds(@HeaderMap header: Map<String, String>): Call<FeedResponse>
 
+    /////////////////////////////////////////////////////////////////////////
     @POST("/api/auth/signup")
-    fun signup(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
+    fun signUp(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
 
     @POST("/api/auth/login")
-    fun login(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
+    fun signIn(@Body requestBody: RequestBody): Call<LoginSignUpResponse>
+
+    @POST("/api/forgot-password")
+    fun resetPassword(@Body requestBody: RequestBody): Call<Any>
 
 
     @GET("/api/v1/profile/{userId}") //no = sign needed
-    fun getProfile(@Path("userId") userId:String,@HeaderMap header: Map<String, String>): Call<MeResponse>
+    fun  getProfile(@Path("userId") userId:String,@HeaderMap header: Map<String, String>): Call<MeResponse>
 
 
     @POST("/api/v1/fcm/token")
@@ -30,7 +36,7 @@ interface SOService {
     @POST("/api/v1/update/photo")
     fun uploadImage(@HeaderMap header: Map<String, String>,
                     @Part("type") type: RequestBody,
-                    @Part userfile: MultipartBody.Part?
+                    @Part userFile: MultipartBody.Part?
     ): Call<ImageUploadResp>
 
     @POST("/api/v1/profile/{userId}")
@@ -57,13 +63,16 @@ interface SOService {
                    @Body requestBody: RequestBody):Call<AddFoodResp>
 
     @POST("/api/v1/lat/lng")
-    fun sendCurrentLatLng(@HeaderMap header: Map<String, String>,@Body requestBody: RequestBody): Call<LatLngResponse>
+    fun sendCurrentLatLng(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody): Call<Any>
 
     @GET("/api/v1/search/user/")
     fun getSpecificFoodList(@HeaderMap header: Map<String, String>, @Query("food")food: String, @Query("contribution")contribution: String): Call<ArrayList<MeResponse>>
 
-    @GET("/api/v1/posts")
-    fun getFeeds(@HeaderMap header: Map<String, String>): Call<FeedResponse>
+    @DELETE("/api/v1/profile/{id}")
+    fun deleteProfile(@Path("id") profileId: String, @HeaderMap header: Map<String, String>): Call<Any>
+
+    @DELETE("/api/v1/review/{id}")
+    fun deleteReview(@Path("id") profileId: Int, @HeaderMap header: Map<String, String>): Call<Any>
 
     @Multipart
     @POST("/api/v1/posts")
@@ -79,6 +88,9 @@ interface SOService {
     @GET("/api/v1/posts")
     fun getTimelinePost(@HeaderMap header: Map<String, String>): Call<FeedResponse>
 
+    @GET("/api/v1/featured")
+    fun getFeaturedTimelinePost(@HeaderMap header: Map<String, String>): Call<FeedResponse>
+
     @GET("/api/v1/posts/{postId}")
     fun getPostById(@Path("postId") userId:String,@HeaderMap header: Map<String, String>): Call<FeedData>
 
@@ -92,14 +104,14 @@ interface SOService {
     fun likeAndUnlike(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<LikeResponse>
 
     @POST("/api/v1/delete/thread/{threadId}")
-    fun DeletThread(@Path("threadId") threadID:Int,@HeaderMap header: Map<String, String>): Call<SimpleResponse>
+    fun deleteThread(@Path("threadId") threadID:Int, @HeaderMap header: Map<String, String>): Call<SimpleResponse>
 
     @POST("/api/v1/notification/clearall")
-    fun DeletAllNotifications(@HeaderMap header: Map<String, String>): Call<SimpleResponse>
+    fun deleteAllNotifications(@HeaderMap header: Map<String, String>): Call<SimpleResponse>
 
 
     @POST("/api/v1/notification/delete/{notifId}")
-    fun DeletSingleNotification(@Path("notifId") notifId:Int,@HeaderMap header: Map<String, String>): Call<SimpleResponse>
+    fun deleteSingleNotification(@Path("notifId") notifId:Int, @HeaderMap header: Map<String, String>): Call<SimpleResponse>
 
     @GET("/api/v1/comments/{postId}")
     fun getComments(@Path("postId") userId:Int,@HeaderMap header: Map<String, String>): Call<GetCommentResponse>
@@ -117,7 +129,7 @@ interface SOService {
     fun sendMessage(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody):Call<MessageListResponse>
 
     @POST("/api/v1/add/review")
-    fun AddReview(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody):Call<SimpleResponse>
+    fun addReview(@HeaderMap header: Map<String, String>, @Body requestBody: RequestBody):Call<SimpleResponse>
 
     @GET("/api/v1/messages/{from_id}/{to_id}")
     fun getMessageList(@HeaderMap header: Map<String, String>,@Path("from_id")from_id:String,@Path("to_id")to_id:String):Call<ArrayList<MessageListResponse>>
@@ -134,15 +146,12 @@ interface SOService {
     @GET("/api/v1/reviews/{userID}")
     fun getMyReviews(@Path("userID") userId:Int,@HeaderMap header: Map<String, String>): Call<Reviews>
 
+    @GET("/api/v1/nearby")
+    fun getNearByUsers(@Query("type") type: String?, @Query("name") name: String?, @HeaderMap header: Map<String, String>): Call<Array<NearByUser>>
 
     @POST("/api/v1/subscription/check")
     fun checkSubscription(@Body requestBody: RequestBody): Call<CheckSubscription>
 
     @POST("/api/v1/subscription/purchase")
     fun purchaseSubscription(@Body requestBody: RequestBody): Call<SuccessResponse>
-
-
-
-
-
 }

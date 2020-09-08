@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:focusable="true"
+    android:layout_margin="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusableInTouchMode="true">
+
+    <RelativeLayout
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/feed_header"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/feed_profile_image"
+                android:src="#f0f0f0ff"
+                android:layout_width="50dp"
+                app:civ_border_width="1dp"
+                android:layout_height="50dp"
+                app:civ_border_color="#f0f0f0"/>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:orientation="vertical"
+                android:layout_marginStart="10dp"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/feed_profile_username"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:text="@string/test_text"
+                    android:fontFamily="@font/roboto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/feed_time"
+                    android:textSize="12sp"
+                    android:text="@string/test_text"
+                    android:textFontWeight="100"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/roboto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:targetApi="p" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:elevation="0dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                style="?attr/actionButtonStyle"
+                android:src="@drawable/ic_more_vert_black_24dp"
+                android:contentDescription="@string/more_options"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/feed_actions"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/feed_header">
+
+            <ImageView
+                android:id="@+id/feed_chat_action"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/chat_bubble_icon"
+                android:contentDescription="@string/start_chat_with_this_person"/>
+
+            <TextView
+                android:id="@+id/feed_comments"
+                android:text="@string/test_text"
+                android:textSize="14sp"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/feed_like_action"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/like_bubble_icon"
+                android:contentDescription="@string/like_this_post"/>
+
+            <TextView
+                android:id="@+id/feed_likes"
+                android:text="@string/test_text"
+                android:textSize="14sp"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/feed_comment_input"
+            android:background="@null"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_below="@id/feed_actions"
+            android:hint="@string/write_comment"
+            android:shadowColor="#A4A4A4"
+            android:inputType="text"
+            android:importantForAutofill="no" />
+
+        <Button
+            android:id="@+id/feed_comment_post"
+            android:layout_width="20dp"
+            android:textColor="#f2f2f2"
+            android:layout_height="20dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/ic_send_black_24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/feed_actions"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

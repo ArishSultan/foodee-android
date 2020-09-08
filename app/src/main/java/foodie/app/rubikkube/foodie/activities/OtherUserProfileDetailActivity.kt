@@ -6,32 +6,29 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
-import app.wi.lakhanipilgrimage.api.SOService
+import androidx.recyclerview.widget.RecyclerView
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.google.gson.Gson
 import com.kaopiz.kprogresshud.KProgressHUD
-import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 import com.stfalcon.frescoimageviewer.ImageViewer
-import es.dmoral.toasty.Toasty
-import foodie.app.rubikkube.foodie.JavaUtils
 import foodie.app.rubikkube.foodie.R
-import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
-import foodie.app.rubikkube.foodie.adapter.ReviewAdapter
-import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
+import foodie.app.rubikkube.foodie.adapters.ProfileFoodAdapter
+import foodie.app.rubikkube.foodie.adapters.ReviewAdapter
+import foodie.app.rubikkube.foodie.adapters.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.*
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.*
+import foodie.app.rubikkube.foodie.ui.chats.NotificationViewModel
+import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.*
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.age
@@ -51,20 +48,14 @@ import kotlinx.android.synthetic.main.activity_other_user_profile_detail.rating_
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.rv_my_posts
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.twenty_precent_crd
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.view_shadow
-import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.fragment_profile.view.*
-import kotlinx.android.synthetic.main.fragment_timeline.view.*
-import kotlinx.android.synthetic.main.show_add_review_dialog.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.HashMap
-import kotlin.math.log
 
 
 class OtherUserProfileDetailActivity : AppCompatActivity() {
-
     private var dialog: androidx.appcompat.app.AlertDialog? = null
     private lateinit var profileAdapter: ProfileFoodAdapter
     var foodList: ArrayList<Food> = ArrayList()
@@ -86,8 +77,13 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_other_user_profile_detail)
         setUpRecyclerView()
 
-        var intent = getIntent()
+//        var intent = getIntent()
 
+        if (intent.getBooleanExtra("fromNotification", false)) {
+            val count2 = Prefs.getInt("notification", 0) - 1
+            NotificationViewModel.notifications.postValue(if (count2 >= 0) count2 else 0)
+            Prefs.putInt("notification", count2)
+        }
         if (intent != null) {
             id = intent.getStringExtra("id")
             //Log.d("id", id)
@@ -120,25 +116,29 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         menu_icon.setOnClickListener { it ->
             val popup =  PopupMenu(this@OtherUserProfileDetailActivity, it)
                 popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener {
-                    if(it.itemId == R.id.send_message) {
+                    when (it.itemId) {
+                        R.id.send_message -> {
 
-                        Prefs.putString("toUserId", toUserId)
-                        Prefs.putString("fromUserId",Prefs.getString(Constant.USERID,""))
-                        Prefs.putString("avatarUser",toUserId)
-                        Prefs.putString("userName",userName)
-                        Prefs.putString("avatar",avatar)
-                        Prefs.putString("toUserFcmToken",toUserFcmToken)
-                        startActivity(Intent(this,ChatActivity::class.java))
+                            Prefs.putString("toUserId", toUserId)
+                            Prefs.putString("fromUserId",Prefs.getString(Constants.USER_ID,""))
+                            Prefs.putString("avatarUser",toUserId)
+                            Prefs.putString("userName",userName)
+                            Prefs.putString("avatar",avatar)
+                            Prefs.putString("toUserFcmToken",toUserFcmToken)
+                            startActivity(Intent(this,ChatActivity::class.java))
 
-                    }else if(it.itemId == R.id.copy_link) {
+                        }
+                        R.id.copy_link -> {
 
-                        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText("userLink", meResponse?.link)
-                        clipboard.setPrimaryClip(clip)
+                            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                            val clip = ClipData.newPlainText("userLink", meResponse?.link)
+                            clipboard.setPrimaryClip(clip)
 
-                    }else if(it.itemId == R.id.add_feedback) {
+                        }
+                        R.id.add_feedback -> {
 
-                        addFeedBackDialog()
+                            addFeedBackDialog()
+                        }
                     }
 
                     return@OnMenuItemClickListener false
@@ -180,23 +180,23 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     fun dataBindMe(me: MeResponse) {
         default_cover.visibility = View.GONE
         view_shadow.visibility = View.VISIBLE
-        userName = me.username.toString()
-        avatar = me.profile.avatar
+        userName = me.username?.toString() ?: ""
+        avatar = me.profile?.avatar
         toUserId = me.id.toString()
         toUserFcmToken = me.device_token
 
         val requestOptionsCover = RequestOptions()
         requestOptionsCover.placeholder(R.drawable.cover_background_two)
         requestOptionsCover.error(R.drawable.cover_background_two)
-        Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(profile_cover)
+        Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile?.cover).into(profile_cover)
 
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
 
-        if(me.profile.avatar!=null) {
-            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
-            Log.d("PRofileLink",ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar)
+        if(me.profile?.avatar!=null) {
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile?.avatar).into(profile_pic)
+            Log.d("PRofileLink",ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile?.avatar)
         }
         else
         {
@@ -204,38 +204,38 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
 
         }
 
-        Log.d("agePrivate",""+me.profile.isAgePrivate+" "+me.profile.age);
-        if(!me.profile.isAgePrivate) {
+        Log.d("agePrivate",""+me.profile?.isAgePrivate+" "+me.profile?.age);
+        if(! (me.profile?.isAgePrivate ?: false)) {
             age_title.visibility = View.INVISIBLE
             age.visibility = View.INVISIBLE
-            age.text = me.profile.age.toString() }
+            age.text = me.profile?.age.toString() }
         else{
             age_title.visibility = View.VISIBLE
             age.visibility = View.VISIBLE
-            age.text = me.profile.age.toString() }
+            age.text = me.profile?.age.toString() }
         profile_name.text = me.username.toString()
 
-        if(me.profile.location == null)
+        if(me.profile?.location == null)
         {
             city.visibility = View.GONE
         }
         else
         {
             city.visibility = View.VISIBLE
-            city.text = me.profile.location
+            city.text = me.profile?.location
         }
 
-        if(me.profile.message == null)
+        if(me.profile?.message == null)
         {
             profile_desc.visibility = View.GONE
         }
         else
         {
             profile_desc.visibility = View.VISIBLE
-            profile_desc.text = me.profile.message.toString()
+            profile_desc.text = me.profile?.message?.toString()
         }
 
-        if (me.profile.contribution == null) {
+        if (me.profile?.contribution == null) {
             contribution.visibility = View.GONE
             twenty_precent_crd.visibility = View.GONE
         }
@@ -243,10 +243,10 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
 
             contribution.visibility = View.VISIBLE
             twenty_precent_crd.visibility = View.VISIBLE
-            contribution_txt.text = me.profile.contribution.toString()
+            contribution_txt.text = me.profile?.contribution?.toString()
         }
 
-        foodList = me.profile.foods!!
+        foodList = me.profile?.foods!!
 
         if(foodList.size!=0) {
             food_like.visibility = View.VISIBLE
@@ -262,14 +262,14 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         profileAdapter = ProfileFoodAdapter(this, foodList,"")
         friend_like_food.setHasFixedSize(false)
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-        layoutManager.orientation =  LinearLayout.HORIZONTAL
+        layoutManager.orientation = RecyclerView.HORIZONTAL
         friend_like_food.layoutManager = layoutManager
         friend_like_food.adapter = profileAdapter
 
         timeLineAdapter = TimelineAdapter(this,feedData,true)
         rv_my_posts.setHasFixedSize(false)
         val layoutManager1 = androidx.recyclerview.widget.LinearLayoutManager(this)
-        layoutManager1.orientation = LinearLayout.VERTICAL
+        layoutManager1.orientation = RecyclerView.VERTICAL
         rv_my_posts.layoutManager = layoutManager1
         rv_my_posts.adapter = timeLineAdapter
     }
@@ -277,7 +277,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     private fun getMe(id:String) {
         val mService = ApiUtils.getSOService() as SOService
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
 
         mService.getProfile(id,hm).enqueue(object : Callback<MeResponse> {
@@ -299,7 +299,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     }
     private fun getMyPost(id:String){
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         //pd1 = Utils.progressDialog(applicationContext, "", "Get my post").show()
         mService.getMyPost(id,hm)
@@ -323,8 +323,6 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
     }
 
     fun addAboutBuilder() {
-
-
         val builder = androidx.appcompat.app.AlertDialog.Builder(this@OtherUserProfileDetailActivity)
         val inflater = LayoutInflater.from(this@OtherUserProfileDetailActivity)
 
@@ -375,10 +373,6 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
         }
 
         subtmitBtn.setOnClickListener {
-
-
-
-
                 nunumberOfStars = ratingBar.rating.toInt()
                 messageTest = review_message.text.toString().trim()
 
@@ -406,34 +400,35 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
 
 
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         val jsonObject = JSONObject()
         jsonObject.put("to_id",toId)
         jsonObject.put("feedback",feeback)
         jsonObject.put("rate",rateNumber)
 
-        mService.AddReview(hm,Utils.getRequestBody(jsonObject.toString()))
+        mService.addReview(hm,Utils.getRequestBody(jsonObject.toString()))
                 .enqueue(object : Callback<SimpleResponse> {
                     override fun onFailure(call: Call<SimpleResponse>?, t: Throwable?) {
                         Toast.makeText(this@OtherUserProfileDetailActivity,"Something went wrong",Toast.LENGTH_SHORT).show()
-
                     }
 
                     override fun onResponse(call: Call<SimpleResponse>?, response: Response<SimpleResponse>?) {
-
                         dialog.dismiss()
-                        if(response?.isSuccessful!!) {
 
-                            if(response.body().success) {
+                        if(response?.isSuccessful!!) {
+                            if (response.body().success) {
                                 Toast.makeText(this@OtherUserProfileDetailActivity,"Done",Toast.LENGTH_SHORT).show()
-                            }else{
-                                Toast.makeText(this@OtherUserProfileDetailActivity,response.message(),Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@OtherUserProfileDetailActivity, response.raw().toString(), Toast.LENGTH_SHORT).show()
                             }
 
-                        }else {
-                            Toast.makeText(this@OtherUserProfileDetailActivity,response.message(),Toast.LENGTH_SHORT).show()
-
+                            val myName = Prefs.getString(Constants.NAME, "")
+                            Utils.sendSimpleNotification(this@OtherUserProfileDetailActivity, "Foodee", "$myName reviewed your post", toUserFcmToken!!, "nothing", "review")
+                        } else {
+                            Log.d("Review Error", response.errorBody().string())
+//                            Log.d("Review Error", response.raw().body()?.string())
+                            Toast.makeText(this@OtherUserProfileDetailActivity, response.message(),Toast.LENGTH_SHORT).show()
                         }
 
                     }
@@ -444,7 +439,7 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
 
     private fun getUserReviews(userID : Int) {
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         mService.getMyReviews(userID,hm)
                 .enqueue(object : Callback<Reviews> {

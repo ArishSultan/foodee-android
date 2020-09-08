@@ -3,22 +3,21 @@ package foodie.app.rubikkube.foodie.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
-import app.wi.lakhanipilgrimage.api.SOService
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 
 import com.bumptech.glide.Glide
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
+import foodie.app.rubikkube.foodie.MainActivity
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.LoginSignUpResponse
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.LoginSignUpResponse
+import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_signup.*
 import kotlinx.android.synthetic.main.activity_signup.etEmail
 import kotlinx.android.synthetic.main.activity_signup.etPassword
@@ -41,7 +40,7 @@ class Signup : AppCompatActivity() {
         initViews()
 
         tvSuLogin.setOnClickListener {
-            val intent = Intent(this@Signup, Login::class.java)
+            val intent = Intent(this@Signup, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -53,7 +52,7 @@ class Signup : AppCompatActivity() {
             val phone = etPhone.text.toString()
             val password = etPassword.text.toString()
             val cpasword = etConfirmPassword.text.toString()
-            val fcm_token = Prefs.getString(Constant.FCM_TOKEN, "")
+            val fcm_token = Prefs.getString(Constants.FCM_TOKEN, "")
             val timeZone = tz.id
             Log.d("TimeZone",timeZone)
             if (fieldValidation(userName, email, password, cpasword)) {
@@ -106,12 +105,13 @@ class Signup : AppCompatActivity() {
         pd?.show()
 
 
-        mService.signup(Utils.getRequestBody(jsonObject.toString()))
+        mService.signUp(Utils.getRequestBody(jsonObject.toString()))
                 .enqueue(object : Callback<LoginSignUpResponse> {
 
                     override fun onFailure(call: Call<LoginSignUpResponse>?, t: Throwable?) {
                         pd?.dismiss()
-                        Toast.makeText(this@Signup, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this@Signup, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Signup, t?.message ?: "Some Error", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onResponse(call: Call<LoginSignUpResponse>?, response: Response<LoginSignUpResponse>?) {
@@ -119,19 +119,19 @@ class Signup : AppCompatActivity() {
                         if (response!!.isSuccessful) {
 
                             if (response.body().status) {
-                                if (response.body().user.email_confirm == 0) {
+                                if (response.body().user.emailConfirm == 0) {
                                     Toasty.info(this@Signup, "Account verification link sent to your Email address, Please verify your Email address before proceeding further", Toast.LENGTH_SHORT, true).show();
-                                    startActivity(Intent(this@Signup, Login::class.java))
+                                    startActivity(Intent(this@Signup, LoginActivity::class.java))
                                     finish()
 
                                 } else {
-                                    Prefs.putString(Constant.IS_LOGIN, "true")
-                                    Prefs.putString(Constant.TOKEN, "Bearer " + response.body()?.accessToken)
-                                    Prefs.putString(Constant.USERID, "" + response.body()?.user?.id)
-                                    Prefs.putString(Constant.NAME, response.body()?.user?.username)
-                                    Prefs.putString(Constant.EMAIL, response.body()?.user?.email)
-                                    Prefs.putString(Constant.PHONE, response.body()?.user?.phone)
-                                    startActivity(Intent(this@Signup, HomeActivity::class.java))
+                                    Prefs.putString(Constants.IS_LOGIN, "true")
+                                    Prefs.putString(Constants.TOKEN, "Bearer " + response.body()?.accessToken)
+                                    Prefs.putString(Constants.USER_ID, "" + response.body()?.user?.id)
+                                    Prefs.putString(Constants.NAME, response.body()?.user?.username)
+                                    Prefs.putString(Constants.EMAIL, response.body()?.user?.email)
+                                    Prefs.putString(Constants.PHONE, response.body()?.user?.phone)
+                                    startActivity(Intent(this@Signup, MainActivity::class.java))
                                     finish()
                                 }
                             } else {
@@ -140,7 +140,8 @@ class Signup : AppCompatActivity() {
                             }
 
                         } else {
-                            Toast.makeText(this@Signup, response.message(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Signup, response.errorBody().string(), Toast.LENGTH_LONG).show()
+//                            Toast.makeText(this@Signup, response, Toast.LENGTH_SHORT).show()
 
                         }
                     }

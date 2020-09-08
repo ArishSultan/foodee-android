@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        android:id="@+id/nearby_user"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="15dp"
+        android:orientation="horizontal" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/nearby_image_holder"
+        app:cardCornerRadius="25dp"
+        app:cardBackgroundColor="@color/black"
+        android:layout_width="50dp"
+        android:layout_height="50dp">
+        <ImageView
+            android:src="@drawable/profile_avatar"
+            android:id="@+id/nearby_image"
+            android:layout_width="50dp"
+            android:scaleType="centerCrop"
+            android:layout_height="50dp" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/nearby_user_name"
+        android:textSize="19sp"
+        android:layout_marginStart="15dp"
+        android:fontFamily="@font/roboto_bold"
+        android:layout_toEndOf="@id/nearby_image_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/nearby_user_distance"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="30dp"
+        android:layout_toEndOf="@id/nearby_image_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/start_chat"
+        android:src="@drawable/ic_baseline_chat_24"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

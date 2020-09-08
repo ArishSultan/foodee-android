@@ -1,27 +1,23 @@
 package foodie.app.rubikkube.foodie.activities
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import app.wi.lakhanipilgrimage.api.SOService
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
-import foodie.app.rubikkube.foodie.adapter.NotificationCenterAdapter
+import foodie.app.rubikkube.foodie.adapters.NotificationCenterAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.NotificationCenter
-import foodie.app.rubikkube.foodie.model.SimpleResponse
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.NotificationCenter
+import foodie.app.rubikkube.foodie.models.SimpleResponse
+import foodie.app.rubikkube.foodie.utilities.Constants
 import kotlinx.android.synthetic.main.activity_notification_center.*
-import kotlinx.android.synthetic.main.custom_toolbar.view.*
-import kotlinx.android.synthetic.main.fragment_timeline.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -96,7 +92,7 @@ class NotificationCenterActivity : AppCompatActivity() {
 
     private fun getNotificationList(){
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         mService.getNotificationList(hm)
             .enqueue(object : Callback<ArrayList<NotificationCenter>> {
@@ -127,9 +123,9 @@ class NotificationCenterActivity : AppCompatActivity() {
 
     private fun clearAllNotification(){
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
-        mService.DeletAllNotifications(hm)
+        mService.deleteAllNotifications(hm)
                 .enqueue(object : Callback<SimpleResponse> {
                     override fun onFailure(call: Call<SimpleResponse>?, t: Throwable?) {
                         Toast.makeText(this@NotificationCenterActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()

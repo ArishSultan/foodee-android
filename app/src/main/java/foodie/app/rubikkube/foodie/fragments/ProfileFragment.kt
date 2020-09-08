@@ -4,16 +4,13 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import app.wi.lakhanipilgrimage.api.SOService
+import androidx.core.view.isVisible
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -21,22 +18,18 @@ import com.google.gson.Gson
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
 import com.stfalcon.frescoimageviewer.ImageViewer
-import foodie.app.rubikkube.foodie.JavaUtils
 
 import foodie.app.rubikkube.foodie.R
 import foodie.app.rubikkube.foodie.activities.EditProfileActivity
 import foodie.app.rubikkube.foodie.activities.PostActivity
-import foodie.app.rubikkube.foodie.adapter.FoodChipAdapter
-import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
-import foodie.app.rubikkube.foodie.adapter.ReviewAdapter
-import foodie.app.rubikkube.foodie.adapter.TimelineAdapter
+import foodie.app.rubikkube.foodie.adapters.ProfileFoodAdapter
+import foodie.app.rubikkube.foodie.adapters.ReviewAdapter
+import foodie.app.rubikkube.foodie.adapters.TimelineAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.*
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.*
+import foodie.app.rubikkube.foodie.ui.chats.NotificationViewModel
+import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
-import kotlinx.android.synthetic.main.activity_other_user_profile_detail.*
-import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.fragment_profile.profile_desc
 import kotlinx.android.synthetic.main.fragment_profile.profile_pic
 import kotlinx.android.synthetic.main.fragment_profile.ratingLayout
 import kotlinx.android.synthetic.main.fragment_profile.rating_title
@@ -61,22 +54,21 @@ import kotlinx.android.synthetic.main.fragment_profile.view.view_shadow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DecimalFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.jvm.java
+import kotlin.math.roundToInt
 
 class ProfileFragment : androidx.fragment.app.Fragment() {
-
-
-
-
-    private lateinit var profileAdapter: ProfileFoodAdapter
+    private var me: MeResponse? = null
     private var pd: KProgressHUD? = null
     private var reviews : Reviews? = null
 
     private var pd1: KProgressHUD? = null
     private  lateinit var intent: Intent
     private var contribution: String? = null
+    private lateinit var profileAdapter: ProfileFoodAdapter
     private var dialog: androidx.appcompat.app.AlertDialog? = null
 
     private lateinit var timeLineAdapter: TimelineAdapter
@@ -95,7 +87,7 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
         getMe(this!!.view!!)
         getListOfFood(this!!.view!!)
         getMyPost()
-        getUserReviews(Prefs.getString(Constant.USERID,"").toInt())
+        getUserReviews(Prefs.getString(Constants.USER_ID,"").toInt())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -116,6 +108,12 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
 
         view.add_post.setOnClickListener {
             view.context.startActivity(Intent(activity, PostActivity::class.java))
+        }
+
+        if (intent.getBooleanExtra("fromNotification", false)) {
+            val count2 = Prefs.getInt("notification", 0) - 1
+            NotificationViewModel.notifications.postValue(if (count2 >= 0) count2 else 0)
+            Prefs.putInt("notification", NotificationViewModel.notifications.value ?: 0)
         }
 
 //        view.profile_desc.setOnClickListener {
@@ -143,7 +141,6 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun setUpRecyclerView(view: View) {
-
         profileAdapter = ProfileFoodAdapter(context!!,foodList,"ComingFromProfileFragment")
         view.friend_like_food.setHasFixedSize(false)
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity, LinearLayout.HORIZONTAL, false)
@@ -162,18 +159,18 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
         val mService = ApiUtils.getSOService() as SOService
         val hm = HashMap<String, String>()
         pd = Utils.progressDialog(context!!, "", "Please wait").show()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
-        mService.getProfile(Prefs.getString(Constant.USERID,""),hm).enqueue(object : Callback<MeResponse> {
+        mService.getProfile(Prefs.getString(Constants.USER_ID,""),hm).enqueue(object : Callback<MeResponse> {
             override fun onFailure(call: Call<MeResponse>?, t: Throwable?) {
                 pd?.dismiss()
-                Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(activity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
             }
             override fun onResponse(call: Call<MeResponse>?, response: Response<MeResponse>?) {
                 pd?.dismiss()
                 if (response!!.isSuccessful) {
                     intent.putExtra("meResponse", response.body())
-                    if (response.body().profile == null || response.body().profile.message == null) {
+                    if (response.body().profile == null || response.body().profile!!.message == null) {
 
                         builder!!.setTitle("Info for new users")
 
@@ -214,8 +211,8 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
             val requestOptionsCover = RequestOptions()
             requestOptionsCover.placeholder(R.drawable.cover_background_two)
             requestOptionsCover.error(R.drawable.cover_background_two)
-            if (me.profile.cover != null) {
-                Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(view.profile_cover)
+            if (me?.profile?.cover != null) {
+                Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile!!.cover).into(view.profile_cover)
             } else {
                 Glide.with(view).setDefaultRequestOptions(requestOptionsCover).load(R.drawable.cover_background_two).into(view.profile_cover)
             }
@@ -223,14 +220,14 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
             val requestOptionsAvatar = RequestOptions()
             requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
             requestOptionsAvatar.error(R.drawable.profile_avatar)
-            if (me.profile.avatar != null) {
-                Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(view.profile_pic)
+            if (me?.profile?.avatar != null) {
+                Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile!!.avatar).into(view.profile_pic)
             } else {
                 Glide.with(view).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(view.profile_pic)
 
             }
             view.profile_name.text = me.username.toString()
-            if(!me.profile.isAgePrivate)
+            if(!(me?.profile?.isAgePrivate ?: false))
             {
                 view.age.visibility = View.INVISIBLE
                 view.age_title.visibility = View.INVISIBLE
@@ -239,30 +236,30 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
             {
                 view.age.visibility = View.VISIBLE
                 view.age_title.visibility = View.VISIBLE
-                view.age.text = me.profile.age.toString()
+                view.age.text = me?.profile?.age?.toString()
             }
 
-            if(me.profile.location == null)
+            if(me?.profile?.location == null)
             {
                 view.city.visibility = View.GONE
             }
             else
             {
                 view.city.visibility = View.VISIBLE
-                view.city.text = me.profile.location
+                view.city.text = me?.profile?.location
             }
 
-            if(me.profile.message == null)
+            if(me?.profile?.message == null)
             {
                 view.profile_desc.visibility = View.GONE
             }
             else
             {
                 view.profile_desc.visibility = View.VISIBLE
-                view.profile_desc.text = me.profile.message.toString()
+                view.profile_desc.text = me?.profile?.message?.toString()
             }
 
-            if (me.profile.contribution == null) {
+            if (me?.profile?.contribution == null) {
                 view.contribution.visibility = View.GONE
                 view.twenty_precent_crd.visibility = View.GONE
                 view.divider_contribution.visibility = View.GONE
@@ -272,7 +269,7 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
                 view.contribution.visibility = View.VISIBLE
                 view.twenty_precent_crd.visibility = View.VISIBLE
                 view.divider_contribution.visibility = View.VISIBLE
-                view.contribution_txt.text = me.profile.contribution.toString()
+                view.contribution_txt.text = me?.profile?.contribution?.toString()
             }
 //            if (me.profile.interest.equals("Male")) {
 //                view.female_card.visibility = View.VISIBLE
@@ -286,8 +283,8 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
 
             val imgs : MutableList<String>? = arrayListOf()
 
-            if (me.profile.avatar != null) {
-                imgs?.add(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar.toString())
+            if (me.profile?.avatar != null) {
+                imgs?.add(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile?.avatar?.toString())
 
             } else {
                 imgs?.add("https://s3.amazonaws.com/37assets/svn/765-default-avatar.png")
@@ -301,10 +298,10 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
 
     private fun getMyPost(){
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         pd1 = Utils.progressDialog(context!!, "", "Get my post").show()
-        mService.getMyPost(Prefs.getString(Constant.USERID,""),hm)
+        mService.getMyPost(Prefs.getString(Constants.USER_ID,""),hm)
             .enqueue(object : Callback<FeedResponse> {
                 override fun onFailure(call: Call<FeedResponse>?, t: Throwable?) {
                     pd1?.dismiss()
@@ -326,7 +323,7 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
 
     private fun getListOfFood(view: View){
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
         mService.getMyFoodList(hm)
             .enqueue(object : Callback<ArrayList<Food>>{
@@ -376,8 +373,6 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
     }
 
     fun addShowReviewDialog() {
-
-
         val builder = androidx.appcompat.app.AlertDialog.Builder(context!!)
 
         val inflater = LayoutInflater.from(context)
@@ -387,10 +382,14 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
 
         var listView = dialog_layout.findViewById<View>(R.id.reviewList) as ListView
 
-        listView.adapter = ReviewAdapter(context!!,reviews?.data!!)
+        Log.d("asd1", listView.toString())
+        Log.d("asd2", reviews?.data.toString())
+        Log.d("asd3", context!!.toString())
 
+        if (reviews?.data != null) {
+            listView.adapter = ReviewAdapter(context!!, reviews?.data!!)
+        }
 
-//
         dialog = builder.create()
 
         dialog!!.window!!.setBackgroundDrawableResource(R.drawable.round_corner)
@@ -399,71 +398,55 @@ class ProfileFragment : androidx.fragment.app.Fragment() {
 
     private fun getUserReviews(userID : Int) {
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         val mService = ApiUtils.getSOService() as SOService
-        mService.getMyReviews(userID,hm)
-                .enqueue(object : Callback<Reviews> {
-                    override fun onFailure(call: Call<Reviews>?, t: Throwable?) {
+        mService.getMyReviews(userID, hm)
+            .enqueue(object : Callback<Reviews> {
+                override fun onFailure(call: Call<Reviews>?, t: Throwable?) {
 
-                        Toast.makeText(context,t?.message,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,t?.message,Toast.LENGTH_SHORT).show()
 
-                    }
+                }
 
-                    override fun onResponse(call: Call<Reviews>?, response: Response<Reviews>?) {
+                override fun onResponse(call: Call<Reviews>?, response: Response<Reviews>?) {
+                    if(response?.isSuccessful!!) {
+                        reviews = response.body()
 
-                        if(response?.isSuccessful!!) {
-                            reviews = response.body()
+                        if(reviews?.data?.isEmpty()!!) {
+                            ratingLayout.visibility = View.GONE
+                        } else {
 
-                            if(reviews?.data?.isEmpty()!!) {
-                                ratingLayout.visibility = View.GONE
-                            }else {
+                            var oneStar = 0.0f
+                            var twoStar = 0.0f
+                            var fiveStar = 0.0f
+                            var fourStar = 0.0f
+                            var threeStar = 0.0f
 
-                                var totalRatings = 0.0f
-                                var fiveStar = 0.0f
-                                var fourStar = 0.0f
-                                var threeStar = 0.0f
-                                var twotar = 0.0f
-                                var oneStar = 0.0f
-                                for(i in reviews?.data?.indices!!) {
-
-
-                                    if(reviews?.data!![i].rate.toInt() == 5) {
-                                        fiveStar++
-                                    }else if(reviews?.data!![i].rate.toInt() == 4) {
-                                        fourStar++
-                                    }else if(reviews?.data!![i].rate.toInt() == 3) {
-                                        threeStar++
-                                    }else if(reviews?.data!![i].rate.toInt() == 2) {
-                                        twotar++
-                                    }else if(reviews?.data!![i].rate.toInt() == 1) {
-                                        oneStar++
-                                    }
-//                                    totalRatings += reviews?.data!![i].rate.toInt()
-
-
+                            for (review in reviews?.data!!) {
+                                when (review.rate.roundToInt()) {
+                                    5 -> ++fiveStar
+                                    4 -> ++fourStar
+                                    3 -> ++threeStar
+                                    2 -> ++twoStar
+                                    1 -> ++oneStar
                                 }
-
-
-                                var sum = 5*fiveStar + 4*fourStar + 3*threeStar + 2*twotar + oneStar
-                                var totalNoOfRatings = fiveStar+fourStar+threeStar+twotar+oneStar
-                                var userRatings =sum.div(totalNoOfRatings)
-
-                                rating_title.setText(userRatings.toString())
-                                //ratings.numStars = currentRatings
-                                ratingLayout.visibility = View.VISIBLE
-
                             }
 
-                        }else {
+                            val sum = 5 * fiveStar + 4 * fourStar + 3 * threeStar + 2 * twoStar + oneStar
+                            val totalRatings = fiveStar + fourStar + threeStar + twoStar + oneStar
 
-                            Toast.makeText(context,response?.message(),Toast.LENGTH_SHORT).show()
-
+                            rating_title.text = DecimalFormat("#.#").format(sum / totalRatings)
+                            ratingLayout.isVisible = true
                         }
+
+                    }else {
+
+                        Toast.makeText(context,response?.message(),Toast.LENGTH_SHORT).show()
+
                     }
+                }
 
-                })
-
-
+            })
     }
 
 

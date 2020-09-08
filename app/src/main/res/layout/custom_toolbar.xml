@@ -19,22 +19,12 @@
         android:id="@+id/img_notification_bell"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        app:srcCompat="@drawable/ic_notifications_black_24dp"
+        app:srcCompat="@drawable/ic_notifications_white_24dp"
         android:tint="@color/white"
         android:visibility="gone"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="15dp" />
-
-    <ImageView
-        android:id="@+id/img_notification_dot"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
-        android:visibility="gone"
-        android:background="@drawable/notification_shape"
-        android:layout_alignParentEnd="true"/>
 
     <foodie.app.rubikkube.foodie.fonts.robotoRegular
         android:id="@+id/clear_notification"

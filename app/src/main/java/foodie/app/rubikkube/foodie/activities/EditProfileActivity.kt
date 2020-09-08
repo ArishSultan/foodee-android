@@ -17,7 +17,7 @@ import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import app.wi.lakhanipilgrimage.api.SOService
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.esafirm.imagepicker.features.ImagePicker
@@ -26,13 +26,13 @@ import com.kaopiz.kprogresshud.KProgressHUD
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
-import foodie.app.rubikkube.foodie.adapter.FoodChipAdapter
-import foodie.app.rubikkube.foodie.adapter.ProfileFoodAdapter
+import foodie.app.rubikkube.foodie.adapters.FoodChipAdapter
+import foodie.app.rubikkube.foodie.adapters.ProfileFoodAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.*
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.*
+import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
-import foodie.app.rubikkube.foodie.utilities.Utils.Companion.progressDialog
+import foodie.app.rubikkube.foodie.utilities.Utils.progressDialog
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.activity_edit_profile.*
 import okhttp3.MediaType
@@ -65,34 +65,17 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var age: String = ""
     private var location: String = ""
     private var contribution: String = ""
+    private var pd: KProgressHUD? = null
+
 
     var isPublic = 0
 
-    var KProgressHUD: KProgressHUD? = null
-    internal var cv: MultipartBody.Part? = null
+    var kProgressHUD: KProgressHUD? = null
+    private var cv: MultipartBody.Part? = null
     private var dialog: androidx.appcompat.app.AlertDialog? = null
 
     private var food_pic : ImageView? = null
-
-//    private fun getListOfFood(){
-//        val hm = java.util.HashMap<String, String>()
-//        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
-//        val mService = ApiUtils.getSOService() as SOService
-//        mService.getMyFoodList(hm)
-//                .enqueue(object : Callback<ArrayList<Food>>{
-//                    override fun onFailure(call: Call<ArrayList<Food>>?, t: Throwable?) {
-//                        Toast.makeText(this@EditProfileActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
-//                    }
-//
-//                    override fun onResponse(call: Call<ArrayList<Food>>?, response: Response<ArrayList<Food>>?) {
-//                        if(response!!.isSuccessful){
-//                            foodList = response!!.body()
-//                            profileAdapter.update(foodList)
-//                        }
-//                    }
-//                })
-//
-//    }
+    private var alertDialog: AlertDialog? = null
 
     override fun onClick(v: View?) {
 
@@ -103,11 +86,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         if (v?.id == R.id.age_dropdown) {
             ageBuilder(this)
         }
-        if (v?.id == R.id.location_dropdown) {
-        }
+//        if (v?.id == R.id.location_dropdown) {
+//        }
 
         if (v?.id == R.id.female_card_bg) {
-            meResponse.profile.gender = "Female"
+            meResponse.profile?.gender = "Female"
 
             female_card_bg.setBackgroundResource(R.drawable.rounded_button)
             male_card_bg.setBackgroundResource(R.drawable.rectangular_line)
@@ -115,7 +98,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             male_txt.setTextColor(resources.getColor(R.color.d_gray))
         }
         if (v?.id == R.id.male_card_bg) {
-            meResponse.profile.gender = "Male"
+            meResponse.profile?.gender = "Male"
             female_card_bg.setBackgroundResource(R.drawable.rectangular_line)
             male_card_bg.setBackgroundResource(R.drawable.rounded_button)
             female_txt.setTextColor(resources.getColor(R.color.d_gray))
@@ -170,7 +153,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             val gender = ""
 
             if (formValidation(userName,message, age, location, gender!!, contribution!!)) {
-                updateProfile(meResponse.id)
+                updateProfile(meResponse.id!!)
             }
         }
         if (v?.id == R.id.food_add_btn) {
@@ -187,11 +170,12 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_edit_profile)
 
         initializeListeners()
+        pd = Utils.progressDialog(this, "", "Please wait")
 
         val intent = getIntent();
         if (intent != null) {
-            meResponse = intent.getSerializableExtra("meResponse") as MeResponse
-            if(meResponse.profile.age != null ){
+            meResponse = intent.getParcelableExtra("meResponse") as MeResponse
+            if(meResponse.profile?.age != null ){
                 foodList = intent.getSerializableExtra("foodList") as ArrayList<Food>
             }
             setValue(meResponse)
@@ -209,6 +193,41 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             {
                 isPublic = 0
             }
+        }
+
+        findViewById<Button>(R.id.delete_profile_btn).setOnClickListener {
+            this.alertDialog = AlertDialog.Builder(this)
+                    .setTitle("Are you sure ?")
+                    .setMessage("This Action is irreversible and your profile will be deleted for ever.")
+                    .setPositiveButton("YES") { _, _ ->
+                        this.pd?.show()
+                        val hm = java.util.HashMap<String, String>()
+                        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
+                        val mService = ApiUtils.getSOService() as SOService
+                        mService.deleteProfile(Prefs.getString(Constants.USER_ID, ""), hm)
+                                .enqueue(object : Callback<Any> {
+                                    override fun onFailure(call: Call<Any>?, t: Throwable?) {
+                                        pd?.dismiss()
+                                        Toast.makeText(this@EditProfileActivity, "Unable to Deactivate Profile", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                    override fun onResponse(call: Call<Any>?, response: Response<Any>?) {
+                                        pd?.dismiss()
+                                        if (response!!.isSuccessful) {
+                                            Toast.makeText(this@EditProfileActivity, "Prfile Removed", Toast.LENGTH_SHORT).show()
+                                            Prefs.clear()
+                                            val _intent = Intent(applicationContext, LoginActivity::class.java)
+                                            _intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            startActivity(_intent)
+                                        } else {
+                                            Toast.makeText(this@EditProfileActivity, "Success: " + response.code(), Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                })
+                    }
+                    .setNegativeButton("NO") { _, _ ->
+                        this.alertDialog?.dismiss()
+                    }.show()
         }
 
 
@@ -282,8 +301,8 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             val requestOptionsCover = RequestOptions()
             requestOptionsCover.placeholder(R.drawable.cover_background_two)
             requestOptionsCover.error(R.drawable.cover_background_two)
-            if(me.profile.cover!=null) {
-                Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile.cover).into(cover_edit)
+            if(me.profile?.cover!=null) {
+                Glide.with(this).setDefaultRequestOptions(requestOptionsCover).load(ApiUtils.BASE_URL + "/storage/media/cover/" + me.id + "/" + me.profile?.cover).into(cover_edit)
             }
             else
             {
@@ -293,21 +312,21 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
             requestOptionsAvatar.error(R.drawable.profile_avatar)
 
-            if(me.profile.avatar!=null) {
-                Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile.avatar).into(profile_pic)
+            if(me.profile?.avatar!=null) {
+                Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.id + "/" + me.profile?.avatar).into(profile_pic)
             }
             else
             {
                 Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(profile_pic)
 
             }
-            age_check_box.isChecked = me.profile.isAgePrivate
+            age_check_box.isChecked = me.profile?.isAgePrivate ?: false
             user_name.setText(me.username.toString())
-            user_status.setText(if(me.profile.message == null) "" else me.profile.message)
-            user_age.setText(if(me.profile.age == null) "" else me.profile.age.toString())
-            user_location.setText(if(me.profile.location == null) "" else me.profile.location.toString())
+            user_status.setText(if(me.profile?.message == null) "" else me.profile?.message)
+            user_age.setText(if(me.profile?.age == null) "" else me.profile?.age.toString())
+            user_location.setText(if(me.profile?.location == null) "" else me.profile?.location.toString())
 
-            if(me.profile.isAgePrivate) {
+            if(me.profile?.isAgePrivate ?: false) {
                 isPublic = 1
             }else {
                 isPublic = 0
@@ -327,17 +346,17 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 ////            }
 
 
-            select_age.text = if(me.profile.age == null) "" else me.profile.age.toString()
-            select_age.text = if(me.profile.location == null) "" else me.profile.location
-            contribution = me.profile.contribution.toString()
+            select_age.text = if(me.profile?.age == null) "" else me.profile?.age.toString()
+            select_age.text = if(me.profile?.location == null) "" else me.profile?.location
+            contribution = me.profile?.contribution.toString()
 
-            if (me.profile.contribution.equals("25%")) {
+            if (me.profile?.contribution.equals("25%")) {
                 twenty_five_precent.setBackgroundResource(R.drawable.rounded_button)
                 twenty_five_precent.setTextColor(resources.getColor(R.color.white))
-            } else if (me.profile.contribution.equals("50%")) {
+            } else if (me.profile?.contribution.equals("50%")) {
                 fifty_percent.setBackgroundResource(R.drawable.rounded_button)
                 fifty_percent.setTextColor(resources.getColor(R.color.white))
-            } else if (me.profile.contribution.equals("Treatme")) {
+            } else if (me.profile?.contribution.equals("Treatme")) {
                 treat_me.setBackgroundResource(R.drawable.rounded_button)
                 treat_me.setTextColor(resources.getColor(R.color.white))
             }
@@ -363,9 +382,9 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
         override fun onPreExecute() {
             super.onPreExecute()
-            KProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait for a moment...")
+            kProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait for a moment...")
 
-            KProgressHUD!!.show()
+            kProgressHUD!!.show()
         }
 
         override fun doInBackground(vararg strings: String): File? {
@@ -388,7 +407,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
         override fun onPostExecute(file: File) {
             super.onPostExecute(file)
-            KProgressHUD!!.dismiss()
+            kProgressHUD!!.dismiss()
             imageFile = file
             if(!imageType.isEmpty()){
                 uploadImage(imageType, imageFile)
@@ -420,11 +439,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun uploadImage(imageTypeVal: String, file: File?) {
-        KProgressHUD = progressDialog(this@EditProfileActivity, "", "Image Uploading...")
-        KProgressHUD!!.show()
+        kProgressHUD = progressDialog(this@EditProfileActivity, "", "Image Uploading...")
+        kProgressHUD!!.show()
 
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
 //        hm["X-Requested-With"] = "XMLHttpRequest"
 //        hm["Content-Type"] = "application/json"
 
@@ -435,7 +454,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 cv
         ).enqueue(object : Callback<ImageUploadResp> {
             override fun onFailure(call: Call<ImageUploadResp>?, t: Throwable?) {
-                KProgressHUD!!.dismiss()
+                kProgressHUD!!.dismiss()
                 imageType = ""
                 imageFile = null
                 Toast.makeText(this@EditProfileActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
@@ -444,7 +463,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
             override fun onResponse(call: Call<ImageUploadResp>?, response: Response<ImageUploadResp>?) {
                 imageType = ""
                 imageFile = null
-                KProgressHUD!!.dismiss()
+                kProgressHUD!!.dismiss()
                 if (response!!.isSuccessful) {
                     if (response!!.body().type != null) {
 
@@ -460,11 +479,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun updateProfile(userId: Int) {
-        KProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait...")
-        KProgressHUD!!.show()
+        kProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait...")
+        kProgressHUD!!.show()
 
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
 //        hm["X-Requested-With"] = "XMLHttpRequest"
 //        hm["Content-Type"] = "application/json"
 
@@ -488,12 +507,12 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 .enqueue(object : Callback<UpdateProfileResp> {
 
                     override fun onFailure(call: Call<UpdateProfileResp>?, t: Throwable?) {
-                        KProgressHUD!!.dismiss()
+                        kProgressHUD!!.dismiss()
                         Toast.makeText(this@EditProfileActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onResponse(call: Call<UpdateProfileResp>?, response: Response<UpdateProfileResp>?) {
-                        KProgressHUD!!.dismiss()
+                        kProgressHUD!!.dismiss()
                         Toast.makeText(this@EditProfileActivity, "Profile Updated", Toast.LENGTH_SHORT).show()
                         finish()
 
@@ -603,11 +622,11 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
 
     fun addFood(foodName : String){
-        KProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait...")
-        KProgressHUD!!.show()
+        kProgressHUD = progressDialog(this@EditProfileActivity, "", "Please wait...")
+        kProgressHUD!!.show()
 
         val hm = HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
 
         cv = MultipartBody.Part.createFormData("photo", if (imageFile == null) "file" else imageFile!!.name, RequestBody.create(MediaType.parse("image/*"), File(imageFile!!.path)))
         val mService = ApiUtils.getSOService() as SOService
@@ -618,7 +637,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onFailure(call: Call<AddFoodResp>?, t: Throwable?) {
                 dialog!!.dismiss()
-                KProgressHUD!!.dismiss()
+                kProgressHUD!!.dismiss()
                 imageType = ""
                 imageFile = null
                 Toast.makeText(this@EditProfileActivity, "Sorry! We are facing some technical error and will be fixed soon", Toast.LENGTH_SHORT).show()
@@ -628,7 +647,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                 dialog!!.dismiss()
                 imageType = ""
                 imageFile = null
-                KProgressHUD!!.dismiss()
+                kProgressHUD!!.dismiss()
                 if (response != null) {
                     if (response.body().success) {
                         foodList.add(0,response.body().data)
@@ -650,7 +669,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
     fun setUpRecyclerView() {
         profileAdapter = ProfileFoodAdapter(this!!,foodList,"")
         friend_like_food.setHasFixedSize(false)
-        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         friend_like_food.layoutManager = layoutManager
         friend_like_food.adapter = profileAdapter
     }

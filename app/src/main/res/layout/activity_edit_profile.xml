@@ -330,13 +330,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:text="Males"
+                            android:text="@string/males"
                             android:layout_marginRight="10dp"
                             android:layout_marginLeft="10dp"
                             android:textSize="18sp"
-                            android:textColor="@android:color/darker_gray"
-
-                            />
+                            android:textColor="@android:color/darker_gray" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -346,9 +344,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/male_card"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="Ages You Prefer "
+                    android:text="@string/ages_you_prefer"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
@@ -360,9 +358,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/age_you"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="10dp"
-                    android:text="25-30"
+                    android:text="@string/_25_30"
                     android:textSize="18sp"
                     android:visibility="gone"
                     android:textColor="@color/grey" />
@@ -383,21 +381,20 @@
                         android:id="@+id/select_age"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Select Ages You Prefer"
+                        android:hint="@string/select_ages_you_prefer"
                         android:layout_centerVertical="true"
                         android:background="@null"
                         android:textSize="14sp"
-                        android:paddingLeft="10dp" />
+                        android:paddingStart="10dp" />
 
 
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
                         app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp"
-                        android:layout_alignParentRight="true"
-                        />
+                        android:layout_alignParentEnd="true" />
 
                 </RelativeLayout>
 
@@ -407,10 +404,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/age_val"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="10dp"
-                    android:text="My Contribution "
+                    android:text="@string/my_contribution"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
@@ -420,7 +417,7 @@
                     android:layout_below="@+id/contribution"
                     android:layout_width="50dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginBottom="40dp"
                     app:cardCornerRadius="10dp"
                     app:cardElevation="4dp"
@@ -429,9 +426,7 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/rectangular_line"
-
-                        >
+                        android:background="@drawable/rectangular_line">
 
                         <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                             android:id="@+id/twenty_five_precent"
@@ -440,50 +435,20 @@
                             android:textSize="16sp"
                             android:textColor="@android:color/darker_gray"
                             android:gravity="center"
-                            android:text="25%"
-                            />
+                            android:text="@string/_25" />
                     </RelativeLayout>
 
                 </androidx.cardview.widget.CardView>
-                <!--<android.support.v7.widget.CardView
-                    android:id="@+id/thirty_percent_card"
-                    android:layout_toRightOf="@+id/twenty_precent_crd"
-                    android:layout_below="@+id/contribution"
-                    android:layout_width="50dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="4dp"
-                    >
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/rectangular_line"
-                        >
-
-                        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                            android:id="@+id/thirty_percent"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="16sp"
-                            android:textColor="@android:color/darker_gray"
-                            android:gravity="center"
-                            android:text="30%"
-                            />
-                    </RelativeLayout>
-
-                </android.support.v7.widget.CardView>-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/fifty_percent_card"
-                    android:layout_toRightOf="@+id/twenty_five_precent_crd"
+                    android:layout_toEndOf="@+id/twenty_five_precent_crd"
                     android:layout_below="@+id/contribution"
                     android:layout_width="50dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="4dp"
-                    >
+                    app:cardElevation="4dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -498,28 +463,24 @@
                             android:textSize="16sp"
                             android:textColor="@android:color/darker_gray"
                             android:gravity="center"
-                            android:text="50%"
-                            />
+                            android:text="@string/_50" />
                     </RelativeLayout>
 
                 </androidx.cardview.widget.CardView>
                 <androidx.cardview.widget.CardView
                     android:id="@+id/treat_me_card"
-                    android:layout_toRightOf="@+id/fifty_percent_card"
+                    android:layout_toEndOf="@+id/fifty_percent_card"
                     android:layout_below="@+id/contribution"
                     android:layout_width="100dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="4dp"
-                    >
+                    app:cardElevation="4dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/rectangular_line"
-
-                        >
+                        android:background="@drawable/rectangular_line">
 
                         <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
                             android:id="@+id/treat_me"
@@ -528,50 +489,21 @@
                             android:textSize="16sp"
                             android:textColor="@android:color/darker_gray"
                             android:gravity="center"
-                            android:text="Treat Me"
-                            />
+                            android:text="@string/treat_me" />
                     </RelativeLayout>
 
-
-
                 </androidx.cardview.widget.CardView>
-
-<!--                <androidx.cardview.widget.CardView-->
-<!--                    android:id="@+id/match_me_card"-->
-<!--                    android:layout_toRightOf="@+id/treat_me_card"-->
-<!--                    android:layout_below="@+id/contribution"-->
-<!--                    android:layout_width="100dp"-->
-<!--                    android:layout_height="40dp"-->
-<!--                    android:layout_marginLeft="10dp"-->
-<!--                    app:cardCornerRadius="10dp"-->
-<!--                    app:cardElevation="4dp"-->
-<!--                    >-->
-
-<!--                    <RelativeLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:background="@drawable/rectangular_line"-->
-
-<!--                        >-->
-
-<!--                        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold-->
-<!--                            android:id="@+id/match_me"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="match_parent"-->
-<!--                            android:textSize="16sp"-->
-<!--                            android:textColor="@android:color/darker_gray"-->
-<!--                            android:gravity="center"-->
-<!--                            android:text="Match me"-->
-<!--                            />-->
-<!--                    </RelativeLayout>-->
-
-
-
-<!--                </androidx.cardview.widget.CardView>-->
-
-
             </RelativeLayout>
+
+            <Button
+                android:id="@+id/delete_profile_btn"
+                android:layout_margin="10dp"
+                android:layout_below="@+id/lower"
+                android:textColor="@color/white"
+                android:text="Deactivate Account"
+                android:background="@color/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
     </ScrollView>
-
 </RelativeLayout>

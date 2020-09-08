@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_refresh"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/home_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/darkBrown"
+        app:titleTextColor="@color/white">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50sp">
+
+            <TextView
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:text="@string/timeline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bell_notification"
+                android:layout_centerInParent="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_notifications_white_24dp" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/notification_count"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    app:cardBackgroundColor="@color/lightBrown"
+                    app:cardCornerRadius="9dp"
+                    app:layout_constraintEnd_toEndOf="@+id/bell_notification">
+
+                    <TextView
+                        android:id="@+id/notification_count_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/home_tabs"
+        android:background="@color/darkBrown"
+        android:layout_below="@id/home_app_bar"
+        app:tabIndicatorColor="@color/white"
+        app:tabTextColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/post"
+        android:layout_below="@+id/home_tabs"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_height="60dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+
+                android:id="@+id/profile_image"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/profile_avatar"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                />
+
+            <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                android:id="@+id/content"
+                android:layout_toRightOf="@+id/profile_image"
+                android:layout_toLeftOf="@+id/photo_ic"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/rectangular_round"
+                android:text="Create your Foodee post!"
+                android:textSize="16sp"
+                android:paddingLeft="20dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center_vertical"
+
+                />
+
+            <ImageView
+                android:id="@+id/photo_ic"
+                android:layout_alignTop="@+id/profile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentRight="true"
+                app:srcCompat="@drawable/ic_photo_black_24dp"
+
+                />
+            <foodie.app.rubikkube.foodie.fonts.robotoRegular
+                android:layout_below="@+id/photo_ic"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Photo"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="-7dp"
+                android:paddingRight="8dp"
+                android:textSize="10sp"
+                />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/home_tabs_pager"
+        android:layout_below="@id/post"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

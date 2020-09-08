@@ -5,32 +5,31 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import app.wi.lakhanipilgrimage.api.SOService
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.gson.JsonObject
 import com.kaopiz.kprogresshud.KProgressHUD
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
 import foodie.app.rubikkube.foodie.R
-import foodie.app.rubikkube.foodie.adapter.MultimediaAdapter
-import foodie.app.rubikkube.foodie.adapter.SearchUserAdapter
+import foodie.app.rubikkube.foodie.adapters.MultimediaAdapter
+import foodie.app.rubikkube.foodie.adapters.SearchUserAdapter
 import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
-import foodie.app.rubikkube.foodie.model.AddNewPostResponse
-import foodie.app.rubikkube.foodie.model.FeedData
-import foodie.app.rubikkube.foodie.model.MeResponse
-import foodie.app.rubikkube.foodie.model.User
-import foodie.app.rubikkube.foodie.utilities.Constant
+import foodie.app.rubikkube.foodie.models.AddNewPostResponse
+import foodie.app.rubikkube.foodie.models.FeedData
+import foodie.app.rubikkube.foodie.models.MeResponse
+import foodie.app.rubikkube.foodie.models.User
+import foodie.app.rubikkube.foodie.models.feed.Feed
+import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
 import kotlinx.android.synthetic.main.activity_post.back_icon
 import kotlinx.android.synthetic.main.activity_post.edt_search_user
@@ -67,7 +66,7 @@ class EditPostActivity : AppCompatActivity() {
     private var userModel: User? = null
     var user: String = ""
     private var userid: ArrayList<Int>? = null
-    private var editPost:FeedData? = null
+    private var editPost: Feed? = null
     private lateinit var searchUserAdapter: SearchUserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,9 +81,11 @@ class EditPostActivity : AppCompatActivity() {
             val meResponse = Hawk.get("profileResponse", "") as MeResponse
             dataBindMe(meResponse)
         }
-        if(Hawk.contains("EditPostObject")){
-            editPost = Hawk.get("EditPostObject", "") as FeedData
+        if(Hawk.contains("feed")){
+            editPost = Hawk.get("feed")
+            Log.d("here", editPost.toString())
             Prefs.putString("EditPostId",editPost!!.id.toString())
+
             dataBindPost(editPost!!)
             if(editPost!!.tags.size!=0) {
                 userid!!.add(editPost!!.tags[0].pivot.userId)
@@ -124,14 +125,14 @@ class EditPostActivity : AppCompatActivity() {
         searchUserAdapter = SearchUserAdapter(this, searchUserList)
         rv_tag_user!!.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         rv_tag_user!!.adapter = searchUserAdapter
-        rv_tag_user!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+        rv_tag_user!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         rv_tag_user!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_tag_user!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 userModel = User()
                 userid  =   ArrayList()
                 userModel = searchUserAdapter.getUser(position)
                 Log.d("User Model", userModel!!.username)
-                userid!!.add(userModel!!.id)
+                userid!!.add(userModel!!.id!!)
                 txt_tagged_user.visibility = View.VISIBLE
                 tag_user_heading.visibility = View.VISIBLE
                 txt_tagged_user.text = userModel!!.username
@@ -144,10 +145,10 @@ class EditPostActivity : AppCompatActivity() {
     private fun setMultimediaGridAdapter() {
         imageNameList!!.add("start")
         imageUrlList!!.add("start")
-        multimediaGridAdapter = MultimediaAdapter(this, imageNameList,imageUrlList,"updatePost")
+        multimediaGridAdapter = MultimediaAdapter(this, imageNameList!!, imageUrlList!!,"updatePost")
         rv_grid!!.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         rv_grid!!.adapter = multimediaGridAdapter
-        rv_grid!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        rv_grid!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         rv_grid!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_grid!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 val lastPos = imageNameList?.size?.minus(1)
@@ -193,8 +194,8 @@ class EditPostActivity : AppCompatActivity() {
         val requestOptionsAvatar = RequestOptions()
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
-        if(me.profile.avatar!=null) {
-            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.profile.userId + "/" + me.profile.avatar).into(user_avatar)
+        if(me.profile?.avatar!=null) {
+            Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + me.profile?.userId + "/" + me.profile?.avatar).into(user_avatar)
         }
         else
         {
@@ -202,28 +203,28 @@ class EditPostActivity : AppCompatActivity() {
         }
     }
 
-    fun dataBindPost(editPost: FeedData) {
+    fun dataBindPost(editPost: Feed) {
         txt_caption.setText(editPost.content)
-        if(editPost.tags.size!=0) {
-            tag_user_heading.visibility = View.VISIBLE
-            txt_tagged_user.visibility = View.VISIBLE
+        if (editPost.tags.isNotEmpty()) {
+            txt_tagged_user.isVisible = true
+            tag_user_heading.isVisible = true
             txt_tagged_user.text = editPost.tags[0].username
+        } else {
+            txt_tagged_user.isVisible = false
+            tag_user_heading.isVisible = false
         }
-        else {
-            tag_user_heading.visibility = View.GONE
-            txt_tagged_user.visibility = View.GONE
-        }
-        if(editPost.photos.size!=0){
-            imagePath = ArrayList()
-            if(!editPost.photos.contains("")) {
-                for (i in editPost!!.photos.indices) {
-                    imagePath!!.add(i,editPost!!.photos[i])
-                    imageUrlList!!.add(i,ApiUtils.BASE_URL + "/storage/media/post/" + editPost!!.photos[i])
-                    Log.d("Image$i",editPost!!.photos[i])
+
+        if (editPost.photos != null) {
+            if (editPost.photos!!.isNotEmpty()) {
+                imagePath = ArrayList<String>()
+
+                for (photo in editPost.photos!!) {
+                    imagePath!!.add(photo)
+                    imageUrlList!!.add(ApiUtils.BASE_URL + "/storage/media/post/" + photo)
                 }
+                imageNameList!!.addAll(imagePath!!)
+                multimediaGridAdapter = MultimediaAdapter(this, imageNameList!!, imageUrlList!!,"updatePost")
             }
-            imageNameList!!.addAll(0,imagePath!!)
-            multimediaGridAdapter = MultimediaAdapter(this, imageNameList,imageUrlList,"updatePost")
         }
     }
 
@@ -234,16 +235,14 @@ class EditPostActivity : AppCompatActivity() {
         val mService = ApiUtils.getSOService() as SOService
         postImagesParts = ArrayList()
         val hm = java.util.HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
         val jsonObject = JSONObject()
         jsonObject.put("_method", "PATCH")
 
         for (i in imageUrlList?.indices!!) {
-
             Log.d( "ImagePath","post image " + i + "  " + imageUrlList!![i])
             if(imageUrlList!![i].contains("start") || imageUrlList!![i].contains("http")){
-
                 Log.d( "ImagePath","post image " + i + "  " + imageUrlList!![i])
                 break
             }
@@ -280,27 +279,25 @@ class EditPostActivity : AppCompatActivity() {
         val mService = ApiUtils.getSOService() as SOService
 
         val hm = java.util.HashMap<String, String>()
-        hm["Authorization"] = Prefs.getString(Constant.TOKEN, "").toString()
+        hm["Authorization"] = Prefs.getString(Constants.TOKEN, "").toString()
         hm["X-Requested-With"] = "XMLHttpRequest"
 
         mService.searchUser(hm, username)
-                .enqueue(object : Callback<ArrayList<User>> {
+            .enqueue(object : Callback<ArrayList<User>> {
 
-                    override fun onFailure(call: Call<ArrayList<User>>?, t: Throwable?) {
-                        pd!!.dismiss()
-                    }
+                override fun onFailure(call: Call<ArrayList<User>>?, t: Throwable?) {
+                    pd!!.dismiss()
+                }
 
-                    override fun onResponse(call: Call<ArrayList<User>>?, response: Response<ArrayList<User>>?) {
-                        Log.d("Search Users", "" + response?.body())
-                        pd!!.dismiss()
-                        searchUserList = response!!.body()
-                        searchUserAdapter.update(searchUserList)
-                        Log.d("Search Users Model", "" + searchUserList)
-                    }
-                })
-
+                override fun onResponse(call: Call<ArrayList<User>>?, response: Response<ArrayList<User>>?) {
+                    Log.d("Search Users", "" + response?.body())
+                    pd!!.dismiss()
+                    searchUserList = response!!.body()
+                    searchUserAdapter.update(searchUserList)
+                    Log.d("Search Users Model", "" + searchUserList)
+                }
+            })
     }
-
 
 
     class RecyclerTouchListener(context: Context, recyclerView: androidx.recyclerview.widget.RecyclerView, private val clickListener: ClickListener?) : androidx.recyclerview.widget.RecyclerView.OnItemTouchListener {

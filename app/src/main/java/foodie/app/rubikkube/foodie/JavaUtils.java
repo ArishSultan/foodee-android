@@ -8,16 +8,17 @@ import androidx.appcompat.app.AlertDialog;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JavaUtils {
 
-    public static void showBadge(Context context, BottomNavigationView
-            bottomNavigationView, @IdRes int itemId, String value) {
+    public static void showBadge(Context context, BottomNavigationView bottomNavigationView, @IdRes int itemId, String value) {
         removeBadge(bottomNavigationView, itemId);
         BottomNavigationItemView itemView = bottomNavigationView.findViewById(itemId);
         View badge = LayoutInflater.from(context).inflate(R.layout.chat_badge, bottomNavigationView, false);
@@ -26,6 +27,17 @@ public class JavaUtils {
         text.setText(value);
         itemView.addView(badge);
     }
+
+//    public static void showBadge(Context context, Toolbar toolbar, @IdRes int itemId, String value) {
+////        removeBadge(bottomNavigationView, itemId);
+//        MenuItem itemView = toolbar.findViewById(itemId);
+//        View badge = LayoutInflater.from(context).inflate(R.layout.chat_badge, bottomNavigationView, false);
+//
+//        TextView text = badge.findViewById(R.id.badge_text_view);
+//        text.setText(value);
+//        itemView.ad
+//        itemView.addView(badge);
+//    }
 
     public static void removeBadge(BottomNavigationView bottomNavigationView, @IdRes int itemId) {
         BottomNavigationItemView itemView = bottomNavigationView.findViewById(itemId);
@@ -86,12 +98,7 @@ public class JavaUtils {
             String int1=m.group(15);
 
              url = w1+w2+w3+w4+c1+c2+c3+ipaddress1+c4+c5+c6+c7+c8+c9+int1;
-
-//            System.out.print("("+w1.toString()+")"+"("+w2.toString()+")"+"("+w3.toString()+")"+"("+w4.toString()+")"+"("+c1.toString()+")"+"("+c2.toString()+")"+"("+c3.toString()+")"+"("+ipaddress1.toString()+")"+"("+c4.toString()+")"+"("+c5.toString()+")"+"("+c6.toString()+")"+"("+c7.toString()+")"+"("+c8.toString()+")"+"("+c9.toString()+")"+"("+int1.toString()+")"+"\n");
         }
-
         return url;
     }
-
-
 }

@@ -21,28 +21,37 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.ActivityMatchMe"></activity>
-        <activity android:name=".activities.ReviewsActivity" />
-        <activity android:name=".activities.WhoLikesActivity" />
-        <activity android:name=".activities.EditPostActivity" />
-        <activity android:name=".activities.NotificationCenterActivity" />
-        <activity android:name=".activities.PostActivity" />
-        <activity android:name=".activities.OtherUserProfileDetailActivity" />
-        <activity android:name=".activities.SplashScreen">
+        <activity
+            android:name=".PasswordReset"
+            android:label="@string/title_activity_password_reset"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_main"/>
+        <activity android:name=".activities.ActivityMatchMe" android:screenOrientation="portrait" />
+        <activity android:name=".activities.ReviewsActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.WhoLikesActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.EditPostActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.NotificationCenterActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.PostActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.OtherUserProfileDetailActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.SplashScreen" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ChatActivity" />
-        <activity android:name=".activities.HomeActivity" />
-        <activity android:name=".activities.Signup" />
-        <activity android:name=".activities.Login" />
-        <activity android:name=".activities.EditProfileActivity" />
-        <activity android:name=".activities.TestActivity" />
+        <activity android:name=".activities.ChatActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.HomeActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.Signup" android:screenOrientation="portrait" />
+        <activity android:name=".activities.LoginActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.EditProfileActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activities.TestActivity" android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -51,7 +60,9 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
 
-        <service android:name=".services.MyFirebaseMessagingServiceKT">
+        <service
+            android:name=".services.MyFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -59,10 +70,11 @@
 
         <activity
             android:name=".activities.MapsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".activities.TimelineRV" />
-        <activity android:name=".activities.Settings" />
-        <activity android:name=".activities.TimelinePostDetailActivity" />
+        <activity android:name=".activities.TimelineRV" android:screenOrientation="portrait" />
+        <activity android:name=".activities.Settings" android:screenOrientation="portrait" />
+        <activity android:name=".activities.TimelinePostDetailActivity" android:screenOrientation="portrait" />
     </application>
 
 </manifest>

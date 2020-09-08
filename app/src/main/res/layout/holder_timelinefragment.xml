@@ -135,9 +135,17 @@
                     android:textColor="@android:color/holo_blue_dark"
                     />
 
+<!--                <com.potyvideo.slider.library.SliderLayout-->
+<!--                    android:id="@+id/imageSlider"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="225dp"-->
+<!--                    android:layout_marginTop="15dp"-->
+<!--                />-->
 
-
-                <com.smarteist.autoimageslider.SliderLayout
+                <com.smarteist.autoimageslider.SliderView
+                    app:sliderAnimationDuration="600"
+                    app:sliderAutoCycleEnabled="true"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="225dp"
                     android:layout_marginTop="15dp"
@@ -164,7 +172,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="5dp"
-                android:src="@drawable/comment" />
+                android:src="@drawable/chat_bubble_icon" />
 
             <foodie.app.rubikkube.foodie.fonts.robotoRegular
                 android:id="@+id/comment_txt"
@@ -322,8 +330,7 @@
                     android:background="@drawable/ic_send"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
-                    />
+                    android:layout_marginRight="10dp" />
             </RelativeLayout>
         </RelativeLayout>
 
