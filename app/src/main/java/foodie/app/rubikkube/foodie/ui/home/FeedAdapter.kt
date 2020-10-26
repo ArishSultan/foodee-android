@@ -19,13 +19,11 @@ import androidx.core.view.isVisible
 import androidx.paging.PagedListAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.facebook.drawee.backends.pipeline.Fresco
 import com.google.android.material.snackbar.Snackbar
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
 import com.smarteist.autoimageslider.SliderView
 import com.smarteist.autoimageslider.SliderViewAdapter
-import com.stfalcon.frescoimageviewer.ImageViewer
 import de.hdodenhof.circleimageview.CircleImageView
 import foodie.app.rubikkube.foodie.JavaUtils
 import foodie.app.rubikkube.foodie.R
@@ -71,7 +69,7 @@ class FeedAdapter: PagedListAdapter<Feed, FeedAdapter.FeedViewHolder>(Feed.CALLB
         if (feed.photos != null) {
             if (feed.photos!!.isNotEmpty()) {
                 holder.imageSlider.isVisible = true
-                holder.imageSlider.setSliderAdapter(SliderAdapterExample(feed.photos!!))
+                holder.imageSlider.setSliderAdapter(SliderAdapterExample(feed.photos!!, context, feed.id.toString()))
             } else {
                 holder.imageSlider.isVisible = false
             }
@@ -179,6 +177,8 @@ class FeedAdapter: PagedListAdapter<Feed, FeedAdapter.FeedViewHolder>(Feed.CALLB
             }
         }
         holder.txtContent.setOnClickListener {
+            Log.d("TAPPED HERE2", "TAPPED")
+
             this.context.startActivity(Intent(this.context, TimelinePostDetailActivity::class.java)
                     .putExtra("PostID", feed.id.toString()))
         }
@@ -194,14 +194,6 @@ class FeedAdapter: PagedListAdapter<Feed, FeedAdapter.FeedViewHolder>(Feed.CALLB
                 Utils.navigateToUserProfile(this.context, feed.userId.toString())
             }
 
-        }
-        holder.showImgSlide.setOnClickListener {
-            val images : MutableList<String> = arrayListOf()
-
-            for (i in feed.photos!!) images.add("${ApiUtils.BASE_URL}/storage/media/post/$i")
-
-            Fresco.initialize(context)
-            ImageViewer.Builder(context, images).show()
         }
         holder.btnSendMessage.setOnClickListener {
             val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -247,8 +239,6 @@ class FeedAdapter: PagedListAdapter<Feed, FeedAdapter.FeedViewHolder>(Feed.CALLB
             }.show()
         }
         holder.chatBubbleIcon.setOnClickListener {
-            this.context.startActivity(Intent(this.context, TimelinePostDetailActivity::class.java)
-                    .putExtra("PostID", feed.id.toString()))
         }
 
         holder.username.setOnClickListener {
@@ -415,8 +405,7 @@ class FeedAdapter: PagedListAdapter<Feed, FeedAdapter.FeedViewHolder>(Feed.CALLB
     }
 }
 
-class SliderAdapterExample(private val images: ArrayList<String>) : SliderViewAdapter<SliderAdapterExample.SliderAdapterVH?>() {
-
+class SliderAdapterExample(private val images: ArrayList<String>, val context: Context, val id: String?) : SliderViewAdapter<SliderAdapterExample.SliderAdapterVH?>() {
     override fun onCreateViewHolder(parent: ViewGroup): SliderAdapterVH {
         val inflate: View = LayoutInflater.from(parent.context).inflate(R.layout.image_slider_layout_item, null)
         return SliderAdapterVH(inflate)
@@ -432,6 +421,12 @@ class SliderAdapterExample(private val images: ArrayList<String>) : SliderViewAd
         Glide.with(viewHolder!!.itemView).setDefaultRequestOptions(requestOptions)
                 .load(ApiUtils.BASE_URL + "/storage/media/post/" + images[position])
                 .into(viewHolder.image)
+
+        if (id != null) {
+            viewHolder.itemView.setOnClickListener {
+                this.context.startActivity(Intent(this.context, TimelinePostDetailActivity::class.java).putExtra("PostID", id))
+            }
+        }
     }
 
     class SliderAdapterVH(itemView: View) : SliderViewAdapter.ViewHolder(itemView) {

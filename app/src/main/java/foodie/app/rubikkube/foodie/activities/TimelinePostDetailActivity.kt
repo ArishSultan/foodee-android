@@ -216,12 +216,11 @@ class TimelinePostDetailActivity : Activity() {
             Glide.with(this).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(profile_image)
         }
 
-        if (timeLinePost.photos?.isNotEmpty() ?: false) {
+        if (timeLinePost.photos?.isNotEmpty() == true) {
+            Log.d("IMAGES_ON_PROFILE", timeLinePost.photos?.size.toString())
             imageSlider?.isVisible = true
-            imageSlider?.setSliderAdapter(SliderAdapterExample(ArrayList(timeLinePost.photos!!)))
+            imageSlider?.setSliderAdapter(SliderAdapterExample(ArrayList(timeLinePost.photos!!), this@TimelinePostDetailActivity, null))
         } else imageSlider?.isVisible = false
-
-
 
 
         user_name.text = timeLinePost.user.username

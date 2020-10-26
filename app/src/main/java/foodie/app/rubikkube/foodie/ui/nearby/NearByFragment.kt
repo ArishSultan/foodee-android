@@ -57,7 +57,7 @@ class NearByFragment : Fragment() {
         typeTreatMeText.setTextColor(Color.BLACK)
 
         text.setTextColor(Color.WHITE)
-        new.setCardBackgroundColor(Color.argb(0.7f, 1f, 0f, 0f))
+        new.setCardBackgroundColor(Color.RED)
         fetchNearByUsers()
     }
 

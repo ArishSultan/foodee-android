@@ -128,9 +128,8 @@ class PostActivity : AppCompatActivity() {
         rv_grid!!.addOnItemTouchListener(RecyclerTouchListener(this@PostActivity, rv_grid!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 val lastPos = imageList?.size?.minus(1)
-                //String aray[] = multimedia.get(position).split("@");
-                if (position == lastPos) {
 
+                if (position == lastPos) {
                     ImagePicker.Builder(this@PostActivity)
                             .mode(ImagePicker.Mode.CAMERA_AND_GALLERY)
                             .compressLevel(ImagePicker.ComperesLevel.MEDIUM)
@@ -140,6 +139,10 @@ class PostActivity : AppCompatActivity() {
                             .allowMultipleImages(true)
                             .enableDebuggingMode(true)
                             .build()
+                } else {
+                    imageList?.removeAt(position)
+                    imageUrlList?.removeAt(position)
+                    multimediaGridAdapter!!.notifyDataSetChanged()
                 }
             }
             override fun onLongClick(view: View?, position: Int) {
@@ -154,7 +157,7 @@ class PostActivity : AppCompatActivity() {
 
         if (requestCode == ImagePicker.IMAGE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val mPaths:ArrayList<String> = data!!.getStringArrayListExtra(ImagePicker.EXTRA_IMAGE_PATH)
-            Log.d("LOG",""+mPaths)
+            Log.d("FILE_PATH",""+mPaths)
             //imageList!!.add(0,mPaths.get(0))
             imageList!!.addAll(0,mPaths)
             imageUrlList!!.addAll(0,mPaths)

@@ -1,31 +1,24 @@
 package foodie.app.rubikkube.foodie.adapters
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.media.Image
-import android.opengl.Visibility
-import android.provider.MediaStore
 import android.text.*
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.startActivity
 import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.orhanobut.hawk.Hawk
 import com.pixplicity.easyprefs.library.Prefs
-import com.squareup.picasso.Picasso
+import com.smarteist.autoimageslider.SliderView
 import com.stfalcon.frescoimageviewer.ImageViewer
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
@@ -37,9 +30,9 @@ import foodie.app.rubikkube.foodie.apiUtils.ApiUtils
 import foodie.app.rubikkube.foodie.apiUtils.SOService
 import foodie.app.rubikkube.foodie.fragments.ProfileFragment
 import foodie.app.rubikkube.foodie.models.*
+import foodie.app.rubikkube.foodie.ui.home.SliderAdapterExample
 import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
-import kotlinx.android.synthetic.main.activity_timeline_post_detail.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -57,11 +50,12 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
     var me: MeResponse? = null
     var user: User? = null
     var profile: Profile? = null
-    var isMyProfile: Boolean = isMyProfile
+    private var isMyProfile: Boolean = isMyProfile
 
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineHolder {
-        val inflater = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineHolder {
+        val inflater = LayoutInflater.from(parent.context)
+
         Hawk.init(mContext).build()
         return TimelineHolder(inflater.inflate(R.layout.holder_timelinefragment, parent, false))
     }
@@ -75,88 +69,68 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         requestOptionsAvatar.placeholder(R.drawable.profile_avatar)
         requestOptionsAvatar.error(R.drawable.profile_avatar)
 
-        if(listFeedData?.get(position)!!.user.profile!!.avatar!=null) {
+        if (listFeedData?.get(position)!!.user.profile!!.avatar != null) {
             Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + listFeedData?.get(position)!!.user.profile!!.userId + "/" + listFeedData?.get(position)!!.user.profile!!.avatar).into(holder.profile_image)
             Log.d("userProfileImage",""+listFeedData?.get(position)!!.user.profile!!.userId + "/" + listFeedData?.get(position)!!.user.profile!!.avatar)
-        }
-        else {
+        } else {
             Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(holder.profile_image)
         }
-//        holder.imageSlider.clearSliderViews()
 
-        if(listFeedData?.get(position)!!.photos!=null ){
-            if(!(listFeedData?.get(position)!!.photos.contains(""))) {
-                for (i in listFeedData?.get(position)!!.photos.indices) {
-//                    holder.imageSlider.visibility = View.VISIBLE
-//                    val sliderView = DefaultSliderView(mContext)
-//                    sliderView.imageUrl = ApiUtils.BASE_URL + "/storage/media/post/" + listFeedData?.get(position)!!.photos.get(i)
+        val feed = listFeedData?.get(position)!!
 
-
-
-//                    holder.imageSlider.addSliderView(sliderView)
-
-                    //sliderView.setImageScaleType(ImageView.ScaleType.FIT_XY)
-                    Log.d("ImageURL", ApiUtils.BASE_URL + "/storage/media/post/" + listFeedData?.get(position)!!.photos.get(i) + " Size " + listFeedData?.get(position)!!.photos.size)
-                }
-            }
-            else {
-//                holder.imageSlider.visibility = View.GONE
+        if (feed.photos != null) {
+            if (feed.photos!!.isNotEmpty()) {
+                holder.imageSlider.isVisible = true
+                holder.imageSlider.setSliderAdapter(SliderAdapterExample((feed.photos as ArrayList<String>?)!!, mContext, feed.id.toString()))
+            } else {
+                holder.imageSlider.isVisible = false
             }
         }
-        else {
-//            holder.imageSlider.visibility = View.GONE
-        }
+
         if (listFeedData!!.get(position).isLiked) {
             holder.like_icon.setImageResource(R.drawable.ic_liked)
-        }
-        else {
+        } else {
             holder.like_icon.setImageResource(R.drawable.like)
         }
 
 
 
         holder.share_icon.setOnClickListener {
-
-                sharePost(listFeedData!![position].content)
+            sharePost(listFeedData!![position].content)
         }
-        if(listFeedData!!.get(position).tags.size > 0){
+
+        if (listFeedData!!.get(position).tags.size > 0) {
             holder.txt_tagged_user.visibility = View.VISIBLE
-            //holder.txt_is_with.visibility = View.VISIBLE
             holder.img_is_with.visibility = View.VISIBLE
             holder.txt_tagged_user.text = listFeedData!!.get(position).tags.get(0).username
-        }
-        else{
+        } else {
             holder.txt_tagged_user.visibility = View.GONE
             holder.img_is_with.visibility = View.GONE
-            //holder.txt_is_with.visibility = View.GONE
         }
 
-        if(listFeedData!!.get(position).commentsCount>0){
+        if (listFeedData!!.get(position).commentsCount > 0) {
             holder.lyt_comment.visibility = View.VISIBLE
             val requestCommentOptionsAvatar = RequestOptions()
             requestCommentOptionsAvatar.placeholder(R.drawable.profile_avatar)
             requestCommentOptionsAvatar.error(R.drawable.profile_avatar)
 
-            if(listFeedData?.get(position)!!.comments.get(listFeedData?.get(position)!!.comments.size-1).user!!.profile?.avatar!=null) {
+            if (listFeedData?.get(position)!!.comments.get(listFeedData?.get(position)!!.comments.size-1).user!!.profile?.avatar != null) {
                 Glide.with(mContext).setDefaultRequestOptions(requestCommentOptionsAvatar).load(ApiUtils.BASE_URL + "/storage/media/avatar/" + listFeedData?.get(position)!!.comments.get(listFeedData?.get(position)!!.comments.size-1).user!!.id + "/" + listFeedData?.get(position)!!.comments.get(listFeedData?.get(position)!!.comments.size-1).user!!.profile!!.avatar).into(holder.comment_profile_image)
                 Log.d("userProfileImage",""+listFeedData?.get(position)!!.user.profile!!.userId + "/" + listFeedData?.get(position)!!.user.profile!!.avatar)
-            }
-            else
-            {
+            } else {
                 Glide.with(mContext).setDefaultRequestOptions(requestOptionsAvatar).load(R.drawable.profile_avatar).into(holder.comment_profile_image)
             }
+
             holder.comment_user_name.text = listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).user?.username ?: "Name"
             holder.comment_time_ago.text = listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).createdAt
             holder.txt_comment_content.text = listFeedData!!.get(position).comments.get(listFeedData?.get(position)!!.comments.size-1).content
-        }
-        else{
+        } else {
             holder.lyt_comment.visibility = View.GONE
         }
 
-        if(listFeedData!![position].userId.toString() == Prefs.getString(Constants.USER_ID,"")){
+        if (listFeedData!![position].userId.toString() == Prefs.getString(Constants.USER_ID,"")) {
             holder.txtViewOptions.visibility = View.VISIBLE
-        }
-        else{
+        } else {
             holder.txtViewOptions.visibility = View.GONE
         }
 
@@ -166,9 +140,8 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         holder.like_txt.text = listFeedData!!.get(position).likescount.toString()
 
         holder.like_txt.setOnClickListener {
-
-
             val intent = Intent(mContext,WhoLikesActivity::class.java)
+
             intent.putExtra("postId",listFeedData!![position].id)
             mContext.startActivity(intent)
         }
@@ -177,8 +150,7 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         holder.txt_user_link.visibility = View.GONE
         val url = JavaUtils.checkUserId(content)
 
-        if(!url.equals("")) {
-
+        if (url != "") {
             val uID = url?.split("/")
             val contentwihtURl = content.replace(url,"https://foodee/friend/"+ uID!![4])
             val linkUrl = "https://foodee/friend/"+ uID!![4]
@@ -186,20 +158,14 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
             holder.txt_content.text = contentwihtURl
 
             holder.txt_content.makeLinks(Pair(linkUrl,View.OnClickListener {
-
                 if (!isMyProfile) {
-                val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
-                intent.putExtra("id", uID!![4])
-                mContext.startActivity(intent)
-
-
-                    }
+                    val intent = Intent(mContext, OtherUserProfileDetailActivity::class.java)
+                    intent.putExtra("id", uID[4])
+                    mContext.startActivity(intent)
+                }
             }))
-
-
-        }else{
+        } else {
             holder.txt_content.text = content
-
         }
 //
 //        holder.txt_user_link.setOnClickListener {
@@ -421,7 +387,7 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
         val user_name:TextView = view.findViewById(R.id.user_name)
         val time_ago:TextView = view.findViewById(R.id.time_ago)
         val txt_content:TextView = view.findViewById(R.id.txt_content)
-//        val imageSlider:SliderLayout = view.findViewById(R.id.imageSlider)
+        val imageSlider: SliderView = view.findViewById(R.id.imageSlider)
         val comment_txt:TextView = view.findViewById(R.id.comment_txt)
         val like_txt:TextView = view.findViewById(R.id.like_txt)
         val edt_msg:EditText = view.findViewById(R.id.edt_msg)

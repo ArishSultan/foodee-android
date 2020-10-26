@@ -152,9 +152,8 @@ class EditPostActivity : AppCompatActivity() {
         rv_grid!!.addOnItemTouchListener(RecyclerTouchListener(this@EditPostActivity, rv_grid!!, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 val lastPos = imageNameList?.size?.minus(1)
-                //String aray[] = multimedia.get(position).split("@");
-                if (position == lastPos) {
 
+                if (position == lastPos) {
                     ImagePicker.Builder(this@EditPostActivity)
                             .mode(ImagePicker.Mode.CAMERA_AND_GALLERY)
                             .compressLevel(ImagePicker.ComperesLevel.MEDIUM)
@@ -164,6 +163,10 @@ class EditPostActivity : AppCompatActivity() {
                             .allowMultipleImages(true)
                             .enableDebuggingMode(true)
                             .build()
+                } else {
+                    imageUrlList?.removeAt(position)
+                    imageNameList?.removeAt(position)
+                    multimediaGridAdapter!!.notifyDataSetChanged()
                 }
             }
             override fun onLongClick(view: View?, position: Int) {
@@ -175,10 +178,9 @@ class EditPostActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-
         if (requestCode == ImagePicker.IMAGE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val mPaths:ArrayList<String> = data!!.getStringArrayListExtra(ImagePicker.EXTRA_IMAGE_PATH)
-            Log.d("LOG",""+mPaths)
+            Log.d("FILE_PATH",""+mPaths)
             //imageNameList!!.add(0,mPaths.get(0))
             //imageNameList!!.addAll(mPaths)
             imageNameList!!.addAll(0,mPaths)

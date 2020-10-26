@@ -102,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("Rsp",""+response.isSuccessful)
 
                 if (response.isSuccessful) {
-                    if (response.body().status) {
+                    if (response.body().status == true) {
                         if (response.body().user.emailConfirm == 0) {
                             Toasty.info(this@LoginActivity,"Account verification link sent to your Email address, Please verify your Email address before proceeding further",Toast.LENGTH_SHORT).show()
                         }
