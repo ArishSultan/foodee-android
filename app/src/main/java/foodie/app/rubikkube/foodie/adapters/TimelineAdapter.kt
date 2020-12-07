@@ -431,18 +431,18 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
                 Toasty.error(context,"There is a Network Connectivity issue.").show()
             }
             override fun onResponse(call: Call<CommentResponse>?, response: Response<CommentResponse>?) {
-                Log.d("content",response!!.body().content)
-                Log.d("CreatedAt",response!!.body().createdAt)
-                Log.d("UpdatedAt",response!!.body().updatedAt)
-                Log.d("post_id",""+response.body().postId)
-                Log.d("user_id",""+response.body().userId)
-                Log.d("comment_id",""+response.body().id)
+//                Log.d("content",response!!.body().content)
+//                Log.d("CreatedAt",response!!.body().createdAt)
+//                Log.d("UpdatedAt",response!!.body().updatedAt)
+//                Log.d("post_id",""+response.body().postId)
+//                Log.d("user_id",""+response.body().userId)
+//                Log.d("comment_id",""+response.body().id)
                 me = Hawk.get("profileResponse")
                 commentData = CommentData()
-                commentData!!.id = response.body().id
-                commentData!!.content = response.body().content
+                commentData!!.id = response?.body()?.id
+                commentData!!.content = content
                 commentData!!.createdAt = "Just now"
-                commentData!!.postId = response.body().postId.toInt()
+                commentData!!.postId = post_id.toInt()
                 user = User()
                 profile = Profile()
                 profile!!.avatar = me!!.profile?.avatar
@@ -475,8 +475,6 @@ class TimelineAdapter(context: Context, feedDate: ArrayList<FeedData>?, isMyProf
                 Toasty.error(context,"There is a Network Connectivity issue.").show()
             }
             override fun onResponse(call: Call<LikeResponse>?, response: Response<LikeResponse>?) {
-                Log.d("status",response!!.body().status.toString())
-                Log.d("post_count",response!!.body().postCount.toString())
             }
         })
     }

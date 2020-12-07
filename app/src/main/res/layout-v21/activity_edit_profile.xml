@@ -214,15 +214,15 @@
                         android:layout_margin="10dp">
 
 
-                        <EditText
-                            android:id="@+id/user_location"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Enter Your Location"
-                            android:layout_centerVertical="true"
-                            android:background="@null"
-                            android:textSize="14sp"
-                            android:paddingLeft="10dp" />
+<!--                        <EditText-->
+<!--                            android:id="@+id/user_location"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:hint="Enter Your Location"-->
+<!--                            android:layout_centerVertical="true"-->
+<!--                            android:background="@null"-->
+<!--                            android:textSize="14sp"-->
+<!--                            android:paddingLeft="10dp" />-->
 
                     </RelativeLayout>
 
@@ -412,33 +412,33 @@
                     android:textStyle="bold"
                     android:textColor="@color/darkBrown" />
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/twenty_five_precent_crd"
-                    android:layout_below="@+id/contribution"
-                    android:layout_width="50dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginBottom="40dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="4dp"
-                    >
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:id="@+id/twenty_five_precent_crd"-->
+<!--                    android:layout_below="@+id/contribution"-->
+<!--                    android:layout_width="50dp"-->
+<!--                    android:layout_height="40dp"-->
+<!--                    android:layout_marginStart="10dp"-->
+<!--                    android:layout_marginBottom="40dp"-->
+<!--                    app:cardCornerRadius="10dp"-->
+<!--                    app:cardElevation="4dp"-->
+<!--                    >-->
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/rectangular_line">
+<!--                    <RelativeLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:background="@drawable/rectangular_line">-->
 
-                        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold
-                            android:id="@+id/twenty_five_precent"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="16sp"
-                            android:textColor="@android:color/darker_gray"
-                            android:gravity="center"
-                            android:text="@string/_25" />
-                    </RelativeLayout>
+<!--                        <foodie.app.rubikkube.foodie.fonts.robotoRegularBold-->
+<!--                            android:id="@+id/twenty_five_precent"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:textSize="16sp"-->
+<!--                            android:textColor="@android:color/darker_gray"-->
+<!--                            android:gravity="center"-->
+<!--                            android:text="@string/_25" />-->
+<!--                    </RelativeLayout>-->
 
-                </androidx.cardview.widget.CardView>
+<!--                </androidx.cardview.widget.CardView>-->
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/fifty_percent_card"

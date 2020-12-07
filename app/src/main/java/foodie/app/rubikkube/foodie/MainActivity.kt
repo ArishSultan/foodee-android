@@ -39,6 +39,7 @@ import foodie.app.rubikkube.foodie.ui.chats.NotificationViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import foodie.app.rubikkube.foodie.models.LatLngResponse
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity(), Observer {
@@ -110,21 +111,36 @@ class MainActivity : AppCompatActivity(), Observer {
         else JavaUtils.removeBadge(navView, R.id.navigation_chat)
     }
 
-    fun sendLocation() {
+    private fun sendLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+
         this.fusedLocationProvider.lastLocation.addOnCompleteListener {
             if (it.isSuccessful && it.result != null) {
                 Log.d("Latitude", it.result?.latitude.toString())
                 Log.d("Longitude", it.result?.longitude.toString())
 
+                val json = JsonObject().apply {
+                    addProperty("lat", it.result?.latitude)
+                    addProperty("lng", it.result?.longitude)
+                }.toString()
+
+                Log.d("LAST_LOCATION_DATA", json)
+
                 ApiUtils.getSOService()?.sendCurrentLatLng(
                     header = mapOf(Pair("Authorization", Prefs.getString(Constants.TOKEN, ""))),
-                    requestBody = Utils.getRequestBody(JsonObject().apply {
-                        addProperty("lat", it.result?.latitude)
-                        addProperty("lng", it.result?.longitude)
-                    }.toString())
+                    requestBody = Utils.getRequestBody(json)
                 )?.enqueue(object: Callback<Any> {
                     override fun onResponse(call: Call<Any>?, response: Response<Any>?) {
-                        Log.d("Recieved Response", response?.toString() ?: "asdsad")
+                        Log.d("Recieved Response", response?.message() ?: "asdsad")
                     }
 
                     override fun onFailure(call: Call<Any>?, t: Throwable?) {
@@ -224,18 +240,28 @@ class ViewPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHA
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                if (fragments[0] == null) {
+                try {
+                    if (fragments[0] == null) {
+                        fragments[0] = HomeFragment()
+                    }
+                } catch (e: Exception) {
                     fragments[0] = HomeFragment()
                 }
+
                 fragments[0]!!
             }
             1 -> NearByFragment()
             2 -> ProfileFragment()
             3 -> ChatFragment()
             4 -> {
-                if (fragments[4] == null) {
+                try {
+                    if (fragments[4] == null) {
+                        fragments[4] = SettingsFragment()
+                    }
+                } catch (e: Exception) {
                     fragments[4] = SettingsFragment()
                 }
+
                 fragments[4]!!
             }
             else -> fragments[0]!!

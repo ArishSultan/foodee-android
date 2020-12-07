@@ -216,12 +216,12 @@ class PostActivity : AppCompatActivity() {
 
                 override fun onResponse(call: Call<AddNewPostResponse>?, response: Response<AddNewPostResponse>?) {
                     pd!!.dismiss()
-                    Log.d("Specific food", "" + response?.body())
-                    Log.d("User_ID",""+response!!.body().id)
-                    Log.d("content",response!!.body().content)
-                    Log.d("CreatedAt",response!!.body().createdAt)
-                    Log.d("UpdatedAt",response!!.body().updatedAt)
-                    Log.d("post_id",""+response.body().id)
+//                    Log.d("Specific food", "" + response?.body())
+//                    Log.d("User_ID",""+response!!.body().id)
+//                    Log.d("content",response!!.body().content)
+//                    Log.d("CreatedAt",response!!.body().createdAt)
+//                    Log.d("UpdatedAt",response!!.body().updatedAt)
+//                    Log.d("post_id",""+response.body().id)
 
                     val name = Prefs.getString(Constants.NAME, "")
                     val total = tag_id!!.size

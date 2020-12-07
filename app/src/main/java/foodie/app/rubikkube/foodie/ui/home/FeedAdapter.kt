@@ -317,7 +317,7 @@ class FeedAdapter: PagedListAdapter<Feed, FeedAdapter.FeedViewHolder>(Feed.CALLB
                     response?.body().apply {
                         comment.id = this?.id
                         comment.postId = this?.postId?.toInt()
-                        comment.content = this?.content
+                        comment.content = content
                         comment.createdAt = "Just now"
                     }
 

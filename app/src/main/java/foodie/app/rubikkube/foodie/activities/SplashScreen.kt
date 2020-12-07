@@ -28,7 +28,7 @@ class SplashScreen : AppCompatActivity() {
 
         FirebaseInstanceId.getInstance().instanceId
                 .addOnCompleteListener(OnCompleteListener { task ->
-                    if (!task.isSuccessful)
+                    if (task.isSuccessful)
                         Prefs.putString(Constants.FCM_TOKEN, task.result?.token)
 
                     return@OnCompleteListener

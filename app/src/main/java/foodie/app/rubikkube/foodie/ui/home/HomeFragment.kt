@@ -5,21 +5,13 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
-import android.widget.TextView
 import com.orhanobut.hawk.Hawk
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.tabs.TabLayout
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mikepenz.actionitembadge.library.ActionItemBadge
 import com.pixplicity.easyprefs.library.Prefs
@@ -33,23 +25,18 @@ import foodie.app.rubikkube.foodie.models.UpdateFcmTokenResponse
 import foodie.app.rubikkube.foodie.ui.chats.NotificationViewModel
 import foodie.app.rubikkube.foodie.utilities.Constants
 import foodie.app.rubikkube.foodie.utilities.Utils
-import kotlinx.android.synthetic.main.fragment_home.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class HomeFragment : Fragment() {
-
     private lateinit var binding: FragmentHomeBinding
 
-    private var feedsViewModel: HomeViewModel? = null
-
-
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
         this.binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -124,6 +111,7 @@ class HomeFragment : Fragment() {
                     }
 
                     override fun onResponse(call: Call<UpdateFcmTokenResponse>?, response: Response<UpdateFcmTokenResponse>?) {
+//                        Toast.makeText(activity, response?.message() ?: "No Message", Toast.LENGTH_SHORT).show()
                     }
                 })
     }
