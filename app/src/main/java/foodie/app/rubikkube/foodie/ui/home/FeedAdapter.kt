@@ -53,6 +53,7 @@ class FeedAdapter: PagedListAdapter<Feed, FeedAdapter.FeedViewHolder>(Feed.CALLB
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val requestOptions = RequestOptions()
+                .centerCrop()
                 .error(R.drawable.profile_avatar)
                 .placeholder(R.drawable.profile_avatar)
 
@@ -415,6 +416,7 @@ class SliderAdapterExample(private val images: ArrayList<String>, val context: C
 
     override fun onBindViewHolder(viewHolder: SliderAdapterVH?, position: Int) {
         val requestOptions = RequestOptions()
+                .centerCrop()
                 .error(R.drawable.profile_avatar)
                 .placeholder(R.drawable.profile_avatar)
 

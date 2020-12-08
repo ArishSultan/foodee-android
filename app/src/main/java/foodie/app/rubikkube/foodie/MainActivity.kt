@@ -1,6 +1,7 @@
 package foodie.app.rubikkube.foodie
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import java.util.*
 import retrofit2.Call
@@ -45,6 +46,9 @@ import java.lang.Exception
 class MainActivity : AppCompatActivity(), Observer {
 
     companion object {
+        var context: Context? = null
+        var navView: BottomNavigationView? = null
+
         var navPager: ViewPager? = null
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
     }
@@ -109,6 +113,9 @@ class MainActivity : AppCompatActivity(), Observer {
         if (Prefs.getInt("chatCount", 0) > 0)
             JavaUtils.showBadge(this@MainActivity, navView, R.id.navigation_chat, Prefs.getInt("chatCount", 0).toString())
         else JavaUtils.removeBadge(navView, R.id.navigation_chat)
+
+        MainActivity.navView = navView
+        MainActivity.context = this@MainActivity
     }
 
     private fun sendLocation() {

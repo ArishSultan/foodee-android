@@ -20,6 +20,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import foodie.app.rubikkube.foodie.apiUtils.SOService
 import es.dmoral.toasty.Toasty
+import foodie.app.rubikkube.foodie.JavaUtils
+import foodie.app.rubikkube.foodie.MainActivity
 import foodie.app.rubikkube.foodie.models.SimpleResponse
 import foodie.app.rubikkube.foodie.ui.chats.NotificationViewModel
 import foodie.app.rubikkube.foodie.utilities.Constants
@@ -68,6 +70,11 @@ class ChatInboxListAdapter(context: Context, list : MutableList<InboxListRespons
         holder.view.setOnClickListener {
             if (inboxUserList!![position].newMessage) {
                 Prefs.putInt("chatCount", Prefs.getInt("chatCount", 0) -1)
+
+                if (MainActivity.navView != null) {
+                    JavaUtils.removeBadge(MainActivity.navView, R.id.navigation_chat)
+                }
+
                 NotificationViewModel.chats.postValue(NotificationViewModel.chats.value?.minus(1))
             }
 

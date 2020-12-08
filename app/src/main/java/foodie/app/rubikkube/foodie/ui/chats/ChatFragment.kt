@@ -134,18 +134,4 @@ class ChatFragment : androidx.fragment.app.Fragment(), Observer {
         }
         getInboxList(this.view!!)
     }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onPause() {
-        super.onPause()
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-}// Required empty public constructor
+}

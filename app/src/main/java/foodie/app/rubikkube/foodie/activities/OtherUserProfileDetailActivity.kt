@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import foodie.app.rubikkube.foodie.apiUtils.SOService
 import com.bumptech.glide.Glide
@@ -48,11 +49,14 @@ import kotlinx.android.synthetic.main.activity_other_user_profile_detail.rating_
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.rv_my_posts
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.twenty_precent_crd
 import kotlinx.android.synthetic.main.activity_other_user_profile_detail.view_shadow
+import kotlinx.android.synthetic.main.fragment_profile.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DecimalFormat
 import java.util.HashMap
+import kotlin.math.roundToInt
 
 
 class OtherUserProfileDetailActivity : AppCompatActivity() {
@@ -455,44 +459,30 @@ class OtherUserProfileDetailActivity : AppCompatActivity() {
                             reviews = response.body()
 
                             if(reviews?.data?.isEmpty()!!) {
-                                ratingLayout.visibility = View.INVISIBLE
-                            }else {
+                                ratingLayout.visibility = View.GONE
+                            } else {
 
-                                var totalRatings = 0
-                                var fiveStar = 0
-                                var fourStar = 0
-                                var threeStar = 0
-                                var twotar = 0
-                                var oneStar = 0
-                                for(i in reviews?.data?.indices!!) {
+                                var oneStar = 0.0f
+                                var twoStar = 0.0f
+                                var fiveStar = 0.0f
+                                var fourStar = 0.0f
+                                var threeStar = 0.0f
 
-
-                                    if(reviews?.data!![i].rate.toInt() == 5) {
-                                        fiveStar++
-                                    }else if(reviews?.data!![i].rate.toInt() == 4) {
-                                        fourStar++
-                                    }else if(reviews?.data!![i].rate.toInt() == 3) {
-                                        threeStar++
-                                    }else if(reviews?.data!![i].rate.toInt() == 2) {
-                                        twotar++
-                                    }else if(reviews?.data!![i].rate.toInt() == 1) {
-                                        oneStar++
+                                for (review in reviews?.data!!) {
+                                    when (review.rate.roundToInt()) {
+                                        5 -> ++fiveStar
+                                        4 -> ++fourStar
+                                        3 -> ++threeStar
+                                        2 -> ++twoStar
+                                        1 -> ++oneStar
                                     }
-//                                    totalRatings += reviews?.data!![i].rate.toInt()
-
-
                                 }
 
+                                val sum = 5 * fiveStar + 4 * fourStar + 3 * threeStar + 2 * twoStar + oneStar
+                                val totalRatings = fiveStar + fourStar + threeStar + twoStar + oneStar
 
-                                var sum = 5*fiveStar + 4*fourStar + 3*threeStar + 2*twotar + oneStar
-                                var totalNoOfRatings = fiveStar+fourStar+threeStar+twotar+oneStar
-                                var userRatings =sum.div(totalNoOfRatings).toFloat()
-
-                                rating_title.setText(userRatings.toString())
-                                //ratings.numStars = currentRatings
-                                ratingLayout.visibility = View.VISIBLE
-
-
+                                rating_title.text = DecimalFormat("#.#").format(sum / totalRatings)
+                                ratingLayout.isVisible = true
                             }
 
                         }else {
